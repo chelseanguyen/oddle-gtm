@@ -1,1 +1,1 @@
-This is a repo to store backup of GTM n8n workflows
+This is a repo to store GTM n8n workflows
