@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-01-15T03:39:42.726Z",
+  "updatedAt": "2026-01-16T07:50:43.523Z",
   "createdAt": "2026-01-15T03:16:53.546Z",
   "id": "A5PDymR3ncd1dzpi",
   "name": "Templates for WA agent",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -3193,7 +3193,7 @@
   "staticData": null,
   "meta": null,
   "pinData": {},
-  "versionId": "b82d4a41-cfaf-40ce-8ae6-d3745614bcb4",
+  "versionId": "8dd5a6ec-473e-44fc-ad70-4e6a3f83719d",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
