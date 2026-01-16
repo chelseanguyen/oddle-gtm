@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-01-16T03:27:29.396Z",
+  "updatedAt": "2026-01-16T07:47:04.817Z",
   "createdAt": "2026-01-16T02:11:22.075Z",
   "id": "9z9V10rnXW7cg4Ji",
   "name": "[To remove] n8n Backup Workflow",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -808,7 +808,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "e6edbf5a-9952-4fec-bb0a-e67ed765bd28",
+  "versionId": "53d8ad01-28aa-4efd-a3d2-f05cb90007e2",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
