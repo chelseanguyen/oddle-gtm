@@ -1,0 +1,518 @@
+{
+  "updatedAt": "2026-01-14T09:14:06.184Z",
+  "createdAt": "2026-01-14T02:26:01.403Z",
+  "id": "Aav3evTwYx1vXcRO",
+  "name": "[Draft] Process human-generated response",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "event": "emailsSent",
+        "options": {
+          "campaignId": "cam_peDaoGPEGHR28WExF"
+        }
+      },
+      "type": "n8n-nodes-base.lemlistTrigger",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        160
+      ],
+      "name": "Lemlist Trigger - Email Sent",
+      "webhookId": "lemlist-human-response-v2",
+      "id": "f89bba8e-22cf-46e1-91b1-d9f47e45cb77",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Lemlist emailsSent payload\n\nconst payload = $input.item.json;\n\n// Extract lead information\nconst leadIdentifier = payload.leadEmail || payload.email;\nconst companyName = payload.leadCompanyName || payload.companyName;\nconst campaignName = payload.campaignName;\nconst fromEmail = payload.sendUserEmail;\nconst contactId = payload.contactId;\nconst teamId = payload.metaData?.teamId || payload.teamId;\nconst messageHtml = payload.html;\nconst messageText = payload.text;\n\n// Check if this is a manual send (not automated)\nconst sendType = payload.sendType || 'manual';\nconst isManualSend = sendType === 'manual' || !payload.automated;\n\n// Helper function to strip HTML tags\nfunction stripHtml(html) {\n  if (!html) return '';\n  return html\n    .replace(/<[^>]*>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nconst cleanText = stripHtml(messageText || messageHtml);\n\nreturn {\n  json: {\n    lead_identifier: leadIdentifier,\n    company_name: companyName,\n    campaign_name: campaignName,\n    human_response_html: messageHtml,\n    human_response_text: cleanText,\n    from_email: fromEmail,\n    contact_id: contactId,\n    team_id: teamId,\n    is_manual_send: isManualSend,\n    sent_at: new Date().toISOString()\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        160
+      ],
+      "name": "Parse Lemlist Payload",
+      "id": "078f5373-7f4b-4190-b0fc-bcdc7c67923f"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-manual",
+              "leftValue": "={{ $json.is_manual_send }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        192,
+        160
+      ],
+      "name": "Filter Manual Sends Only",
+      "id": "314812c0-6dfa-429b-9b4e-130feb59b448"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse conversation to extract prospect's latest message\n\nconst messages = $input.first().json.data || [];\n\n// Find the most recent emailsReplied (prospect's message)\nconst prospectMessage = messages.find(msg => msg.type === 'emailsReplied');\n\nif (!prospectMessage) {\n  return {\n    json: {\n      lead_message: 'No prospect reply found',\n      has_prospect_message: false\n    }\n  };\n}\n\n// Helper function to strip HTML tags\nfunction stripHtml(html) {\n  if (!html) return '';\n  return html\n    .replace(/<[^>]*>/g, ' ')\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/\\s+/g, ' ')\n    .trim();\n}\n\nconst leadMessageText = prospectMessage.text || stripHtml(prospectMessage.message);\n\nreturn {\n  json: {\n    lead_message: leadMessageText,\n    has_prospect_message: true,\n    prospect_email: prospectMessage.fromEmail\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        624,
+        144
+      ],
+      "name": "Parse Lead Message",
+      "id": "57c8347e-7fd8-4bdf-85ab-0096fdc8209b"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "condition-has-message",
+              "leftValue": "={{ $json.has_prospect_message }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        848,
+        144
+      ],
+      "name": "Has Prospect Message?",
+      "id": "7eca5d14-671f-41eb-806b-d4dd2589042a"
+    },
+    {
+      "parameters": {
+        "modelName": "text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1616,
+        320
+      ],
+      "name": "Google Gemini Embeddings",
+      "id": "1a7222d8-c461-4208-b6a4-7a62ce266cb2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A3N12LT5Z\",\n  \"text\": \"Human response captured for training\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":brain: Human Response Captured\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead:*\\n{{ $('Parse Lemlist Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Lemlist Payload').item.json.company_name || 'N/A' }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Topic:*\\n{{ $('Prepare Training Document1').item.json.metadata.topic }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Sent At:*\\n{{ $('Parse Lemlist Payload').item.json.sent_at }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Lead's Message:*\\n```{{ $('Parse Lead Message').item.json.lead_message.substring(0, 150) }}...```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Human Response:*\\n```{{ $('Parse Lemlist Payload').item.json.human_response_text.substring(0, 150) }}...```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":white_check_mark: Stored in vector database and categorized as {{ $('Prepare Training Document1').item.json.metadata.topic }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1952,
+        128
+      ],
+      "name": "Notify Slack - Human Response",
+      "id": "9d1cc9e2-8fce-4915-a481-066ad08798ae"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A3N12LT5Z\",\n  \"text\": \"No prospect message found - skipped\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: No Prospect Message Found\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead:*\\n{{ $('Parse Lemlist Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Type:*\\nDirect outreach (no prospect reply)\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":information_source: Skipped storage - only capturing responses to prospect messages\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        496
+      ],
+      "name": "Notify Slack - No Message",
+      "id": "23af1cf7-f7b2-4e62-9196-696ed2e448ed"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.lemlist.com/api/inbox/{{ $json.contact_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "lemlistApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        416,
+        144
+      ],
+      "name": "Get Conversation History1",
+      "id": "24ab42a8-2a96-461a-99fd-b879ef50849b"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash-exp",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        304
+      ],
+      "name": "Google Gemini Chat1",
+      "id": "25d71c49-ad3c-4fde-9ff9-8b5cf6453cdc",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"topic\": \"pricing\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        336
+      ],
+      "name": "Topic Output Parser1",
+      "id": "f5e0c2b9-4b47-448b-9735-e99edf7789fe"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Parse Lead Message').item.json.lead_message }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI assistant that categorizes prospect messages into topics.\n\nAnalyze the prospect's message and categorize it into ONE of the following topics:\n\n**Valid Topics:**\n- pricing: Questions about cost, pricing plans, discounts, payment terms\n- product_feature: Questions about specific features, functionality, capabilities\n- competitor_comparison: Comparisons with competitors, asking why choose us\n- objection: Concerns, doubts, hesitations, or pushback\n- interested: Expressing interest, wanting to learn more, positive signals\n- not_interested: Clearly not interested, politely declining, no need\n- timing: Questions about implementation timeline, when to start, availability\n- technical: Technical questions, integrations, API, security, compliance\n- scheduling: Requesting a demo, meeting, call, or follow-up\n- general_inquiry: General questions that don't fit other categories\n- out_of_office: Auto-replies, out of office messages\n\n**Instructions:**\n1. Read the prospect's message carefully\n2. Identify the main intent or topic\n3. Return ONLY the topic keyword (e.g., \"pricing\", \"product_feature\")\n4. Use lowercase and underscores for multi-word topics\n5. Choose the MOST relevant single topic\n\n**Output Format:**\nReturn a JSON object with the topic:\n{\n  \"topic\": \"<topic_keyword>\"\n}\n\n**Examples:**\nMessage: \"How much does this cost?\"\nOutput: {\"topic\": \"pricing\"}\n\nMessage: \"Does it integrate with Salesforce?\"\nOutput: {\"topic\": \"technical\"}\n\nMessage: \"Not interested right now, thanks.\"\nOutput: {\"topic\": \"not_interested\"}\n\nMessage: \"Can you tell me more about the reporting features?\"\nOutput: {\"topic\": \"product_feature\"}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        1136,
+        128
+      ],
+      "name": "Categorize Lead Message Topic1",
+      "id": "4cdc4748-7e46-4f46-a571-cf4b0e36df16"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepare training document for Vector Store\n// Human response schema: lead_message, topic, sdr_response, timestamp\n\nconst leadMessage = $('Parse Lead Message').item.json.lead_message;\nconst humanResponse = $('Parse Lemlist Payload').item.json.human_response_text;\nconst topic = $json.output?.topic || $json.topic || 'general_inquiry';\nconst timestamp = new Date().toISOString();\n\n// Create document text for embedding\n// Embed the lead message for similarity search\nconst documentText = `Topic: ${topic}\\n\\nLead Message: ${leadMessage}\\n\\nSDR Response: ${humanResponse}`;\n\nreturn {\n  json: {\n    pageContent: documentText,\n    metadata: {\n      lead_message: leadMessage,\n      topic: topic,\n      sdr_response: humanResponse,\n      timestamp: timestamp\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        128
+      ],
+      "name": "Prepare Training Document1",
+      "id": "5da0ba1a-4d64-46da-a4fa-543d5881dd16"
+    },
+    {
+      "parameters": {
+        "content": "## Ignore: Workflow 3: Process & record human-generated response\n\n",
+        "height": 100,
+        "width": 640
+      },
+      "id": "9e3135ba-79a7-4dbc-8b04-f9b5156db0ed",
+      "name": "Sticky Note17",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        -32
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        1776,
+        336
+      ],
+      "id": "137426bc-94ac-4ce8-8774-60ed6bedcaca",
+      "name": "Default Data Loader1"
+    },
+    {
+      "parameters": {
+        "content": "Possible to distinguish?\n- emails sent manually (by human) => this is what we want to capture\nVS\n- email sent via API (approved via Slack) => already captured",
+        "height": 144,
+        "width": 288
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -256,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "972b74a6-0115-4a71-a4f3-71c40286f63a",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": "sdr_training_vectors",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        1648,
+        128
+      ],
+      "name": "Store Human Response to DB",
+      "id": "faeee28b-61eb-4143-bd41-de49eecfe919",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Lemlist Trigger - Email Sent": {
+      "main": [
+        [
+          {
+            "node": "Parse Lemlist Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Lemlist Payload": {
+      "main": [
+        [
+          {
+            "node": "Filter Manual Sends Only",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Manual Sends Only": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation History1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Lead Message": {
+      "main": [
+        [
+          {
+            "node": "Has Prospect Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Prospect Message?": {
+      "main": [
+        [
+          {
+            "node": "Categorize Lead Message Topic1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Slack - No Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Human Response to DB",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Conversation History1": {
+      "main": [
+        [
+          {
+            "node": "Parse Lead Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Categorize Lead Message Topic1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Categorize Lead Message Topic1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categorize Lead Message Topic1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Training Document1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Training Document1": {
+      "main": [
+        [
+          {
+            "node": "Store Human Response to DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Human Response to DB",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store Human Response to DB": {
+      "main": [
+        [
+          {
+            "node": "Notify Slack - Human Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "6115a1c8-62cf-42a7-a115-25820443fc9d",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-14T02:26:01.403Z",
+      "createdAt": "2026-01-14T02:26:01.403Z",
+      "role": "workflow:owner",
+      "workflowId": "Aav3evTwYx1vXcRO",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
