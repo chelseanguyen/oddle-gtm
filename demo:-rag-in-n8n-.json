@@ -1,0 +1,1499 @@
+{
+  "updatedAt": "2026-01-14T09:13:52.207Z",
+  "createdAt": "2026-01-08T02:10:19.157Z",
+  "id": "vsvpxpP6Ri7puUSU",
+  "name": "Demo: RAG in n8n",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Upload your data to test RAG",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload your file(s)",
+              "fieldType": "file",
+              "acceptFileTypes": ".pdf, .csv",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -128,
+        0
+      ],
+      "id": "f7a656ec-83fc-4ed2-a089-57a9def662b7",
+      "name": "Upload your file here",
+      "webhookId": "82848bc4-5ea2-4e5a-8bb6-3c09b94a8c5d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        528,
+        480
+      ],
+      "id": "6ea78663-cf2f-4f2d-8e68-43047c2afd87",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "14",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        160
+      ],
+      "id": "94aecac0-03f9-4915-932b-d14a2576607b",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "content": "### Readme\nLoad your data into a vector database with the 📚 **Load Data** flow, and then use your data as chat context with the 🐕 **Retriever** flow.\n\n**Quick start**\n1. Click on the `Execute Workflow` button to run the 📚 **Load Data** flow.\n2. Click on `Open Chat` button to run the 🐕 **Retriever** flow. Then ask a question about content from your document(s)\n\n\nFor more info, check [our docs on RAG in n8n](https://docs.n8n.io/advanced-ai/rag-in-n8n/).",
+        "height": 300,
+        "width": 440,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -656,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "0d07742b-0b36-4c2e-990c-266cbe6e2d4d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### 📚 Load Data Flow",
+        "height": 460,
+        "width": 700,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -176,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "d19d04f3-5231-4e47-bed7-9f24a4a8f582",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": {
+          "__rl": true,
+          "value": "vector_store_key",
+          "mode": "list",
+          "cachedResultName": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        64,
+        0
+      ],
+      "id": "bf50a11f-ca6a-4e04-a6d2-42fee272b260",
+      "name": "Insert Data to Store"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "knowledge_base",
+        "toolDescription": "Use this knowledge base to answer questions from the user",
+        "memoryKey": {
+          "__rl": true,
+          "mode": "list",
+          "value": "vector_store_key"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.2,
+      "position": [
+        944,
+        208
+      ],
+      "id": "09c0db62-5413-440e-8c13-fb6bb66d9b6a",
+      "name": "Query Data Tool"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        944,
+        -16
+      ],
+      "id": "579aed76-9644-42d1-ac13-7369059ff1c2",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        720,
+        -16
+      ],
+      "id": "9c30de61-935a-471f-ae88-ec5f67beeefc",
+      "name": "When chat message received",
+      "webhookId": "4091fa09-fb9a-4039-9411-7104d213f601"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        720,
+        208
+      ],
+      "id": "b5aa8942-9cd5-4c2f-bd77-7a0ceb921bac",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "14",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 🐕 2. Retriever Flow",
+        "height": 460,
+        "width": 680,
+        "color": 7
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "28bc73a1-e64a-47bf-ac1c-ffe644894ea5",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### Embeddings\n\nThe Insert and Retrieve operation use the same embedding node.\n\nThis is to ensure that they are using the **exact same embeddings and settings**.\n\nDifferent embeddings might not work at all, or have unintended consequences.\n",
+        "height": 240,
+        "width": 320,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        672,
+        448
+      ],
+      "typeVersion": 1,
+      "id": "0cf8c647-418c-4d1a-8952-766145afca72",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are the AI assistant for a company specializing in advanced technology solutions. Your task is to help internal users by consulting the official product documentation for the company’s platforms.\n\nAvailable References:\n\nproductDocs: Step-by-step guides, technical configurations, and official manuals from the developer documentation.\n\nfeedbackPositive: Previous responses rated positively by users, useful as examples for generating high-quality answers.\n\nfeedbackNegative: Previous responses rated negatively by users. Use this tool to avoid making similar mistakes in your replies.\n\nCurrently, there are no use cases or update history documented in the available materials.\n\nBehavior Rules\n\nSearch & Response:\n\nAlways consult the official documentation first using the productDocs tool.\n\nAlso search feedbackPositive for highly rated previous responses to similar questions.\n\nCheck feedbackNegative to see if similar answers were poorly rated, and avoid repeating those mistakes.\n\nIf multiple tools return relevant results, combine the information to provide the best answer. If only one tool returns relevant content, use that as your source.\n\nRespond directly and clearly, explaining exactly how to perform the requested task.\n\nDo not filter by category unless the user explicitly asks.\n\nLanguage (Strict Per-Message Rule):\n\nDetect the language of each incoming message individually.\n\nRespond in the same language as the most recent message.\n\nDo not use the language of previous messages or conversation history to decide the language.\n\nLinks (Not Allowed):\n\nNever provide links, even if the user requests them.\n\nIf a user asks for a link, respond with:\n“I cannot provide links. If you need specific information, let me know and I will help with the details.”\n\nResponse Style:\n\nUse a professional, direct, and human tone.\n\nKeep responses between 2 and 4 lines unless the user asks for more detail.\n\nDo not make up information that isn’t in MongoDB.\n\nIf your answer contains numbered steps or lists, always number them sequentially (1, 2, 3...) without skipping or repeating numbers, even if the original content uses a different numbering style."
+        }
+      },
+      "id": "3be83ceb-f9ce-4f8c-a946-59d6686a0ef5",
+      "name": "Knowledge Base Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        16,
+        2464
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "doc_id",
+                "value": "={{ $json.documentId }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "96090c05-5618-4388-84e9-78d40e50a7da",
+      "name": "Document Section Loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        416,
+        2160
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 200,
+        "options": {
+          "splitCode": "markdown"
+        }
+      },
+      "id": "2cae022b-9e1b-464b-b60b-be6d746f1d02",
+      "name": "Document Chunker",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        416,
+        2320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fa47a7c3-252c-4fb3-9db7-fbfbcbdb253f",
+      "name": "OpenAI Embeddings Generator",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        160,
+        2128
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1gvgp71e9edob8WLqFIYCdzC7kUq3pLO37VKb-a-vVW4/edit?tab=t.0"
+      },
+      "id": "046ba996-2aa6-47e5-b616-6fe880fd9e30",
+      "name": "Google Docs Importer",
+      "type": "n8n-nodes-base.googleDocs",
+      "position": [
+        16,
+        1936
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {},
+      "id": "aac55751-eaa8-4807-bf91-1606899699c4",
+      "name": "When clicking \"Execute Workflow\"",
+      "type": "n8n-nodes-base.manualTrigger",
+      "position": [
+        -208,
+        1936
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Receive Message on Telegram').item.json.message.chat.id }}",
+        "collectionName": "n8n-template-chat-history"
+      },
+      "id": "fe2887c8-6a9d-49b6-9951-fd9787857c79",
+      "name": "MongoDB Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryMongoDbChat",
+      "position": [
+        16,
+        2640
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "bb4c5c9e-efc3-4b53-b5e4-45f2c6fd812e",
+      "name": "Embeddings OpenAI1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        -32,
+        3072
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "chunkSize": 4000,
+        "options": {}
+      },
+      "id": "3f5d4a8f-37f8-4dfa-89b5-b08d2cae224e",
+      "name": "Recursive Character Text Splitter",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        1136,
+        2816
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "cabd4645-37e9-4bcd-ab2a-d6334be93eb4",
+      "name": "Embeddings OpenAI3",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        256,
+        2944
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "feedbackPositive",
+        "toolDescription": "Retrieve previous examples of similar questions that were rated positively by users. Use this tool before responding to improve your answer based on those approved examples.",
+        "mongoCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-template-feedback",
+          "cachedResultName": "n8n-template-feedback"
+        },
+        "vectorIndexName": "template-feedback-search",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "feedback",
+                "value": "positive"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f732546c-1e10-41c1-9dd8-6b114b0ce1d8",
+      "name": "Search Positive Interactions",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "position": [
+        -80,
+        2912
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "productDocs",
+        "toolDescription": "retreive documentation",
+        "mongoCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-template",
+          "cachedResultName": "n8n-template"
+        },
+        "vectorIndexName": "data_index",
+        "options": {}
+      },
+      "id": "070c3bf7-a95c-4f13-ba50-cf9334d3e1bc",
+      "name": "Search Documentation",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "position": [
+        480,
+        2736
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "feedbackNegative",
+        "toolDescription": "Retrieve previous examples of similar questions that were rated negatively by users. Use this tool before responding to avoid generating answers similar to those that did not work well in the past.",
+        "mongoCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-template-feedback",
+          "cachedResultName": "n8n-template-feedback"
+        },
+        "vectorIndexName": "template-feedback-search",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "feedback",
+                "value": "negative"
+              }
+            ]
+          }
+        }
+      },
+      "id": "90134d3e-90a5-46f8-805f-533d9e57db7c",
+      "name": "Search Negative Interactions",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "position": [
+        192,
+        2784
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "32f53302-fa65-4918-b217-1381d4100039",
+      "name": "Receive Message on Telegram",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "position": [
+        -208,
+        2464
+      ],
+      "webhookId": "fff1b90c-59ce-406b-a7f0-08953c90c0ce",
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "={{ $('Receive Message on Telegram').item.json.message.chat.id }}",
+        "message": "={{ $json.output }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "3dd54afd-ceb8-4e97-bb0e-3efca4304948",
+      "name": "Send Message on Telegram, Wait for Feedback",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        400,
+        2464
+      ],
+      "webhookId": "ed8fc221-70ad-47df-b70e-6667c580553b",
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "jsCode": "let response;\n\nif ($input.first().json.data.approved) {\n  response = \"positive\"\n} \nelse {\n  response = \"negative\"\n}\n\nreturn {\n  feedback: response\n}\n"
+      },
+      "id": "d38c7c80-6bf3-4721-9f2c-2610aa7f3e2d",
+      "name": "Map feedback data",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        624,
+        2464
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "prompt",
+              "value": "={{ $('Receive Message on Telegram').item.json.message.text }}"
+            },
+            {
+              "name": "response",
+              "value": "={{ $('Knowledge Base Agent').item.json.output }}"
+            },
+            {
+              "name": "text",
+              "value": "=Prompt: {{ $('Receive Message on Telegram').item.json.message.text }}. Completion: {{ $('Knowledge Base Agent').item.json.output }}"
+            },
+            {
+              "name": "feedback",
+              "value": "={{ $json.feedback }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6707a80a-1df9-4f43-ab52-d9527697afd7",
+      "name": "Set feedback fields for collection storage",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        832,
+        2464
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "mongoCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-template-feedback",
+          "cachedResultName": "n8n-template-feedback"
+        },
+        "vectorIndexName": "template-feedback-search",
+        "embeddingBatchSize": 1,
+        "options": {}
+      },
+      "id": "ce3aa894-b364-4a07-9a79-cab1c81f325c",
+      "name": "Submit embedded chat feedback",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "position": [
+        1056,
+        2464
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "9cd33c0d-4fbc-4f48-a2f4-450a8e8fbf4a",
+      "name": "OpenAI Embeddings Generator1",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        992,
+        2672
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "mongoCollection": {
+          "__rl": true,
+          "mode": "list",
+          "value": "n8n-template",
+          "cachedResultName": "n8n-template"
+        },
+        "vectorIndexName": "data_index",
+        "options": {}
+      },
+      "id": "f4edd14e-42ab-4127-a7e3-198c18315e20",
+      "name": "MongoDB Documentation Inserter",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreMongoDBAtlas",
+      "position": [
+        240,
+        1936
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "content": "Run this workflow manually to import and index Google Docs product documentation into MongoDB with vector embeddings for fast search.",
+        "color": 5
+      },
+      "id": "70d1a01a-ceca-4ff5-b31a-0e8b802cdc3f",
+      "name": "Sticky Note7",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        1952
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "This workflow uses retrieval-augmented generation (RAG) to answer user questions by searching the MongoDB vector store and generating AI responses enhanced with Telegram-based RLHF feedback.",
+        "height": 180,
+        "color": 4
+      },
+      "id": "b33c5dd0-7e3e-4ad5-b625-0e8564df44fb",
+      "name": "Sticky Note8",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        2496
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "extractionValues": {
+          "values": [
+            {
+              "key": "title",
+              "cssSelector": "title, h1"
+            },
+            {
+              "key": "content",
+              "cssSelector": "p, article, .content, .post-content, main"
+            },
+            {
+              "key": "meta_description",
+              "cssSelector": "meta[name='description']",
+              "returnValue": "attribute",
+              "attribute": "content"
+            },
+            {
+              "key": "links",
+              "cssSelector": "a[href]",
+              "returnValue": "attribute",
+              "attribute": "href"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "01cc7d9a-fe3d-4731-91d1-06b41b03a444",
+      "name": "HTML Extract",
+      "type": "n8n-nodes-base.htmlExtract",
+      "position": [
+        -192,
+        3600
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents",
+          "cachedResultName": "documents"
+        },
+        "embeddingBatchSize": 100,
+        "options": {}
+      },
+      "id": "fa020573-40b9-488d-acb2-c8f4e72c9dee",
+      "name": "Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        224,
+        3600
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Form",
+        "formDescription": "Enter Website Url",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Website Url",
+              "placeholder": "Enter Website Url"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "074842ff-577b-46f2-a19e-41f43d60386a",
+      "name": "Enter Website Url",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        -544,
+        3600
+      ],
+      "webhookId": "b02a5096-11b0-4677-acfa-fcac5722498c",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Website Url'] }}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "maxRedirects": 5
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "b5a0b652-bd62-4ec7-92f0-347e61efd1ca",
+      "name": "Website Data Scrapping",
+      "type": "n8n-nodes-base.httpRequest",
+      "maxTries": 3,
+      "position": [
+        -368,
+        3600
+      ],
+      "retryOnFail": true,
+      "typeVersion": 4.1
+    },
+    {
+      "parameters": {
+        "operation": "toJson",
+        "options": {}
+      },
+      "id": "347e4224-57c0-40cb-80ce-f8c50f91d319",
+      "name": "Convert to File",
+      "type": "n8n-nodes-base.convertToFile",
+      "position": [
+        -48,
+        3600
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {},
+      "id": "03ff456b-c26f-4cff-89b5-b8f442c92017",
+      "name": "Embeddings Cohere",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "position": [
+        128,
+        3792
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Overview  \nYou are an AI agent that responds strictly using information from stored document embeddings in a supabase vector store.  \n\n## Context  \n- The agent is designed to provide accurate, document-based answers.  \n- It must avoid using external knowledge or assumptions.  \n\n## Instructions  \n1. Analyze the user's question.  \n2. Retrieve relevant content from the document embeddings using supabase.  \n3. Construct a response only from the matching document chunks.\n## Tools  \n- Vector store containing embedded documents\n- Embeddings Cohere  \n\n## SOP (Standard Operating Procedure)  \n1. Receive user query.  \n2. Search the vector store for relevant document chunks.  \n3. Extract and synthesize an answer using only that content.  \n4. If no matches, issue fallback message.  \n\n## Final Notes  \n- Do not rely on prior training or external facts.  \n- The response must remain strictly grounded in the documents.  "
+        }
+      },
+      "id": "7d836710-796a-4510-b529-072375c941a2",
+      "name": "Question & Answer Retrieve",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        1088,
+        3568
+      ],
+      "typeVersion": 1.8
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "documents_knowledge_base",
+        "toolDescription": "work with documents data in Supabase vector store",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": "documents",
+          "cachedResultName": "documents"
+        },
+        "topK": null,
+        "includeDocumentMetadata": false,
+        "options": {}
+      },
+      "id": "61eea6e1-7a85-4bc9-a022-56ffd695b575",
+      "name": "Data From Supabase Vector Store",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "position": [
+        1296,
+        3792
+      ],
+      "typeVersion": 1.1,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "b47fba59-012e-46fc-b6be-973874db42b7",
+      "name": "Embeddings With Cohere",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsCohere",
+      "position": [
+        1296,
+        4000
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "tableName": "chat_memory",
+        "contextWindowLength": 3
+      },
+      "id": "05d1f41b-5fc8-4a84-8b66-f9be7a4328b8",
+      "name": "Chat Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "position": [
+        1168,
+        3824
+      ],
+      "typeVersion": 1.3
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "dd6a7fa6-ba16-4e00-90b6-0c96d6ebf548",
+      "name": "OpenAI Chat Modell",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        1024,
+        3808
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "loader": "jsonLoader",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "website_url",
+                "value": "={{ $('Enter Website Url').item.json['Website Url'] }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "80e8d9df-e95a-47ba-a56b-182a753df190",
+      "name": "Default Data Loader1",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        336,
+        3776
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "chunkSize": 3000,
+        "chunkOverlap": 500,
+        "options": {}
+      },
+      "id": "92e1a28c-fcf0-4086-a339-f76a4091d6f3",
+      "name": "Recursive Character Text Splitter1",
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "position": [
+        336,
+        3952
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Generating Embeddings from Website Content",
+        "height": 100,
+        "width": 520,
+        "color": 3
+      },
+      "id": "fa128406-1c2d-4274-b9b0-dd00b0f29c21",
+      "name": "Sticky Note10",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        96,
+        3456
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## User-Initiated Question",
+        "height": 80,
+        "width": 300
+      },
+      "id": "ab551969-7521-4f5a-8736-8c5a16850e66",
+      "name": "Sticky Note11",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        3456
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Vector-Based Answer Retrieval",
+        "height": 80,
+        "width": 540,
+        "color": 3
+      },
+      "id": "f212ffea-1ab4-43fc-af6a-643a20a1fdc7",
+      "name": "Sticky Note12",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        3456
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Website Data Extraction\n\n",
+        "height": 100,
+        "width": 640
+      },
+      "id": "969393b5-0dbf-429c-a606-25e599a3b37b",
+      "name": "Sticky Note13",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -576,
+        3456
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "Workflow template #1 for reference",
+        "height": 80,
+        "width": 1424
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -624,
+        1760
+      ],
+      "typeVersion": 1,
+      "id": "d0ff8cad-b5c0-49ed-807e-ebbd45687613",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "content": "Workflow template #2 for reference",
+        "height": 80,
+        "width": 1424
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -576,
+        3312
+      ],
+      "typeVersion": 1,
+      "id": "a45e8a45-04df-4dee-8b62-ad25f88a6e58",
+      "name": "Sticky Note14"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "ce6c10d3-24cf-49df-ad8b-8f64886c35e6",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -160,
+        2704
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "32d8bd20-c8c1-4a9a-906b-9f37801c6d17",
+      "name": "Embeddings OpenAI2",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "position": [
+        528,
+        2896
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.text }}",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "prompt",
+                "value": "={{ $json.prompt }}"
+              },
+              {
+                "name": "response",
+                "value": "={{ $json.response }}"
+              },
+              {
+                "name": "feedback",
+                "value": "={{ $json.feedback }}"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7779c9e3-57eb-4c01-9d4f-5ed95740ce21",
+      "name": "Default Data Loader2",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "position": [
+        1136,
+        2640
+      ],
+      "typeVersion": 1
+    }
+  ],
+  "connections": {
+    "Upload your file here": {
+      "main": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_embedding",
+            "index": 0
+          },
+          {
+            "node": "Query Data Tool",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Insert Data to Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Query Data Tool": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Knowledge Base Agent": {
+      "main": [
+        [
+          {
+            "node": "Send Message on Telegram, Wait for Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Section Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "MongoDB Documentation Inserter",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document Chunker": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Document Section Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embeddings Generator": {
+      "ai_embedding": [
+        [
+          {
+            "node": "MongoDB Documentation Inserter",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Docs Importer": {
+      "main": [
+        [
+          {
+            "node": "MongoDB Documentation Inserter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking \"Execute Workflow\"": {
+      "main": [
+        [
+          {
+            "node": "Google Docs Importer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "MongoDB Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Positive Interactions",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader2",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI3": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Negative Interactions",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Positive Interactions": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Documentation": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Negative Interactions": {
+      "ai_tool": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Message on Telegram": {
+      "main": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Message on Telegram, Wait for Feedback": {
+      "main": [
+        [
+          {
+            "node": "Map feedback data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map feedback data": {
+      "main": [
+        [
+          {
+            "node": "Set feedback fields for collection storage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set feedback fields for collection storage": {
+      "main": [
+        [
+          {
+            "node": "Submit embedded chat feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Embeddings Generator1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Submit embedded chat feedback",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML Extract": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Enter Website Url": {
+      "main": [
+        [
+          {
+            "node": "Website Data Scrapping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Website Data Scrapping": {
+      "main": [
+        [
+          {
+            "node": "HTML Extract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data From Supabase Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "Question & Answer Retrieve",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings With Cohere": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Data From Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Question & Answer Retrieve",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Modell": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Question & Answer Retrieve",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader1": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader1",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Knowledge Base Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Search Documentation",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader2": {
+      "ai_document": [
+        [
+          {
+            "node": "Submit embedded chat feedback",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateId": "rag-starter-template"
+  },
+  "pinData": {},
+  "versionId": "80b9c3a6-d4e2-4664-8cda-bbca768cd7ed",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-01-08T02:10:19.157Z",
+      "createdAt": "2026-01-08T02:10:19.157Z",
+      "role": "workflow:owner",
+      "workflowId": "vsvpxpP6Ri7puUSU",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
