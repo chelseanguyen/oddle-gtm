@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T07:48:34.841Z",
+  "updatedAt": "2026-01-16T08:05:52.446Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] SDR Agent - Sophie",
@@ -529,11 +529,11 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 60
+    "timeSavedPerExecution": 5
   },
   "staticData": {
     "node:Reply Received": {
-      "webhookId": "hoo_bRmfHmR9yD57vosaf"
+      "webhookId": "hoo_z2KBPbxTjWR3oNpjT"
     }
   },
   "meta": {
