@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T07:46:28.980Z",
+  "updatedAt": "2026-01-16T09:37:19.016Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -213,8 +213,8 @@
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        2416,
-        96
+        2720,
+        112
       ],
       "typeVersion": 1,
       "credentials": {
@@ -326,7 +326,7 @@
         "text": "={{ $('Receive Reply').item.json.body.messages[0].text.body }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"An agent will be with you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+          "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -396,7 +396,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Prospect's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'SDR' : 'Prospect';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// Format as a string\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Prospect' : `Prospect (${latestInput.message_type})`\n    }\n  }\n};"
+        "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    // Filter out system actions/reactions\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Restaurant's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'Veronica' : 'Restaurant';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    isFromMe: isFromMe,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological (Oldest to Newest)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// 4. CALCULATE RESPONSE TIME (Numeric)\nlet responseTimeMinutes = 0; // Default to 0 for the IF node\n\nconst lastMsgIndex = chronologicalMessages.length - 1;\n\n// Only calculate if there are at least 2 messages and the latest is from the Contact\nif (lastMsgIndex > 0) {\n  const lastMsg = chronologicalMessages[lastMsgIndex];\n  \n  if (!lastMsg.isFromMe) {\n    // Look backwards for the first message from \"Me\" (Veronica)\n    for (let i = lastMsgIndex - 1; i >= 0; i--) {\n      if (chronologicalMessages[i].isFromMe) {\n        const diffInSeconds = lastMsg.timestamp - chronologicalMessages[i].timestamp;\n        const diffInMinutes = diffInSeconds / 60;\n        \n        // Logic: less than 1 min = 1, otherwise Round Up\n        if (diffInMinutes <= 1) {\n          responseTimeMinutes = 1;\n        } else {\n          responseTimeMinutes = Math.ceil(diffInMinutes);\n        }\n        break; // Found the latest response pair, exit loop\n      }\n    }\n  }\n}\n\n// 5. FORMAT THREAD FOR DISPLAY\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\n// 6. RETURN RESULTS\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Restaurant' : `Restaurant (${latestInput.message_type})`\n    }\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -414,8 +414,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2672,
-        96
+        2976,
+        112
       ],
       "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
       "name": "Structured Output Parser"
@@ -758,7 +758,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2912,
+        3504,
         -96
       ],
       "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
@@ -806,20 +806,242 @@
       }
     },
     {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3504,
+        144
+      ],
+      "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "content": "### If they provide a reservation link, capture the link and send to Slack"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2768,
+        352
+      ],
+      "typeVersion": 1,
+      "id": "c8d667de-f744-4442-ba92-67f7b9c9a0b9",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3fb404a2-ac30-43cb-8535-60b7b4cc78bb",
+              "leftValue": "={{ $json.responseTimeMinutes }}",
+              "rightValue": 30,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2384,
+        -96
+      ],
+      "id": "3c3b2df4-3be1-43e5-a707-7b2fd3fd7ece",
+      "name": "Check if respond after 30 mins"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+              "leftValue": "={{ $json.output.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3200,
+        -80
+      ],
+      "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
+      "name": "If agent continues to respond"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "id": "cd6bb42a-dc42-42dc-9f06-1d10dd1dfc10",
+      "name": "Google Gemini Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        2736,
+        -352
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2992,
+        -352
+      ],
+      "id": "f54d8687-851a-4838-be60-36726a64662a",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3504,
+        -560
+      ],
+      "id": "635848e2-7b95-434e-9c34-968698829227",
+      "name": "Send to Slack for Approval1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3504,
+        -320
+      ],
+      "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
+      "name": "No Operation, do nothing2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+              "leftValue": "={{ $json.output.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3200,
+        -544
+      ],
+      "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
+      "name": "If agent continues to respond1"
+    },
+    {
       "parameters": {
         "promptType": "define",
         "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a Singaporean tourist who is visiting Australia with your family and looking for a restaurant to make a reservation for 10-12 pax. You've already asked the restaurant whether they're taking reservation and now they are responding to you. \n\nYour job is to follow up, answer their questions about your booking, ask if they have a reservation website for you to book by yourself, and if they don't, suggest them to use a reservation system to make it convenient for consumers like you.\n\nGuidelines:\n- Keep your response natural, casual, conversational, short and concise.\n- You don't need to tell the restaurant all details about your reservation all at once, provide the information when asked.\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nDetails about your reservation:\n- You're with a family of 10, 8 adults and 2 kids (5 and 7 years old)\n- You're looking to make a reservation some time this week for next week, either lunch or dinner, you're unsure about the exact date and are flexible depending on the restaurant's availability\n- You & your family have no diet restriction & no allergy"
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp, or ask why you need to reserve online, say \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can y ou send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards."
+        }
+      },
+      "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
+      "name": "Response Agent #1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2800,
+        -544
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If they ask why or ask further, then say \"I'm going with a big group of friends & need to make a reservation asap so I couldn't risk it. Sorry again, have a great day\""
         }
       },
       "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
-      "name": "Response Agent",
+      "name": "Response Agent #2",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        2480,
-        -96
+        2784,
+        -80
       ],
       "typeVersion": 1.6
     }
@@ -880,7 +1102,7 @@
       "ai_languageModel": [
         [
           {
-            "node": "Response Agent",
+            "node": "Response Agent #2",
             "type": "ai_languageModel",
             "index": 0
           }
@@ -957,7 +1179,7 @@
       "main": [
         [
           {
-            "node": "Response Agent",
+            "node": "Check if respond after 30 mins",
             "type": "main",
             "index": 0
           }
@@ -968,7 +1190,7 @@
       "ai_outputParser": [
         [
           {
-            "node": "Response Agent",
+            "node": "Response Agent #2",
             "type": "ai_outputParser",
             "index": 0
           }
@@ -1108,11 +1330,98 @@
         ]
       ]
     },
-    "Response Agent": {
+    "Check if respond after 30 mins": {
+      "main": [
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Agent #2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent continues to respond": {
       "main": [
         [
           {
             "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent continues to respond1": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Agent #1": {
+      "main": [
+        [
+          {
+            "node": "If agent continues to respond1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Agent #2": {
+      "main": [
+        [
+          {
+            "node": "If agent continues to respond",
             "type": "main",
             "index": 0
           }
@@ -1125,7 +1434,7 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 60
+    "timeSavedPerExecution": 5
   },
   "staticData": null,
   "meta": {
@@ -1139,12 +1448,12 @@
             "host": "workflow.oddle.center",
             "accept": "application/json",
             "content-type": "application/json",
-            "content-length": "321",
-            "sentry-trace": "d13f690a64c06f61208c952a25fb58c3-e1b22b0d4b53667f",
-            "baggage": "sentry-environment=prod,sentry-public_key=22217dc31eef5d21afad60404664acb9,sentry-trace_id=d13f690a64c06f61208c952a25fb58c3",
-            "x-cloud-trace-context": "38d5b67378a4ce60c575abc1bca1180f/3867005645660084958",
+            "content-length": "308",
+            "sentry-trace": "90953e3deaf863366cbe8e2dd13d88ae-7e554651649d6b80",
+            "baggage": "sentry-environment=prod,sentry-public_key=22217dc31eef5d21afad60404664acb9,sentry-trace_id=90953e3deaf863366cbe8e2dd13d88ae",
+            "x-cloud-trace-context": "bf05a2e04e556cdb559797c3e4a72cc9/4433550141777436425;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-38d5b67378a4ce60c575abc1bca1180f-35aa5d257dffdade-00",
+            "traceparent": "00-bf05a2e04e556cdb559797c3e4a72cc9-3d87225d2e86df09-01",
             "x-forwarded-for": "65.108.194.158",
             "forwarded": "for=\"65.108.194.158\";proto=https"
           },
@@ -1153,14 +1462,14 @@
           "body": {
             "messages": [
               {
-                "id": "Os6ArS2po.JU1A-gEgBiNQgng",
+                "id": "OhrHwlbZpdIVBA-gAEBiNQgng",
                 "from_me": false,
                 "type": "text",
                 "chat_id": "6590570654@s.whatsapp.net",
-                "timestamp": 1768465746,
+                "timestamp": 1768554045,
                 "source": "mobile",
                 "text": {
-                  "body": "Thank you! That’s all for now"
+                  "body": "Ok when is it for?"
                 },
                 "from": "6590570654",
                 "from_name": "Chelsea"
@@ -1181,8 +1490,8 @@
       }
     ]
   },
-  "versionId": "218c6105-d83e-499e-9ec1-c7f2d2ab8829",
-  "activeVersionId": "218c6105-d83e-499e-9ec1-c7f2d2ab8829",
+  "versionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
+  "activeVersionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
   "triggerCount": 1,
   "shared": [
     {
@@ -1194,9 +1503,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-16T06:11:55.450Z",
-    "createdAt": "2026-01-16T03:30:58.197Z",
-    "versionId": "218c6105-d83e-499e-9ec1-c7f2d2ab8829",
+    "updatedAt": "2026-01-16T09:37:39.822Z",
+    "createdAt": "2026-01-16T09:37:19.020Z",
+    "versionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
     "workflowId": "dgCCa2SjvGETsfVC",
     "nodes": [
       {
@@ -1406,8 +1715,8 @@
         "name": "Google Gemini Chat Model",
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
-          2416,
-          96
+          2720,
+          112
         ],
         "typeVersion": 1,
         "credentials": {
@@ -1519,7 +1828,7 @@
           "text": "={{ $('Receive Reply').item.json.body.messages[0].text.body }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"An agent will be with you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+            "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
           }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
@@ -1589,7 +1898,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Prospect's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'SDR' : 'Prospect';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// Format as a string\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Prospect' : `Prospect (${latestInput.message_type})`\n    }\n  }\n};"
+          "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    // Filter out system actions/reactions\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Restaurant's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'Veronica' : 'Restaurant';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    isFromMe: isFromMe,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological (Oldest to Newest)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// 4. CALCULATE RESPONSE TIME (Numeric)\nlet responseTimeMinutes = 0; // Default to 0 for the IF node\n\nconst lastMsgIndex = chronologicalMessages.length - 1;\n\n// Only calculate if there are at least 2 messages and the latest is from the Contact\nif (lastMsgIndex > 0) {\n  const lastMsg = chronologicalMessages[lastMsgIndex];\n  \n  if (!lastMsg.isFromMe) {\n    // Look backwards for the first message from \"Me\" (Veronica)\n    for (let i = lastMsgIndex - 1; i >= 0; i--) {\n      if (chronologicalMessages[i].isFromMe) {\n        const diffInSeconds = lastMsg.timestamp - chronologicalMessages[i].timestamp;\n        const diffInMinutes = diffInSeconds / 60;\n        \n        // Logic: less than 1 min = 1, otherwise Round Up\n        if (diffInMinutes <= 1) {\n          responseTimeMinutes = 1;\n        } else {\n          responseTimeMinutes = Math.ceil(diffInMinutes);\n        }\n        break; // Found the latest response pair, exit loop\n      }\n    }\n  }\n}\n\n// 5. FORMAT THREAD FOR DISPLAY\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\n// 6. RETURN RESULTS\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Restaurant' : `Restaurant (${latestInput.message_type})`\n    }\n  }\n};"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -1607,8 +1916,8 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          2672,
-          96
+          2976,
+          112
         ],
         "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
         "name": "Structured Output Parser"
@@ -1951,7 +2260,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2912,
+          3504,
           -96
         ],
         "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
@@ -1999,20 +2308,242 @@
         }
       },
       {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3504,
+          144
+        ],
+        "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
+        "name": "No Operation, do nothing1"
+      },
+      {
+        "parameters": {
+          "content": "### If they provide a reservation link, capture the link and send to Slack"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          2768,
+          352
+        ],
+        "typeVersion": 1,
+        "id": "c8d667de-f744-4442-ba92-67f7b9c9a0b9",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "3fb404a2-ac30-43cb-8535-60b7b4cc78bb",
+                "leftValue": "={{ $json.responseTimeMinutes }}",
+                "rightValue": 30,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2384,
+          -96
+        ],
+        "id": "3c3b2df4-3be1-43e5-a707-7b2fd3fd7ece",
+        "name": "Check if respond after 30 mins"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+                "leftValue": "={{ $json.output.text }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3200,
+          -80
+        ],
+        "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
+        "name": "If agent continues to respond"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-3-flash-preview",
+          "options": {}
+        },
+        "id": "cd6bb42a-dc42-42dc-9f06-1d10dd1dfc10",
+        "name": "Google Gemini Chat Model1",
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "position": [
+          2736,
+          -352
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          2992,
+          -352
+        ],
+        "id": "f54d8687-851a-4838-be60-36726a64662a",
+        "name": "Structured Output Parser1"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3504,
+          -560
+        ],
+        "id": "635848e2-7b95-434e-9c34-968698829227",
+        "name": "Send to Slack for Approval1",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "jByqEazESu9xXEeO",
+            "name": "Slack's WhatsApp Agent"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3504,
+          -320
+        ],
+        "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
+        "name": "No Operation, do nothing2"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+                "leftValue": "={{ $json.output.text }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3200,
+          -544
+        ],
+        "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
+        "name": "If agent continues to respond1"
+      },
+      {
         "parameters": {
           "promptType": "define",
           "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are a Singaporean tourist who is visiting Australia with your family and looking for a restaurant to make a reservation for 10-12 pax. You've already asked the restaurant whether they're taking reservation and now they are responding to you. \n\nYour job is to follow up, answer their questions about your booking, ask if they have a reservation website for you to book by yourself, and if they don't, suggest them to use a reservation system to make it convenient for consumers like you.\n\nGuidelines:\n- Keep your response natural, casual, conversational, short and concise.\n- You don't need to tell the restaurant all details about your reservation all at once, provide the information when asked.\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nDetails about your reservation:\n- You're with a family of 10, 8 adults and 2 kids (5 and 7 years old)\n- You're looking to make a reservation some time this week for next week, either lunch or dinner, you're unsure about the exact date and are flexible depending on the restaurant's availability\n- You & your family have no diet restriction & no allergy"
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp, or ask why you need to reserve online, say \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can y ou send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards."
+          }
+        },
+        "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
+        "name": "Response Agent #1",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "position": [
+          2800,
+          -544
+        ],
+        "typeVersion": 1.6
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If they ask why or ask further, then say \"I'm going with a big group of friends & need to make a reservation asap so I couldn't risk it. Sorry again, have a great day\""
           }
         },
         "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
-        "name": "Response Agent",
+        "name": "Response Agent #2",
         "type": "@n8n/n8n-nodes-langchain.agent",
         "position": [
-          2480,
-          -96
+          2784,
+          -80
         ],
         "typeVersion": 1.6
       }
@@ -2073,7 +2604,7 @@
         "ai_languageModel": [
           [
             {
-              "node": "Response Agent",
+              "node": "Response Agent #2",
               "type": "ai_languageModel",
               "index": 0
             }
@@ -2150,7 +2681,7 @@
         "main": [
           [
             {
-              "node": "Response Agent",
+              "node": "Check if respond after 30 mins",
               "type": "main",
               "index": 0
             }
@@ -2161,7 +2692,7 @@
         "ai_outputParser": [
           [
             {
-              "node": "Response Agent",
+              "node": "Response Agent #2",
               "type": "ai_outputParser",
               "index": 0
             }
@@ -2301,11 +2832,98 @@
           ]
         ]
       },
-      "Response Agent": {
+      "Check if respond after 30 mins": {
+        "main": [
+          [
+            {
+              "node": "Response Agent #1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Response Agent #2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If agent continues to respond": {
         "main": [
           [
             {
               "node": "Send to Slack for Approval",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Response Agent #1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Response Agent #1",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If agent continues to respond1": {
+        "main": [
+          [
+            {
+              "node": "Send to Slack for Approval1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Response Agent #1": {
+        "main": [
+          [
+            {
+              "node": "If agent continues to respond1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Response Agent #2": {
+        "main": [
+          [
+            {
+              "node": "If agent continues to respond",
               "type": "main",
               "index": 0
             }
@@ -2314,7 +2932,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 218c6105",
+    "name": "Version ed35ab8a",
     "description": "",
     "autosaved": false
   },
