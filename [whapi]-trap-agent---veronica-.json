@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T09:37:19.016Z",
+  "updatedAt": "2026-01-19T02:06:35.720Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -187,6 +187,31 @@
               },
               "renameOutput": true,
               "outputKey": "Video Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.messages[0].type }}",
+                    "rightValue": "link_preview",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Link provided"
             }
           ]
         },
@@ -213,8 +238,8 @@
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        2720,
-        112
+        3088,
+        464
       ],
       "typeVersion": 1,
       "credentials": {
@@ -233,7 +258,7 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -640,
+        -736,
         0
       ],
       "id": "162614d4-536a-489e-befd-8ff06d06b0b3",
@@ -267,7 +292,7 @@
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "On"
+              "outputKey": "From contact"
             },
             {
               "conditions": {
@@ -292,7 +317,7 @@
                 "combinator": "and"
               },
               "renameOutput": true,
-              "outputKey": "Off"
+              "outputKey": "From me"
             }
           ]
         },
@@ -301,7 +326,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -128,
+        -272,
         -16
       ],
       "id": "ec7b28a1-a84e-4069-b6da-b5cd0ecc73a5",
@@ -314,7 +339,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        848,
+        960,
         -400
       ],
       "name": "Topic Output Parser",
@@ -332,7 +357,7 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        672,
+        784,
         -592
       ],
       "name": "Check if Bot Message",
@@ -346,7 +371,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        624,
+        736,
         -400
       ],
       "name": "Google Gemini LLM",
@@ -414,8 +439,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2976,
-        112
+        3344,
+        464
       ],
       "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
       "name": "Structured Output Parser"
@@ -479,7 +504,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.2,
       "position": [
-        -416,
+        -512,
         0
       ],
       "id": "7495747d-c0b1-40fb-b346-6a56c74358b9",
@@ -492,7 +517,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
+        736,
         -176
       ],
       "id": "4f5056e1-ef1a-4397-930c-437bb5fdbbd9",
@@ -539,7 +564,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
+        736,
         32
       ],
       "id": "62328a45-e5a9-422d-9442-f2a0d7f55d54",
@@ -560,7 +585,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        848,
+        960,
         32
       ],
       "id": "20717694-7e4f-417b-ab47-64c29425f2b7",
@@ -589,7 +614,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        848,
+        960,
         -176
       ],
       "id": "3158ca77-0569-4a28-92c1-bae7aae909fa",
@@ -608,7 +633,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        624,
+        736,
         240
       ],
       "id": "e4515859-021c-4cb8-a048-c6bfd47d8583",
@@ -632,7 +657,7 @@
       "name": "Format image description",
       "type": "n8n-nodes-base.set",
       "position": [
-        1104,
+        1216,
         -176
       ],
       "typeVersion": 3.4
@@ -654,7 +679,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        848,
+        960,
         240
       ],
       "id": "5d862cad-1054-47dd-87bc-0cbbc776ede2",
@@ -684,7 +709,7 @@
       "name": "Format video description",
       "type": "n8n-nodes-base.set",
       "position": [
-        1104,
+        1216,
         240
       ],
       "typeVersion": 3.4
@@ -707,7 +732,7 @@
       "name": "Format voice transcription",
       "type": "n8n-nodes-base.set",
       "position": [
-        1104,
+        1216,
         32
       ],
       "typeVersion": 3.4
@@ -730,7 +755,7 @@
       "name": "Format response",
       "type": "n8n-nodes-base.set",
       "position": [
-        1104,
+        1216,
         -592
       ],
       "typeVersion": 3.4
@@ -758,8 +783,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3504,
-        -96
+        3888,
+        256
       ],
       "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
       "name": "Send to Slack for Approval",
@@ -793,8 +818,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        352,
-        304
+        736,
+        656
       ],
       "id": "4a31ad8d-d319-4a88-863a-0c126b88dcbe",
       "name": "Notify in Slack",
@@ -804,30 +829,6 @@
           "name": "Slack's WhatsApp Agent"
         }
       }
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        3504,
-        144
-      ],
-      "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
-      "name": "No Operation, do nothing1"
-    },
-    {
-      "parameters": {
-        "content": "### If they provide a reservation link, capture the link and send to Slack"
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        2768,
-        352
-      ],
-      "typeVersion": 1,
-      "id": "c8d667de-f744-4442-ba92-67f7b9c9a0b9",
-      "name": "Sticky Note"
     },
     {
       "parameters": {
@@ -864,40 +865,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
-              "leftValue": "={{ $json.output.text }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3200,
-        -80
-      ],
-      "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
-      "name": "If agent continues to respond"
-    },
-    {
-      "parameters": {
         "modelName": "models/gemini-3-flash-preview",
         "options": {}
       },
@@ -905,8 +872,8 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        2736,
-        -352
+        3024,
+        -176
       ],
       "typeVersion": 1,
       "credentials": {
@@ -923,8 +890,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        2992,
-        -352
+        3280,
+        -176
       ],
       "id": "f54d8687-851a-4838-be60-36726a64662a",
       "name": "Structured Output Parser1"
@@ -952,8 +919,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3504,
-        -560
+        3792,
+        -384
       ],
       "id": "635848e2-7b95-434e-9c34-968698829227",
       "name": "Send to Slack for Approval1",
@@ -965,15 +932,84 @@
       }
     },
     {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system :sweat_smile:\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+        }
+      },
+      "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
+      "name": "Response Agent #1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3088,
+        -368
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp/message, or ask why you need to reserve online, say something along the line of \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+        }
+      },
+      "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
+      "name": "Response Agent #2",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3152,
+        272
+      ],
+      "typeVersion": 1.6
+    },
+    {
       "parameters": {},
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3504,
-        -320
+        -272,
+        192
+      ],
+      "id": "95ae88d8-dd73-45cc-924e-db3516bce2bd",
+      "name": "Skip status"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        192
+      ],
+      "id": "ec5baf8f-647b-4cd7-b22d-a89629a8cf94",
+      "name": "Skip my message"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3792,
+        -144
       ],
       "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
-      "name": "No Operation, do nothing2"
+      "name": "Skip agent 1's response"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3872,
+        496
+      ],
+      "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
+      "name": "Skip agent 2's response"
     },
     {
       "parameters": {
@@ -1003,47 +1039,220 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3200,
-        -544
+        3488,
+        -368
       ],
       "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
-      "name": "If agent continues to respond1"
+      "name": "If agent 1 continues to respond"
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
-        "hasOutputParser": true,
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+              "leftValue": "={{ $json.output.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3568,
+        272
+      ],
+      "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
+      "name": "If agent 2 continues to respond"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "https?:\\/\\/[^\\s]+",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
         "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp, or ask why you need to reserve online, say \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can y ou send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards."
+          "ignoreCase": true
         }
       },
-      "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
-      "name": "Response Agent #1",
-      "type": "@n8n/n8n-nodes-langchain.agent",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2816,
+        -384
+      ],
+      "id": "b4f56b35-f802-4de2-9ebe-68dbd23d6bc7",
+      "name": "Check for booking link"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "https?:\\/\\/[^\\s]+",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
       "position": [
         2800,
-        -544
+        256
       ],
-      "typeVersion": 1.6
+      "id": "0435a853-f4f3-4e2d-b626-b5fa01264b17",
+      "name": "Check for booking link_2"
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
-        "hasOutputParser": true,
-        "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If they ask why or ask further, then say \"I'm going with a big group of friends & need to make a reservation asap so I couldn't risk it. Sorry again, have a great day\""
-        }
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Redirect Message Types').item.json.body.messages[0].link_preview?.body ? JSON.stringify($('Redirect Message Types').item.json.body.messages[0].link_preview.body).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
       },
-      "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
-      "name": "Response Agent #2",
-      "type": "@n8n/n8n-nodes-langchain.agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
       "position": [
-        2784,
-        -80
+        736,
+        448
       ],
-      "typeVersion": 1.6
+      "id": "8727f695-51a1-44aa-bb51-aae0da26d8d3",
+      "name": "Send link to Slack",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3120,
+        -608
+      ],
+      "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
+      "name": "Send booking link to Slack 2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3168,
+        64
+      ],
+      "id": "bd3bae3b-2116-437a-adb7-3d3d7880b41d",
+      "name": "Send booking link to Slack 3",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent"
+        }
+      }
     }
   ],
   "connections": {
@@ -1085,6 +1294,13 @@
         [
           {
             "node": "Get video URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send link to Slack",
             "type": "main",
             "index": 0
           }
@@ -1136,6 +1352,13 @@
         [
           {
             "node": "Redirect Message Types",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip my message",
             "type": "main",
             "index": 0
           }
@@ -1202,6 +1425,13 @@
         [
           {
             "node": "Check if Prospect's Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip status",
             "type": "main",
             "index": 0
           }
@@ -1334,32 +1564,14 @@
       "main": [
         [
           {
-            "node": "Response Agent #1",
+            "node": "Check for booking link",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Response Agent #2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If agent continues to respond": {
-      "main": [
-        [
-          {
-            "node": "Send to Slack for Approval",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
+            "node": "Check for booking link_2",
             "type": "main",
             "index": 0
           }
@@ -1388,29 +1600,11 @@
         ]
       ]
     },
-    "If agent continues to respond1": {
-      "main": [
-        [
-          {
-            "node": "Send to Slack for Approval1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Response Agent #1": {
       "main": [
         [
           {
-            "node": "If agent continues to respond1",
+            "node": "If agent 1 continues to respond",
             "type": "main",
             "index": 0
           }
@@ -1421,7 +1615,84 @@
       "main": [
         [
           {
-            "node": "If agent continues to respond",
+            "node": "If agent 2 continues to respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent 1 continues to respond": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip agent 1's response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent 2 continues to respond": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip agent 2's response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip agent 1's response": {
+      "main": [
+        []
+      ]
+    },
+    "Check for booking link": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for booking link_2": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Agent #2",
             "type": "main",
             "index": 0
           }
@@ -1448,12 +1719,12 @@
             "host": "workflow.oddle.center",
             "accept": "application/json",
             "content-type": "application/json",
-            "content-length": "308",
-            "sentry-trace": "90953e3deaf863366cbe8e2dd13d88ae-7e554651649d6b80",
+            "content-length": "377",
+            "sentry-trace": "90953e3deaf863366cbe8e2dd13d88ae-accecff7f4ea6615",
             "baggage": "sentry-environment=prod,sentry-public_key=22217dc31eef5d21afad60404664acb9,sentry-trace_id=90953e3deaf863366cbe8e2dd13d88ae",
-            "x-cloud-trace-context": "bf05a2e04e556cdb559797c3e4a72cc9/4433550141777436425;o=1",
+            "x-cloud-trace-context": "463524a1d4609941ebb0e7f337d4584b/10920027793488526697",
             "x-forwarded-proto": "https",
-            "traceparent": "00-bf05a2e04e556cdb559797c3e4a72cc9-3d87225d2e86df09-01",
+            "traceparent": "00-463524a1d4609941ebb0e7f337d4584b-978bbb6be046bd69-00",
             "x-forwarded-for": "65.108.194.158",
             "forwarded": "for=\"65.108.194.158\";proto=https"
           },
@@ -1462,14 +1733,14 @@
           "body": {
             "messages": [
               {
-                "id": "OhrHwlbZpdIVBA-gAEBiNQgng",
+                "id": "OhbkF5otySyPqA-gKkBiNQgng",
                 "from_me": false,
                 "type": "text",
                 "chat_id": "6590570654@s.whatsapp.net",
-                "timestamp": 1768554045,
+                "timestamp": 1768787895,
                 "source": "mobile",
                 "text": {
-                  "body": "Ok when is it for?"
+                  "body": "Or here \nhttps://www.sevenrooms.com/explore/latidosingapore/reservations/create/search"
                 },
                 "from": "6590570654",
                 "from_name": "Chelsea"
@@ -1490,8 +1761,8 @@
       }
     ]
   },
-  "versionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
-  "activeVersionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
+  "versionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
+  "activeVersionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
   "triggerCount": 1,
   "shared": [
     {
@@ -1503,9 +1774,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-16T09:37:39.822Z",
-    "createdAt": "2026-01-16T09:37:19.020Z",
-    "versionId": "ed35ab8a-e672-49a4-81a0-4849e8c1c148",
+    "updatedAt": "2026-01-19T02:06:42.735Z",
+    "createdAt": "2026-01-19T02:06:35.723Z",
+    "versionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
     "workflowId": "dgCCa2SjvGETsfVC",
     "nodes": [
       {
@@ -1689,6 +1960,31 @@
                 },
                 "renameOutput": true,
                 "outputKey": "Video Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                      "leftValue": "={{ $('Receive Reply').item.json.body.messages[0].type }}",
+                      "rightValue": "link_preview",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Link provided"
               }
             ]
           },
@@ -1715,8 +2011,8 @@
         "name": "Google Gemini Chat Model",
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
-          2720,
-          112
+          3088,
+          464
         ],
         "typeVersion": 1,
         "credentials": {
@@ -1735,7 +2031,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -640,
+          -736,
           0
         ],
         "id": "162614d4-536a-489e-befd-8ff06d06b0b3",
@@ -1769,7 +2065,7 @@
                   "combinator": "and"
                 },
                 "renameOutput": true,
-                "outputKey": "On"
+                "outputKey": "From contact"
               },
               {
                 "conditions": {
@@ -1794,7 +2090,7 @@
                   "combinator": "and"
                 },
                 "renameOutput": true,
-                "outputKey": "Off"
+                "outputKey": "From me"
               }
             ]
           },
@@ -1803,7 +2099,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.2,
         "position": [
-          -128,
+          -272,
           -16
         ],
         "id": "ec7b28a1-a84e-4069-b6da-b5cd0ecc73a5",
@@ -1816,7 +2112,7 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          848,
+          960,
           -400
         ],
         "name": "Topic Output Parser",
@@ -1834,7 +2130,7 @@
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.6,
         "position": [
-          672,
+          784,
           -592
         ],
         "name": "Check if Bot Message",
@@ -1848,7 +2144,7 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "typeVersion": 1,
         "position": [
-          624,
+          736,
           -400
         ],
         "name": "Google Gemini LLM",
@@ -1916,8 +2212,8 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          2976,
-          112
+          3344,
+          464
         ],
         "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
         "name": "Structured Output Parser"
@@ -1981,7 +2277,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.2,
         "position": [
-          -416,
+          -512,
           0
         ],
         "id": "7495747d-c0b1-40fb-b346-6a56c74358b9",
@@ -1994,7 +2290,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          624,
+          736,
           -176
         ],
         "id": "4f5056e1-ef1a-4397-930c-437bb5fdbbd9",
@@ -2041,7 +2337,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          624,
+          736,
           32
         ],
         "id": "62328a45-e5a9-422d-9442-f2a0d7f55d54",
@@ -2062,7 +2358,7 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          848,
+          960,
           32
         ],
         "id": "20717694-7e4f-417b-ab47-64c29425f2b7",
@@ -2091,7 +2387,7 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          848,
+          960,
           -176
         ],
         "id": "3158ca77-0569-4a28-92c1-bae7aae909fa",
@@ -2110,7 +2406,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          624,
+          736,
           240
         ],
         "id": "e4515859-021c-4cb8-a048-c6bfd47d8583",
@@ -2134,7 +2430,7 @@
         "name": "Format image description",
         "type": "n8n-nodes-base.set",
         "position": [
-          1104,
+          1216,
           -176
         ],
         "typeVersion": 3.4
@@ -2156,7 +2452,7 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          848,
+          960,
           240
         ],
         "id": "5d862cad-1054-47dd-87bc-0cbbc776ede2",
@@ -2186,7 +2482,7 @@
         "name": "Format video description",
         "type": "n8n-nodes-base.set",
         "position": [
-          1104,
+          1216,
           240
         ],
         "typeVersion": 3.4
@@ -2209,7 +2505,7 @@
         "name": "Format voice transcription",
         "type": "n8n-nodes-base.set",
         "position": [
-          1104,
+          1216,
           32
         ],
         "typeVersion": 3.4
@@ -2232,7 +2528,7 @@
         "name": "Format response",
         "type": "n8n-nodes-base.set",
         "position": [
-          1104,
+          1216,
           -592
         ],
         "typeVersion": 3.4
@@ -2260,8 +2556,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3504,
-          -96
+          3888,
+          256
         ],
         "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
         "name": "Send to Slack for Approval",
@@ -2295,8 +2591,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          352,
-          304
+          736,
+          656
         ],
         "id": "4a31ad8d-d319-4a88-863a-0c126b88dcbe",
         "name": "Notify in Slack",
@@ -2306,30 +2602,6 @@
             "name": "Slack's WhatsApp Agent"
           }
         }
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          3504,
-          144
-        ],
-        "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
-        "name": "No Operation, do nothing1"
-      },
-      {
-        "parameters": {
-          "content": "### If they provide a reservation link, capture the link and send to Slack"
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          2768,
-          352
-        ],
-        "typeVersion": 1,
-        "id": "c8d667de-f744-4442-ba92-67f7b9c9a0b9",
-        "name": "Sticky Note"
       },
       {
         "parameters": {
@@ -2366,40 +2638,6 @@
       },
       {
         "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
-                "leftValue": "={{ $json.output.text }}",
-                "rightValue": "",
-                "operator": {
-                  "type": "string",
-                  "operation": "notEmpty",
-                  "singleValue": true
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          3200,
-          -80
-        ],
-        "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
-        "name": "If agent continues to respond"
-      },
-      {
-        "parameters": {
           "modelName": "models/gemini-3-flash-preview",
           "options": {}
         },
@@ -2407,8 +2645,8 @@
         "name": "Google Gemini Chat Model1",
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
-          2736,
-          -352
+          3024,
+          -176
         ],
         "typeVersion": 1,
         "credentials": {
@@ -2425,8 +2663,8 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          2992,
-          -352
+          3280,
+          -176
         ],
         "id": "f54d8687-851a-4838-be60-36726a64662a",
         "name": "Structured Output Parser1"
@@ -2454,8 +2692,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3504,
-          -560
+          3792,
+          -384
         ],
         "id": "635848e2-7b95-434e-9c34-968698829227",
         "name": "Send to Slack for Approval1",
@@ -2467,15 +2705,84 @@
         }
       },
       {
+        "parameters": {
+          "promptType": "define",
+          "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system :sweat_smile:\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+          }
+        },
+        "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
+        "name": "Response Agent #1",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "position": [
+          3088,
+          -368
+        ],
+        "typeVersion": 1.6
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp/message, or ask why you need to reserve online, say something along the line of \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+          }
+        },
+        "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
+        "name": "Response Agent #2",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "position": [
+          3152,
+          272
+        ],
+        "typeVersion": 1.6
+      },
+      {
         "parameters": {},
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          3504,
-          -320
+          -272,
+          192
+        ],
+        "id": "95ae88d8-dd73-45cc-924e-db3516bce2bd",
+        "name": "Skip status"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          -16,
+          192
+        ],
+        "id": "ec5baf8f-647b-4cd7-b22d-a89629a8cf94",
+        "name": "Skip my message"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3792,
+          -144
         ],
         "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
-        "name": "No Operation, do nothing2"
+        "name": "Skip agent 1's response"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3872,
+          496
+        ],
+        "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
+        "name": "Skip agent 2's response"
       },
       {
         "parameters": {
@@ -2505,47 +2812,220 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          3200,
-          -544
+          3488,
+          -368
         ],
         "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
-        "name": "If agent continues to respond1"
+        "name": "If agent 1 continues to respond"
       },
       {
         "parameters": {
-          "promptType": "define",
-          "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
-          "hasOutputParser": true,
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+                "leftValue": "={{ $json.output.text }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3568,
+          272
+        ],
+        "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
+        "name": "If agent 2 continues to respond"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": false,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+                "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+                "rightValue": "https?:\\/\\/[^\\s]+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
           "options": {
-            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp, or ask why you need to reserve online, say \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can y ou send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards."
+            "ignoreCase": true
           }
         },
-        "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
-        "name": "Response Agent #1",
-        "type": "@n8n/n8n-nodes-langchain.agent",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2816,
+          -384
+        ],
+        "id": "b4f56b35-f802-4de2-9ebe-68dbd23d6bc7",
+        "name": "Check for booking link"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": false,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+                "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+                "rightValue": "https?:\\/\\/[^\\s]+",
+                "operator": {
+                  "type": "string",
+                  "operation": "regex"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {
+            "ignoreCase": true
+          }
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
         "position": [
           2800,
-          -544
+          256
         ],
-        "typeVersion": 1.6
+        "id": "0435a853-f4f3-4e2d-b626-b5fa01264b17",
+        "name": "Check for booking link_2"
       },
       {
         "parameters": {
-          "promptType": "define",
-          "text": "=- Prospect's latest message: {{ $json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $json.conversationThreadFormatted }}",
-          "hasOutputParser": true,
-          "options": {
-            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If they ask why or ask further, then say \"I'm going with a big group of friends & need to make a reservation asap so I couldn't risk it. Sorry again, have a great day\""
-          }
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Redirect Message Types').item.json.body.messages[0].link_preview?.body ? JSON.stringify($('Redirect Message Types').item.json.body.messages[0].link_preview.body).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+          "options": {}
         },
-        "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
-        "name": "Response Agent #2",
-        "type": "@n8n/n8n-nodes-langchain.agent",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
         "position": [
-          2784,
-          -80
+          736,
+          448
         ],
-        "typeVersion": 1.6
+        "id": "8727f695-51a1-44aa-bb51-aae0da26d8d3",
+        "name": "Send link to Slack",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "jByqEazESu9xXEeO",
+            "name": "Slack's WhatsApp Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3120,
+          -608
+        ],
+        "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
+        "name": "Send booking link to Slack 2",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "jByqEazESu9xXEeO",
+            "name": "Slack's WhatsApp Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3168,
+          64
+        ],
+        "id": "bd3bae3b-2116-437a-adb7-3d3d7880b41d",
+        "name": "Send booking link to Slack 3",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "jByqEazESu9xXEeO",
+            "name": "Slack's WhatsApp Agent"
+          }
+        }
       }
     ],
     "connections": {
@@ -2587,6 +3067,13 @@
           [
             {
               "node": "Get video URL",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Send link to Slack",
               "type": "main",
               "index": 0
             }
@@ -2638,6 +3125,13 @@
           [
             {
               "node": "Redirect Message Types",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip my message",
               "type": "main",
               "index": 0
             }
@@ -2704,6 +3198,13 @@
           [
             {
               "node": "Check if Prospect's Message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip status",
               "type": "main",
               "index": 0
             }
@@ -2836,32 +3337,14 @@
         "main": [
           [
             {
-              "node": "Response Agent #1",
+              "node": "Check for booking link",
               "type": "main",
               "index": 0
             }
           ],
           [
             {
-              "node": "Response Agent #2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "If agent continues to respond": {
-        "main": [
-          [
-            {
-              "node": "Send to Slack for Approval",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "No Operation, do nothing1",
+              "node": "Check for booking link_2",
               "type": "main",
               "index": 0
             }
@@ -2890,29 +3373,11 @@
           ]
         ]
       },
-      "If agent continues to respond1": {
-        "main": [
-          [
-            {
-              "node": "Send to Slack for Approval1",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "No Operation, do nothing2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Response Agent #1": {
         "main": [
           [
             {
-              "node": "If agent continues to respond1",
+              "node": "If agent 1 continues to respond",
               "type": "main",
               "index": 0
             }
@@ -2923,7 +3388,84 @@
         "main": [
           [
             {
-              "node": "If agent continues to respond",
+              "node": "If agent 2 continues to respond",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If agent 1 continues to respond": {
+        "main": [
+          [
+            {
+              "node": "Send to Slack for Approval1",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip agent 1's response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If agent 2 continues to respond": {
+        "main": [
+          [
+            {
+              "node": "Send to Slack for Approval",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip agent 2's response",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Skip agent 1's response": {
+        "main": [
+          []
+        ]
+      },
+      "Check for booking link": {
+        "main": [
+          [
+            {
+              "node": "Send booking link to Slack 2",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Response Agent #1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check for booking link_2": {
+        "main": [
+          [
+            {
+              "node": "Send booking link to Slack 3",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Response Agent #2",
               "type": "main",
               "index": 0
             }
@@ -2932,7 +3474,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version ed35ab8a",
+    "name": "Version cd14b24f",
     "description": "",
     "autosaved": false
   },
