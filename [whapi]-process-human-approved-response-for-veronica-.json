@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T08:05:42.107Z",
+  "updatedAt": "2026-01-19T09:49:28.374Z",
   "createdAt": "2026-01-15T09:24:12.490Z",
   "id": "IjmqnhfRxYGFuoPT",
   "name": "[Whapi] Process human-approved response for Veronica",
@@ -23,13 +23,13 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        720,
+        784,
         -32
       ],
       "name": "Update Message - Approved",
@@ -58,13 +58,13 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        720,
+        784,
         416
       ],
       "name": "Update Message - Rejected",
@@ -130,39 +130,6 @@
           },
           "conditions": [
             {
-              "id": "condition-approve",
-              "leftValue": "={{ $json.action_id }}",
-              "rightValue": "approve",
-              "operator": {
-                "type": "string",
-                "operation": "equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2,
-      "position": [
-        496,
-        320
-      ],
-      "name": "Check Action",
-      "id": "c50d9dd1-ddab-4907-8fd6-9fc4989c9e42"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 1
-          },
-          "conditions": [
-            {
               "id": "condition-send-success",
               "leftValue": "={{ $json.error }}",
               "rightValue": "",
@@ -188,8 +155,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        976,
-        224
+        1248,
+        208
       ],
       "name": "Check Send Status",
       "id": "519b07ee-948e-4729-978b-0c22c23d2103"
@@ -211,14 +178,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1248,
-        464
+        1520,
+        448
       ],
       "name": "Post Error status to Slack",
       "id": "7cd029bf-b30f-4c78-98ae-41b9d092f064",
@@ -246,14 +213,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1248,
-        208
+        1520,
+        192
       ],
       "name": "Post Success status to Slack",
       "id": "2b192ca2-18cb-4fbe-9d00-a8769a3dcc9f",
@@ -316,8 +283,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        720,
-        224
+        992,
+        208
       ],
       "id": "4566523b-0466-4955-b969-5bb45fb1c847",
       "name": "Respond to Prospect"
@@ -334,6 +301,53 @@
       "typeVersion": 1,
       "id": "1e6d2005-e459-4d3a-85d4-3ff42c82918b",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-approve",
+              "leftValue": "={{ $json.action_id }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        496,
+        320
+      ],
+      "name": "Check if Approved",
+      "id": "c50d9dd1-ddab-4907-8fd6-9fc4989c9e42"
+    },
+    {
+      "parameters": {
+        "amount": 30
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        208
+      ],
+      "id": "459c62b3-1524-413e-8499-b01175727eed",
+      "name": "Wait",
+      "webhookId": "c26cb05a-ac87-4fc8-8bde-a6e1f5c8d0d9"
     }
   ],
   "connections": {
@@ -341,30 +355,7 @@
       "main": [
         [
           {
-            "node": "Check Action",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check Action": {
-      "main": [
-        [
-          {
-            "node": "Update Message - Approved",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Respond to Prospect",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Update Message - Rejected",
+            "node": "Check if Approved",
             "type": "main",
             "index": 0
           }
@@ -425,6 +416,40 @@
           }
         ]
       ]
+    },
+    "Check if Approved": {
+      "main": [
+        [
+          {
+            "node": "Update Message - Approved",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Message - Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Prospect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -469,8 +494,8 @@
       }
     ]
   },
-  "versionId": "2345648a-8b24-42a0-aa08-a028608d1701",
-  "activeVersionId": "e56db26a-41fc-4e02-aec7-b255d3fc6c3c",
+  "versionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
+  "activeVersionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
   "triggerCount": 1,
   "shared": [
     {
@@ -482,26 +507,11 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-15T10:29:16.759Z",
-    "createdAt": "2026-01-15T10:29:07.193Z",
-    "versionId": "e56db26a-41fc-4e02-aec7-b255d3fc6c3c",
+    "updatedAt": "2026-01-19T09:49:30.825Z",
+    "createdAt": "2026-01-19T09:49:28.375Z",
+    "versionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
     "workflowId": "IjmqnhfRxYGFuoPT",
     "nodes": [
-      {
-        "parameters": {
-          "content": "## Workflow 2: Process human-approved response\n\n",
-          "height": 100,
-          "width": 640
-        },
-        "id": "3663b001-6fb4-4ef7-9e51-ffd05cfaf863",
-        "name": "Sticky Note16",
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -160,
-          -64
-        ],
-        "typeVersion": 1
-      },
       {
         "parameters": {
           "method": "POST",
@@ -519,13 +529,13 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Caption:*\\n```{{ JSON.stringify($json.message_caption || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          720,
+          784,
           -32
         ],
         "name": "Update Message - Approved",
@@ -554,13 +564,13 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Caption:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.message_caption || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          720,
+          784,
           416
         ],
         "name": "Update Message - Rejected",
@@ -626,39 +636,6 @@
             },
             "conditions": [
               {
-                "id": "condition-approve",
-                "leftValue": "={{ $json.action_id }}",
-                "rightValue": "approve",
-                "operator": {
-                  "type": "string",
-                  "operation": "equals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2,
-        "position": [
-          496,
-          320
-        ],
-        "name": "Check Action",
-        "id": "c50d9dd1-ddab-4907-8fd6-9fc4989c9e42"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 1
-            },
-            "conditions": [
-              {
                 "id": "condition-send-success",
                 "leftValue": "={{ $json.error }}",
                 "rightValue": "",
@@ -684,8 +661,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          976,
-          224
+          1248,
+          208
         ],
         "name": "Check Send Status",
         "id": "519b07ee-948e-4729-978b-0c22c23d2103"
@@ -707,21 +684,21 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          1248,
-          464
+          1520,
+          448
         ],
         "name": "Post Error status to Slack",
         "id": "7cd029bf-b30f-4c78-98ae-41b9d092f064",
         "credentials": {
           "httpBearerAuth": {
             "id": "A9y0ZdmG00hI8udd",
-            "name": "Slack's SDR Agent OAuth Token"
+            "name": "Slack's Email SDR Agent"
           }
         }
       },
@@ -742,14 +719,14 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Parse Slack Payload').item.json.name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          1248,
-          208
+          1520,
+          192
         ],
         "name": "Post Success status to Slack",
         "id": "2b192ca2-18cb-4fbe-9d00-a8769a3dcc9f",
@@ -812,11 +789,71 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          720,
-          224
+          992,
+          208
         ],
         "id": "4566523b-0466-4955-b969-5bb45fb1c847",
         "name": "Respond to Prospect"
+      },
+      {
+        "parameters": {
+          "content": "### Receive human's response from Slack"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -160,
+          -80
+        ],
+        "typeVersion": 1,
+        "id": "1e6d2005-e459-4d3a-85d4-3ff42c82918b",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-approve",
+                "leftValue": "={{ $json.action_id }}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          496,
+          320
+        ],
+        "name": "Check if Approved",
+        "id": "c50d9dd1-ddab-4907-8fd6-9fc4989c9e42"
+      },
+      {
+        "parameters": {
+          "amount": 30
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          784,
+          208
+        ],
+        "id": "459c62b3-1524-413e-8499-b01175727eed",
+        "name": "Wait",
+        "webhookId": "c26cb05a-ac87-4fc8-8bde-a6e1f5c8d0d9"
       }
     ],
     "connections": {
@@ -824,30 +861,7 @@
         "main": [
           [
             {
-              "node": "Check Action",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Check Action": {
-        "main": [
-          [
-            {
-              "node": "Update Message - Approved",
-              "type": "main",
-              "index": 0
-            },
-            {
-              "node": "Respond to Prospect",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Update Message - Rejected",
+              "node": "Check if Approved",
               "type": "main",
               "index": 0
             }
@@ -908,10 +922,44 @@
             }
           ]
         ]
+      },
+      "Check if Approved": {
+        "main": [
+          [
+            {
+              "node": "Update Message - Approved",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Message - Rejected",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Respond to Prospect",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "test again",
+    "name": "Version c3db90ee",
     "description": "",
     "autosaved": false
   },
