@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-19T02:18:25.826Z",
+  "updatedAt": "2026-01-19T09:52:39.981Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -777,7 +777,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -872,7 +872,7 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3024,
+        3072,
         -176
       ],
       "typeVersion": 1,
@@ -890,7 +890,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3280,
+        3328,
         -176
       ],
       "id": "f54d8687-851a-4838-be60-36726a64662a",
@@ -913,13 +913,13 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3792,
+        3840,
         -384
       ],
       "id": "635848e2-7b95-434e-9c34-968698829227",
@@ -937,14 +937,14 @@
         "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system :sweat_smile:\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
         }
       },
       "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
       "name": "Response Agent #1",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3088,
+        3136,
         -368
       ],
       "typeVersion": 1.6
@@ -955,7 +955,7 @@
         "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp/message, or ask why you need to reserve online, say something along the line of \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentences\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation, ask if they have a reservation link to book online because you need to coordinate some details with your friends.\n- If the restaurant asks why you need to reserve online, say that it's because I need to coordinate with your friends before you could make a reservation.\n- If the restaurant asks when is your booking date, say that you're not sure yet and still checking with your friends, then ask if they have a booking link\n- If the restaurant asks for other details of your reservation, answer according to your knowledge and if you don't know, come up with something generic\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
         }
       },
       "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
@@ -994,7 +994,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3792,
+        3840,
         -144
       ],
       "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
@@ -1039,7 +1039,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3488,
+        3536,
         -368
       ],
       "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
@@ -1207,7 +1207,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3120,
+        3168,
         -608
       ],
       "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
@@ -1856,8 +1856,8 @@
       }
     ]
   },
-  "versionId": "013bd5e4-a821-40de-8054-11a265bc1324",
-  "activeVersionId": "013bd5e4-a821-40de-8054-11a265bc1324",
+  "versionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
+  "activeVersionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
   "triggerCount": 1,
   "shared": [
     {
@@ -1869,9 +1869,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-19T02:18:29.055Z",
-    "createdAt": "2026-01-19T02:18:25.829Z",
-    "versionId": "013bd5e4-a821-40de-8054-11a265bc1324",
+    "updatedAt": "2026-01-19T09:52:42.946Z",
+    "createdAt": "2026-01-19T09:52:39.985Z",
+    "versionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
     "workflowId": "dgCCa2SjvGETsfVC",
     "nodes": [
       {
@@ -2645,7 +2645,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -2740,7 +2740,7 @@
         "name": "Google Gemini Chat Model1",
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
-          3024,
+          3072,
           -176
         ],
         "typeVersion": 1,
@@ -2758,7 +2758,7 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          3280,
+          3328,
           -176
         ],
         "id": "f54d8687-851a-4838-be60-36726a64662a",
@@ -2781,13 +2781,13 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3792,
+          3840,
           -384
         ],
         "id": "635848e2-7b95-434e-9c34-968698829227",
@@ -2805,14 +2805,14 @@
           "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system :sweat_smile:\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
           }
         },
         "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
         "name": "Response Agent #1",
         "type": "@n8n/n8n-nodes-langchain.agent",
         "position": [
-          3088,
+          3136,
           -368
         ],
         "typeVersion": 1.6
@@ -2823,7 +2823,7 @@
           "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation via WhatsApp/message, or ask why you need to reserve online, say something along the line of \"Oh it's because I need to coordinate with my friends before I could make a reservation\"\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentences\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation, ask if they have a reservation link to book online because you need to coordinate some details with your friends.\n- If the restaurant asks why you need to reserve online, say that it's because I need to coordinate with your friends before you could make a reservation.\n- If the restaurant asks when is your booking date, say that you're not sure yet and still checking with your friends, then ask if they have a booking link\n- If the restaurant asks for other details of your reservation, answer according to your knowledge and if you don't know, come up with something generic\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
           }
         },
         "id": "eb062c5d-4a08-4647-9e3e-17e2f93d0217",
@@ -2862,7 +2862,7 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          3792,
+          3840,
           -144
         ],
         "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
@@ -2907,7 +2907,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          3488,
+          3536,
           -368
         ],
         "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
@@ -3075,7 +3075,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3120,
+          3168,
           -608
         ],
         "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
@@ -3664,7 +3664,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 013bd5e4",
+    "name": "Version 24f8f540",
     "description": "",
     "autosaved": false
   },
