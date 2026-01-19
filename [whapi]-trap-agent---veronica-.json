@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-19T02:06:35.720Z",
+  "updatedAt": "2026-01-19T02:18:25.826Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -59,7 +59,7 @@
       "name": "Get User's Message",
       "type": "n8n-nodes-base.set",
       "position": [
-        1728,
+        1824,
         -96
       ],
       "typeVersion": 3.4
@@ -259,7 +259,7 @@
       "typeVersion": 2.1,
       "position": [
         -736,
-        0
+        16
       ],
       "id": "162614d4-536a-489e-befd-8ff06d06b0b3",
       "name": "Receive Reply",
@@ -327,7 +327,7 @@
       "typeVersion": 3.2,
       "position": [
         -272,
-        -16
+        0
       ],
       "id": "ec7b28a1-a84e-4069-b6da-b5cd0ecc73a5",
       "name": "Check if Prospect's Message"
@@ -358,7 +358,7 @@
       "typeVersion": 1.6,
       "position": [
         784,
-        -592
+        -560
       ],
       "name": "Check if Bot Message",
       "id": "5deaf20d-ae9e-4fef-8f71-5245e1f2d28d"
@@ -413,7 +413,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1968,
+        2064,
         -96
       ],
       "id": "e02f4a2d-5811-4da1-943a-78e1a2516cd3",
@@ -426,7 +426,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2176,
+        2272,
         -96
       ],
       "name": "Parse Chat History",
@@ -505,7 +505,7 @@
       "typeVersion": 3.2,
       "position": [
         -512,
-        0
+        16
       ],
       "id": "7495747d-c0b1-40fb-b346-6a56c74358b9",
       "name": "Check event type"
@@ -755,8 +755,8 @@
       "name": "Format response",
       "type": "n8n-nodes-base.set",
       "position": [
-        1216,
-        -592
+        1344,
+        -576
       ],
       "typeVersion": 3.4
     },
@@ -857,7 +857,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2384,
+        2480,
         -96
       ],
       "id": "3c3b2df4-3be1-43e5-a707-7b2fd3fd7ece",
@@ -973,7 +973,7 @@
       "typeVersion": 1,
       "position": [
         -272,
-        192
+        208
       ],
       "id": "95ae88d8-dd73-45cc-924e-db3516bce2bd",
       "name": "Skip status"
@@ -984,7 +984,7 @@
       "typeVersion": 1,
       "position": [
         -16,
-        192
+        208
       ],
       "id": "ec5baf8f-647b-4cd7-b22d-a89629a8cf94",
       "name": "Skip my message"
@@ -1253,6 +1253,83 @@
           "name": "Slack's WhatsApp Agent"
         }
       }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.classification }}",
+                    "rightValue": "human",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f620673b-58a0-4990-b57d-aeceafc007f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Human reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ef99233a-2a44-4831-b14d-9a6928d5afce",
+                    "leftValue": "={{ $json.output.classification }}",
+                    "rightValue": "auto_bot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Auto reply"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        -560
+      ],
+      "id": "4f0346b2-575f-412e-a061-e3b71a8f048a",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -384
+      ],
+      "id": "196f7594-c22d-4bdd-a6a0-66abac14ec6c",
+      "name": "Skip auto reply"
     }
   ],
   "connections": {
@@ -1380,7 +1457,7 @@
       "main": [
         [
           {
-            "node": "Format response",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -1698,6 +1775,24 @@
           }
         ]
       ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Format response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip auto reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1761,8 +1856,8 @@
       }
     ]
   },
-  "versionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
-  "activeVersionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
+  "versionId": "013bd5e4-a821-40de-8054-11a265bc1324",
+  "activeVersionId": "013bd5e4-a821-40de-8054-11a265bc1324",
   "triggerCount": 1,
   "shared": [
     {
@@ -1774,9 +1869,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-19T02:06:42.735Z",
-    "createdAt": "2026-01-19T02:06:35.723Z",
-    "versionId": "cd14b24f-372e-428d-a0fa-b8ca1df0d021",
+    "updatedAt": "2026-01-19T02:18:29.055Z",
+    "createdAt": "2026-01-19T02:18:25.829Z",
+    "versionId": "013bd5e4-a821-40de-8054-11a265bc1324",
     "workflowId": "dgCCa2SjvGETsfVC",
     "nodes": [
       {
@@ -1832,7 +1927,7 @@
         "name": "Get User's Message",
         "type": "n8n-nodes-base.set",
         "position": [
-          1728,
+          1824,
           -96
         ],
         "typeVersion": 3.4
@@ -2032,7 +2127,7 @@
         "typeVersion": 2.1,
         "position": [
           -736,
-          0
+          16
         ],
         "id": "162614d4-536a-489e-befd-8ff06d06b0b3",
         "name": "Receive Reply",
@@ -2100,7 +2195,7 @@
         "typeVersion": 3.2,
         "position": [
           -272,
-          -16
+          0
         ],
         "id": "ec7b28a1-a84e-4069-b6da-b5cd0ecc73a5",
         "name": "Check if Prospect's Message"
@@ -2131,7 +2226,7 @@
         "typeVersion": 1.6,
         "position": [
           784,
-          -592
+          -560
         ],
         "name": "Check if Bot Message",
         "id": "5deaf20d-ae9e-4fef-8f71-5245e1f2d28d"
@@ -2186,7 +2281,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          1968,
+          2064,
           -96
         ],
         "id": "e02f4a2d-5811-4da1-943a-78e1a2516cd3",
@@ -2199,7 +2294,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2176,
+          2272,
           -96
         ],
         "name": "Parse Chat History",
@@ -2278,7 +2373,7 @@
         "typeVersion": 3.2,
         "position": [
           -512,
-          0
+          16
         ],
         "id": "7495747d-c0b1-40fb-b346-6a56c74358b9",
         "name": "Check event type"
@@ -2528,8 +2623,8 @@
         "name": "Format response",
         "type": "n8n-nodes-base.set",
         "position": [
-          1216,
-          -592
+          1344,
+          -576
         ],
         "typeVersion": 3.4
       },
@@ -2630,7 +2725,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          2384,
+          2480,
           -96
         ],
         "id": "3c3b2df4-3be1-43e5-a707-7b2fd3fd7ece",
@@ -2746,7 +2841,7 @@
         "typeVersion": 1,
         "position": [
           -272,
-          192
+          208
         ],
         "id": "95ae88d8-dd73-45cc-924e-db3516bce2bd",
         "name": "Skip status"
@@ -2757,7 +2852,7 @@
         "typeVersion": 1,
         "position": [
           -16,
-          192
+          208
         ],
         "id": "ec5baf8f-647b-4cd7-b22d-a89629a8cf94",
         "name": "Skip my message"
@@ -3026,6 +3121,83 @@
             "name": "Slack's WhatsApp Agent"
           }
         }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.output.classification }}",
+                      "rightValue": "human",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "f620673b-58a0-4990-b57d-aeceafc007f7"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Human reply"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "ef99233a-2a44-4831-b14d-9a6928d5afce",
+                      "leftValue": "={{ $json.output.classification }}",
+                      "rightValue": "auto_bot",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Auto reply"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1104,
+          -560
+        ],
+        "id": "4f0346b2-575f-412e-a061-e3b71a8f048a",
+        "name": "Switch"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1344,
+          -384
+        ],
+        "id": "196f7594-c22d-4bdd-a6a0-66abac14ec6c",
+        "name": "Skip auto reply"
       }
     ],
     "connections": {
@@ -3153,7 +3325,7 @@
         "main": [
           [
             {
-              "node": "Format response",
+              "node": "Switch",
               "type": "main",
               "index": 0
             }
@@ -3471,10 +3643,28 @@
             }
           ]
         ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Format response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip auto reply",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version cd14b24f",
+    "name": "Version 013bd5e4",
     "description": "",
     "autosaved": false
   },
