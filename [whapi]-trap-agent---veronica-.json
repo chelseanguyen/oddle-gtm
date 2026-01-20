@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-19T09:52:39.981Z",
+  "updatedAt": "2026-01-20T02:00:31.605Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -1330,6 +1330,522 @@
       ],
       "id": "196f7594-c22d-4bdd-a6a0-66abac14ec6c",
       "name": "Skip auto reply"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reservation Link": "={{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}",
+            "Number": "={{ $json.body.messages[0].from }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        448
+      ],
+      "id": "ba38cab9-6811-4ac5-8234-4f222d8fa21a",
+      "name": "Add reservation link to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+            "Reservation Link": "={{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3376,
+        -608
+      ],
+      "id": "fd8b06d4-de59-4358-b46f-0bbefee571cc",
+      "name": "Add reservation link to Google Sheet_2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1793,6 +2309,28 @@
           }
         ]
       ]
+    },
+    "Send link to Slack": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send booking link to Slack 2": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1806,57 +2344,8 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Receive Reply": [
-      {
-        "json": {
-          "headers": {
-            "host": "workflow.oddle.center",
-            "accept": "application/json",
-            "content-type": "application/json",
-            "content-length": "377",
-            "sentry-trace": "90953e3deaf863366cbe8e2dd13d88ae-accecff7f4ea6615",
-            "baggage": "sentry-environment=prod,sentry-public_key=22217dc31eef5d21afad60404664acb9,sentry-trace_id=90953e3deaf863366cbe8e2dd13d88ae",
-            "x-cloud-trace-context": "463524a1d4609941ebb0e7f337d4584b/10920027793488526697",
-            "x-forwarded-proto": "https",
-            "traceparent": "00-463524a1d4609941ebb0e7f337d4584b-978bbb6be046bd69-00",
-            "x-forwarded-for": "65.108.194.158",
-            "forwarded": "for=\"65.108.194.158\";proto=https"
-          },
-          "params": {},
-          "query": {},
-          "body": {
-            "messages": [
-              {
-                "id": "OhbkF5otySyPqA-gKkBiNQgng",
-                "from_me": false,
-                "type": "text",
-                "chat_id": "6590570654@s.whatsapp.net",
-                "timestamp": 1768787895,
-                "source": "mobile",
-                "text": {
-                  "body": "Or here \nhttps://www.sevenrooms.com/explore/latidosingapore/reservations/create/search"
-                },
-                "from": "6590570654",
-                "from_name": "Chelsea"
-              }
-            ],
-            "event": {
-              "type": "messages",
-              "event": "post"
-            },
-            "channel_id": "DEADPL-MVUH7"
-          },
-          "webhookUrl": "https://workflow.oddle.center/webhook-test/a590dac3-2647-4ca9-87d6-444c5422a4e5",
-          "executionMode": "test"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ]
-  },
-  "versionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
+  "pinData": {},
+  "versionId": "e302a47d-b301-42f1-8bf6-d11bf1c79684",
   "activeVersionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
   "triggerCount": 1,
   "shared": [
