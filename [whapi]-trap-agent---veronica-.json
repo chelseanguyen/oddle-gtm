@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-20T02:00:31.605Z",
+  "updatedAt": "2026-01-20T06:52:16.147Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica",
@@ -238,8 +238,8 @@
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3088,
-        464
+        3104,
+        576
       ],
       "typeVersion": 1,
       "credentials": {
@@ -439,8 +439,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3344,
-        464
+        3360,
+        576
       ],
       "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
       "name": "Structured Output Parser"
@@ -783,8 +783,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3888,
-        256
+        3904,
+        368
       ],
       "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
       "name": "Send to Slack for Approval",
@@ -872,7 +872,7 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3072,
+        3088,
         -176
       ],
       "typeVersion": 1,
@@ -890,7 +890,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3328,
+        3344,
         -176
       ],
       "id": "f54d8687-851a-4838-be60-36726a64662a",
@@ -919,7 +919,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3840,
+        3856,
         -384
       ],
       "id": "635848e2-7b95-434e-9c34-968698829227",
@@ -937,14 +937,14 @@
         "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really consider getting an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
         }
       },
       "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
       "name": "Response Agent #1",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3136,
+        3152,
         -368
       ],
       "typeVersion": 1.6
@@ -962,8 +962,8 @@
       "name": "Response Agent #2",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3152,
-        272
+        3168,
+        384
       ],
       "typeVersion": 1.6
     },
@@ -994,7 +994,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3840,
+        3856,
         -144
       ],
       "id": "127a065b-3346-4043-bf98-dbfa397ec17d",
@@ -1005,8 +1005,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3872,
-        496
+        3888,
+        608
       ],
       "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
       "name": "Skip agent 2's response"
@@ -1039,7 +1039,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3536,
+        3552,
         -368
       ],
       "id": "50dc6873-fe75-4907-b536-6f71ef14b82c",
@@ -1073,8 +1073,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3568,
-        272
+        3584,
+        384
       ],
       "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
       "name": "If agent 2 continues to respond"
@@ -1092,7 +1092,7 @@
             {
               "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
               "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
-              "rightValue": "https?:\\/\\/[^\\s]+",
+              "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -1127,7 +1127,7 @@
             {
               "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
               "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
-              "rightValue": "https?:\\/\\/[^\\s]+",
+              "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
               "operator": {
                 "type": "string",
                 "operation": "regex"
@@ -1201,14 +1201,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $json.extractedBookingUrl }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3168,
-        -608
+        3392,
+        -640
       ],
       "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
       "name": "Send booking link to Slack 2",
@@ -1236,14 +1236,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $json.extractedBookingUrl }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3168,
-        64
+        3392,
+        128
       ],
       "id": "bd3bae3b-2116-437a-adb7-3d3d7880b41d",
       "name": "Send booking link to Slack 3",
@@ -1610,7 +1610,7 @@
           "mappingMode": "defineBelow",
           "value": {
             "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
-            "Reservation Link": "={{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}"
+            "Reservation Link": "={{ $('Extract booking link1').item.json.extractedBookingUrl }}"
           },
           "matchingColumns": [
             "Number"
@@ -1835,11 +1835,305 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3376,
-        -608
+        3616,
+        -640
       ],
       "id": "fd8b06d4-de59-4358-b46f-0bbefee571cc",
       "name": "Add reservation link to Google Sheet_2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $input.first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3168,
+        128
+      ],
+      "id": "08a2676a-708f-47c1-8ce3-db4eadeb1b33",
+      "name": "Extract booking link"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $input.first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3152,
+        -640
+      ],
+      "id": "dd671bbe-a3ee-411e-927a-c3752cc467f6",
+      "name": "Extract booking link1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reservation Link": "={{ $('Extract booking link').item.json.extractedBookingUrl }}",
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Trap Set",
+              "displayName": "Trap Set",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3600,
+        128
+      ],
+      "id": "911ba6b1-845e-4677-bb98-c5be069017c5",
+      "name": "Add reservation link to Google Sheet_3",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
@@ -2260,7 +2554,7 @@
       "main": [
         [
           {
-            "node": "Send booking link to Slack 2",
+            "node": "Extract booking link1",
             "type": "main",
             "index": 0
           }
@@ -2278,7 +2572,7 @@
       "main": [
         [
           {
-            "node": "Send booking link to Slack 3",
+            "node": "Extract booking link",
             "type": "main",
             "index": 0
           }
@@ -2331,6 +2625,39 @@
           }
         ]
       ]
+    },
+    "Extract booking link": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send booking link to Slack 3": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract booking link1": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2344,9 +2671,59 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "e302a47d-b301-42f1-8bf6-d11bf1c79684",
-  "activeVersionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
+  "pinData": {
+    "Receive Reply": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "accept": "application/json",
+            "content-type": "application/json",
+            "content-length": "391",
+            "sentry-trace": "295bc6cc5f56ae98a2dd4da9ba38f88f-dba5e5464633db0a",
+            "baggage": "sentry-environment=prod,sentry-public_key=22217dc31eef5d21afad60404664acb9,sentry-trace_id=295bc6cc5f56ae98a2dd4da9ba38f88f",
+            "x-cloud-trace-context": "1a967969a15ff309485b25c110be21e8/1073335769975311201",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-1a967969a15ff309485b25c110be21e8-0ee541322e194b61-00",
+            "x-forwarded-for": "65.108.194.158",
+            "forwarded": "for=\"65.108.194.158\";proto=https"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "messages": [
+              {
+                "id": "PrB2Qjh2m.PoDSo-hS4lYAwAwOM",
+                "from_me": false,
+                "type": "text",
+                "chat_id": "6590570654@s.whatsapp.net",
+                "timestamp": 1768881357,
+                "source": "web",
+                "device_id": 18,
+                "text": {
+                  "body": "Or here \nhttps://www.sevenrooms.com/explore/latidosingapore/reservations/create/search"
+                },
+                "from": "6590570654",
+                "from_name": "Chelsea"
+              }
+            ],
+            "event": {
+              "type": "messages",
+              "event": "post"
+            },
+            "channel_id": "DEADPL-MVUH7"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook-test/a590dac3-2647-4ca9-87d6-444c5422a4e5",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "d1a4ed77-8b6d-4e0a-b49c-ed9b0fd16012",
+  "activeVersionId": "5eca729f-7c78-44b8-9cec-878b37ff4ed6",
   "triggerCount": 1,
   "shared": [
     {
@@ -2358,9 +2735,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-19T09:52:42.946Z",
-    "createdAt": "2026-01-19T09:52:39.985Z",
-    "versionId": "24f8f540-1dad-42e3-8b68-bdb625bbd74d",
+    "updatedAt": "2026-01-20T06:47:42.373Z",
+    "createdAt": "2026-01-20T04:00:07.592Z",
+    "versionId": "5eca729f-7c78-44b8-9cec-878b37ff4ed6",
     "workflowId": "dgCCa2SjvGETsfVC",
     "nodes": [
       {
@@ -2596,7 +2973,7 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
           3088,
-          464
+          656
         ],
         "typeVersion": 1,
         "credentials": {
@@ -2797,7 +3174,7 @@
         "typeVersion": 1.3,
         "position": [
           3344,
-          464
+          656
         ],
         "id": "5b3ea7d8-1dcb-44a9-bdd6-abbd5840fb6d",
         "name": "Structured Output Parser"
@@ -3141,7 +3518,7 @@
         "typeVersion": 4.3,
         "position": [
           3888,
-          256
+          448
         ],
         "id": "c34e3519-3ef4-4b34-9951-0abddc0f5690",
         "name": "Send to Slack for Approval",
@@ -3294,7 +3671,7 @@
           "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really try to get an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+            "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really consider getting an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
           }
         },
         "id": "18ffd738-2200-42a9-941a-c0da5f34a044",
@@ -3320,7 +3697,7 @@
         "type": "@n8n/n8n-nodes-langchain.agent",
         "position": [
           3152,
-          272
+          464
         ],
         "typeVersion": 1.6
       },
@@ -3363,7 +3740,7 @@
         "typeVersion": 1,
         "position": [
           3872,
-          496
+          688
         ],
         "id": "c1a1f2be-c656-4ce8-a186-560d1422d834",
         "name": "Skip agent 2's response"
@@ -3431,7 +3808,7 @@
         "typeVersion": 2.3,
         "position": [
           3568,
-          272
+          464
         ],
         "id": "480e44e6-d71d-4d8d-9dce-d7b737fa77f7",
         "name": "If agent 2 continues to respond"
@@ -3449,7 +3826,7 @@
               {
                 "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
                 "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
-                "rightValue": "https?:\\/\\/[^\\s]+",
+                "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
                 "operator": {
                   "type": "string",
                   "operation": "regex"
@@ -3484,7 +3861,7 @@
               {
                 "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
                 "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
-                "rightValue": "https?:\\/\\/[^\\s]+",
+                "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
                 "operator": {
                   "type": "string",
                   "operation": "regex"
@@ -3558,14 +3935,14 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $json.extractedBookingUrl }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3168,
-          -608
+          3392,
+          -640
         ],
         "id": "2ae77d53-52d5-4d14-8854-577f4bafbc2c",
         "name": "Send booking link to Slack 2",
@@ -3593,14 +3970,14 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $('Parse Chat History').item.json.leadMessage.match(/https?:\\/\\/[^\\s]+/)?.[0] || 'No URL found' }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      },\n      \"accessory\": {\n        \"type\": \"button\",\n        \"text\": {\n          \"type\": \"plain_text\",\n          \"text\": \"Open Link\",\n          \"emoji\": true\n        },\n        \"value\": \"url_click\",\n        \"url\": \"{{ $json.extractedBookingUrl }}\",\n        \"action_id\": \"button-action\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3168,
-          64
+          3392,
+          160
         ],
         "id": "bd3bae3b-2116-437a-adb7-3d3d7880b41d",
         "name": "Send booking link to Slack 3",
@@ -3687,6 +4064,816 @@
         ],
         "id": "196f7594-c22d-4bdd-a6a0-66abac14ec6c",
         "name": "Skip auto reply"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+            "mode": "list",
+            "cachedResultName": "AU OR Outreach - 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1716060325,
+            "mode": "list",
+            "cachedResultName": "Target_List",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Reservation Link": "={{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}",
+              "Number": "={{ $json.body.messages[0].from }}"
+            },
+            "matchingColumns": [
+              "Number"
+            ],
+            "schema": [
+              {
+                "id": "Number",
+                "displayName": "Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Name",
+                "displayName": "Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "1st Msg",
+                "displayName": "1st Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "2nd Msg",
+                "displayName": "2nd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "3rd Msg",
+                "displayName": "3rd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Queue Status",
+                "displayName": "Message Queue Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Delivery Status",
+                "displayName": "Message Delivery Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "First Response",
+                "displayName": "First Response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Sender",
+                "displayName": "Sender",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Restaurant Name",
+                "displayName": "Restaurant Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Batch Number",
+                "displayName": "Batch Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remarks",
+                "displayName": "Remarks",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 1",
+                "displayName": "Message 1",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 2",
+                "displayName": "Message 2",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 3",
+                "displayName": "Message 3",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Entry ID",
+                "displayName": "Entry ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Place ID",
+                "displayName": "Place ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "record (attio)",
+                "displayName": "record (attio)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Reservation Link",
+                "displayName": "Reservation Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          944,
+          448
+        ],
+        "id": "ba38cab9-6811-4ac5-8234-4f222d8fa21a",
+        "name": "Add reservation link to Google Sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+            "mode": "list",
+            "cachedResultName": "AU OR Outreach - 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1716060325,
+            "mode": "list",
+            "cachedResultName": "Target_List",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+              "Reservation Link": "={{ $('Extract booking link1').item.json.extractedBookingUrl }}"
+            },
+            "matchingColumns": [
+              "Number"
+            ],
+            "schema": [
+              {
+                "id": "Number",
+                "displayName": "Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Name",
+                "displayName": "Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "1st Msg",
+                "displayName": "1st Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "2nd Msg",
+                "displayName": "2nd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "3rd Msg",
+                "displayName": "3rd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Queue Status",
+                "displayName": "Message Queue Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Delivery Status",
+                "displayName": "Message Delivery Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "First Response",
+                "displayName": "First Response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Sender",
+                "displayName": "Sender",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Restaurant Name",
+                "displayName": "Restaurant Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Batch Number",
+                "displayName": "Batch Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remarks",
+                "displayName": "Remarks",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 1",
+                "displayName": "Message 1",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 2",
+                "displayName": "Message 2",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 3",
+                "displayName": "Message 3",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Entry ID",
+                "displayName": "Entry ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Place ID",
+                "displayName": "Place ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "record (attio)",
+                "displayName": "record (attio)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Reservation Link",
+                "displayName": "Reservation Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          3616,
+          -640
+        ],
+        "id": "fd8b06d4-de59-4358-b46f-0bbefee571cc",
+        "name": "Add reservation link to Google Sheet_2",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const message = $input.first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3168,
+          160
+        ],
+        "id": "08a2676a-708f-47c1-8ce3-db4eadeb1b33",
+        "name": "Extract booking link"
+      },
+      {
+        "parameters": {
+          "jsCode": "for (const item of $input.all()) {\n  const message = $input.first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          3152,
+          -640
+        ],
+        "id": "dd671bbe-a3ee-411e-927a-c3752cc467f6",
+        "name": "Extract booking link1"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+            "mode": "list",
+            "cachedResultName": "AU OR Outreach - 2026",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 1716060325,
+            "mode": "list",
+            "cachedResultName": "Target_List",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Reservation Link": "={{ $('Extract booking link').item.json.extractedBookingUrl }}",
+              "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}"
+            },
+            "matchingColumns": [
+              "Number"
+            ],
+            "schema": [
+              {
+                "id": "Number",
+                "displayName": "Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Name",
+                "displayName": "Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "1st Msg",
+                "displayName": "1st Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "2nd Msg",
+                "displayName": "2nd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "3rd Msg",
+                "displayName": "3rd Msg",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Queue Status",
+                "displayName": "Message Queue Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message Delivery Status",
+                "displayName": "Message Delivery Status",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "First Response",
+                "displayName": "First Response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Sender",
+                "displayName": "Sender",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Restaurant Name",
+                "displayName": "Restaurant Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Batch Number",
+                "displayName": "Batch Number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Remarks",
+                "displayName": "Remarks",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 1",
+                "displayName": "Message 1",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 2",
+                "displayName": "Message 2",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Message 3",
+                "displayName": "Message 3",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Entry ID",
+                "displayName": "Entry ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Place ID",
+                "displayName": "Place ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Record ID",
+                "displayName": "Record ID",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "record (attio)",
+                "displayName": "record (attio)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Reservation Link",
+                "displayName": "Reservation Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Trap Set",
+                "displayName": "Trap Set",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          3600,
+          160
+        ],
+        "id": "911ba6b1-845e-4677-bb98-c5be069017c5",
+        "name": "Add reservation link to Google Sheet_3",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account"
+          }
+        }
       }
     ],
     "connections": {
@@ -4101,7 +5288,7 @@
         "main": [
           [
             {
-              "node": "Send booking link to Slack 2",
+              "node": "Extract booking link1",
               "type": "main",
               "index": 0
             }
@@ -4119,7 +5306,7 @@
         "main": [
           [
             {
-              "node": "Send booking link to Slack 3",
+              "node": "Extract booking link",
               "type": "main",
               "index": 0
             }
@@ -4150,10 +5337,65 @@
             }
           ]
         ]
+      },
+      "Send link to Slack": {
+        "main": [
+          [
+            {
+              "node": "Add reservation link to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send booking link to Slack 2": {
+        "main": [
+          [
+            {
+              "node": "Add reservation link to Google Sheet_2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract booking link": {
+        "main": [
+          [
+            {
+              "node": "Send booking link to Slack 3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send booking link to Slack 3": {
+        "main": [
+          [
+            {
+              "node": "Add reservation link to Google Sheet_3",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract booking link1": {
+        "main": [
+          [
+            {
+              "node": "Send booking link to Slack 2",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 24f8f540",
+    "name": "Version 5eca729f",
     "description": "",
     "autosaved": false
   },
