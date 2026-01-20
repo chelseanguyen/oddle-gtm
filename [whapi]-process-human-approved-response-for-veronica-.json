@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-19T09:49:28.374Z",
+  "updatedAt": "2026-01-20T06:48:36.565Z",
   "createdAt": "2026-01-15T09:24:12.490Z",
   "id": "IjmqnhfRxYGFuoPT",
   "name": "[Whapi] Process human-approved response for Veronica",
@@ -178,7 +178,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -213,7 +213,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -337,7 +337,8 @@
     },
     {
       "parameters": {
-        "amount": 30
+        "amount": 1,
+        "unit": "minutes"
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -494,8 +495,8 @@
       }
     ]
   },
-  "versionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
-  "activeVersionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
+  "versionId": "f0f70608-ceb3-4ea6-bae9-8ebc32699cf5",
+  "activeVersionId": "f0f70608-ceb3-4ea6-bae9-8ebc32699cf5",
   "triggerCount": 1,
   "shared": [
     {
@@ -507,9 +508,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-19T09:49:30.825Z",
-    "createdAt": "2026-01-19T09:49:28.375Z",
-    "versionId": "c3db90ee-5600-4e02-9e1d-f7592c540e77",
+    "updatedAt": "2026-01-20T06:48:38.640Z",
+    "createdAt": "2026-01-20T06:48:36.568Z",
+    "versionId": "f0f70608-ceb3-4ea6-bae9-8ebc32699cf5",
     "workflowId": "IjmqnhfRxYGFuoPT",
     "nodes": [
       {
@@ -684,7 +685,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -719,7 +720,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -843,7 +844,8 @@
       },
       {
         "parameters": {
-          "amount": 30
+          "amount": 1,
+          "unit": "minutes"
         },
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
@@ -959,7 +961,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version c3db90ee",
+    "name": "Version f0f70608",
     "description": "",
     "autosaved": false
   },
