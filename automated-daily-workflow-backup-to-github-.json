@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T08:05:10.538Z",
+  "updatedAt": "2026-01-21T03:22:25.392Z",
   "createdAt": "2026-01-16T06:02:03.867Z",
   "id": "uVOflcZAL18WW8Ls",
   "name": "Automated daily workflow backup to GitHub",
@@ -11,8 +11,7 @@
         "rule": {
           "interval": [
             {
-              "field": "hours",
-              "hoursInterval": 12
+              "triggerAtHour": 19
             }
           ]
         }
@@ -421,7 +420,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "83b93ede-8f31-40c2-8baf-c2e21f379270",
+  "versionId": "db272c06-cce3-47eb-947b-14590c2d2031",
   "activeVersionId": "83b93ede-8f31-40c2-8baf-c2e21f379270",
   "triggerCount": 1,
   "shared": [
