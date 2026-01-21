@@ -1,0 +1,937 @@
+{
+  "updatedAt": "2026-01-21T09:12:11.711Z",
+  "createdAt": "2026-01-21T08:24:58.389Z",
+  "id": "SkFSENNbsHm6FOWZ",
+  "name": "[Whapi] Process human-approved response for Veronica 3001",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        784,
+        -32
+      ],
+      "name": "Update Message - Approved",
+      "id": "026f9c19-0824-4524-8bfd-1ea3277b7a0b",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SWDEgTIP3Iofj3Ek",
+          "name": "Slack's WhatsApp Agent 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        784,
+        416
+      ],
+      "name": "Update Message - Rejected",
+      "id": "dce9a96a-8049-40b3-bd98-3439387277f2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SWDEgTIP3Iofj3Ek",
+          "name": "Slack's WhatsApp Agent 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        496
+      ],
+      "typeVersion": 1,
+      "id": "aa027b44-b9c5-43e7-a78e-3465bf7ff752",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        64,
+        320
+      ],
+      "name": "Respond to Slack",
+      "id": "0248c23b-5187-4bdc-98b8-06179a41b136"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id;\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\n\n// Helper function to extract text from markdown field (used for Name, Number, and Message Type)\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text from section with specific header (used for Reply, Agent Response, and Caption)\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Data Extraction based on your payload labels\nconst name = extractFromField(blocks, '*Name:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst messageType = extractFromField(blocks, '*Message type:*'); // Added\nconst prospectReply = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst caption = extractSectionText(blocks, '*Caption:*'); // Added\nconst agentResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\n// \"value\" from the action (whapi chat_id)\nconst chatId = action?.value;\n\nreturn {\n  json: {\n    action_id: actionId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_name: user?.name || user?.username,\n    name: name,\n    lead_identifier: number,\n    message_type: messageType,              // Added\n    lead_message: prospectReply,\n    message_caption: caption,               // Added\n    ai_generated_response: agentResponse,\n    whapi_channel_id: channel?.id,          \n    chat_id: chatId,                        \n    user_id: user?.id,\n    response_url: responseUrl,\n    original_message_ts: parsedPayload.message?.ts\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        320
+      ],
+      "name": "Parse Slack Payload",
+      "id": "b42c306b-bc90-4443-93c7-be58f0d653d8"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-send-success",
+              "leftValue": "={{ $json.error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isEmpty"
+              }
+            },
+            {
+              "id": "a9b819a9-7bac-4399-984e-28e3ddfd0802",
+              "leftValue": "={{ $json.sent }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1248,
+        208
+      ],
+      "name": "Check Send Status",
+      "id": "1190de4f-1669-40e6-8f9a-fc09c9e5447d"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1520,
+        448
+      ],
+      "name": "Post Error status to Slack",
+      "id": "6aac6715-036a-4731-9d04-1d375cdbf4a0",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SWDEgTIP3Iofj3Ek",
+          "name": "Slack's WhatsApp Agent 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1520,
+        192
+      ],
+      "name": "Post Success status to Slack",
+      "id": "678f70ae-ff98-494e-916a-600869beb218",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "SWDEgTIP3Iofj3Ek",
+          "name": "Slack's WhatsApp Agent 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "slack-approval-whapi-2",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -144,
+        128
+      ],
+      "id": "e3f30755-5019-426f-98d0-7a46a3da3e18",
+      "name": "Webhook",
+      "webhookId": "ece30c19-e445-44a4-ae35-371c8acd9c4f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gate.whapi.cloud/messages/text",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "authorization",
+              "value": "Bearer D5wZD8PLJ3m4zKEAJ4xl9D8MMElgSq9x"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "to",
+              "value": "={{ $json.chat_id }}"
+            },
+            {
+              "name": "body",
+              "value": "={{ $json.ai_generated_response }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        992,
+        208
+      ],
+      "id": "c1fc3697-6b99-408e-9ce4-2c0cd2b4ec6c",
+      "name": "Respond to Prospect"
+    },
+    {
+      "parameters": {
+        "content": "### Receive human's response from Slack"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -160,
+        -80
+      ],
+      "typeVersion": 1,
+      "id": "53a3cae3-180e-44da-bbf0-6a8b82e75afc",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-approve",
+              "leftValue": "={{ $json.action_id }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        496,
+        320
+      ],
+      "name": "Check if Approved",
+      "id": "67b08ecd-d791-4d4d-8e13-de5ef7eb2905"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        784,
+        208
+      ],
+      "id": "a0594f7f-8801-4824-a09f-27f98e96bd4c",
+      "name": "Wait",
+      "webhookId": "66a7f49f-9bbb-44ef-83fc-c396c5b83fea"
+    }
+  ],
+  "connections": {
+    "Parse Slack Payload": {
+      "main": [
+        [
+          {
+            "node": "Check if Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Send Status": {
+      "main": [
+        [
+          {
+            "node": "Post Success status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post Error status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Error status to Slack": {
+      "main": [
+        []
+      ]
+    },
+    "Post Success status to Slack": {
+      "main": [
+        []
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parse Slack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Prospect": {
+      "main": [
+        [
+          {
+            "node": "Check Send Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Approved": {
+      "main": [
+        [
+          {
+            "node": "Update Message - Approved",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Message - Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Prospect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {},
+  "versionId": "fb21f262-47c7-45cd-bb58-662c0774b6fe",
+  "activeVersionId": "fb21f262-47c7-45cd-bb58-662c0774b6fe",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-21T08:24:58.389Z",
+      "createdAt": "2026-01-21T08:24:58.389Z",
+      "role": "workflow:owner",
+      "workflowId": "SkFSENNbsHm6FOWZ",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-01-21T08:35:54.070Z",
+    "createdAt": "2026-01-21T08:35:38.759Z",
+    "versionId": "fb21f262-47c7-45cd-bb58-662c0774b6fe",
+    "workflowId": "SkFSENNbsHm6FOWZ",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          784,
+          -32
+        ],
+        "name": "Update Message - Approved",
+        "id": "026f9c19-0824-4524-8bfd-1ea3277b7a0b",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "SWDEgTIP3Iofj3Ek",
+            "name": "Slack's WhatsApp Agent 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Parse Slack Payload').item.json.message_type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.lead_message || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $json.message_caption ? JSON.stringify($json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          784,
+          416
+        ],
+        "name": "Update Message - Rejected",
+        "id": "dce9a96a-8049-40b3-bd98-3439387277f2",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "SWDEgTIP3Iofj3Ek",
+            "name": "Slack's WhatsApp Agent 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          64,
+          496
+        ],
+        "typeVersion": 1,
+        "id": "aa027b44-b9c5-43e7-a78e-3465bf7ff752",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "OK",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          64,
+          320
+        ],
+        "name": "Respond to Slack",
+        "id": "0248c23b-5187-4bdc-98b8-06179a41b136"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id;\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\n\n// Helper function to extract text from markdown field (used for Name, Number, and Message Type)\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text from section with specific header (used for Reply, Agent Response, and Caption)\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Data Extraction based on your payload labels\nconst name = extractFromField(blocks, '*Name:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst messageType = extractFromField(blocks, '*Message type:*'); // Added\nconst prospectReply = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst caption = extractSectionText(blocks, '*Caption:*'); // Added\nconst agentResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\n// \"value\" from the action (whapi chat_id)\nconst chatId = action?.value;\n\nreturn {\n  json: {\n    action_id: actionId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_name: user?.name || user?.username,\n    name: name,\n    lead_identifier: number,\n    message_type: messageType,              // Added\n    lead_message: prospectReply,\n    message_caption: caption,               // Added\n    ai_generated_response: agentResponse,\n    whapi_channel_id: channel?.id,          \n    chat_id: chatId,                        \n    user_id: user?.id,\n    response_url: responseUrl,\n    original_message_ts: parsedPayload.message?.ts\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          272,
+          320
+        ],
+        "name": "Parse Slack Payload",
+        "id": "b42c306b-bc90-4443-93c7-be58f0d653d8"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-send-success",
+                "leftValue": "={{ $json.error }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "isEmpty"
+                }
+              },
+              {
+                "id": "a9b819a9-7bac-4399-984e-28e3ddfd0802",
+                "leftValue": "={{ $json.sent }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1248,
+          208
+        ],
+        "name": "Check Send Status",
+        "id": "1190de4f-1669-40e6-8f9a-fc09c9e5447d"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually via phone.\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1520,
+          448
+        ],
+        "name": "Post Error status to Slack",
+        "id": "6aac6715-036a-4731-9d04-1d375cdbf4a0",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "SWDEgTIP3Iofj3Ek",
+            "name": "Slack's WhatsApp Agent 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"mrkdwn\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Message Sent\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1520,
+          192
+        ],
+        "name": "Post Success status to Slack",
+        "id": "678f70ae-ff98-494e-916a-600869beb218",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "SWDEgTIP3Iofj3Ek",
+            "name": "Slack's WhatsApp Agent 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "slack-approval-whapi-2",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -144,
+          128
+        ],
+        "id": "e3f30755-5019-426f-98d0-7a46a3da3e18",
+        "name": "Webhook",
+        "webhookId": "ece30c19-e445-44a4-ae35-371c8acd9c4f"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://gate.whapi.cloud/messages/text",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "application/json"
+              },
+              {
+                "name": "authorization",
+                "value": "Bearer D5wZD8PLJ3m4zKEAJ4xl9D8MMElgSq9x"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "to",
+                "value": "={{ $json.chat_id }}"
+              },
+              {
+                "name": "body",
+                "value": "={{ $json.ai_generated_response }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          992,
+          208
+        ],
+        "id": "c1fc3697-6b99-408e-9ce4-2c0cd2b4ec6c",
+        "name": "Respond to Prospect"
+      },
+      {
+        "parameters": {
+          "content": "### Receive human's response from Slack"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -160,
+          -80
+        ],
+        "typeVersion": 1,
+        "id": "53a3cae3-180e-44da-bbf0-6a8b82e75afc",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-approve",
+                "leftValue": "={{ $json.action_id }}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          496,
+          320
+        ],
+        "name": "Check if Approved",
+        "id": "67b08ecd-d791-4d4d-8e13-de5ef7eb2905"
+      },
+      {
+        "parameters": {
+          "amount": 1,
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          784,
+          208
+        ],
+        "id": "a0594f7f-8801-4824-a09f-27f98e96bd4c",
+        "name": "Wait",
+        "webhookId": "66a7f49f-9bbb-44ef-83fc-c396c5b83fea"
+      }
+    ],
+    "connections": {
+      "Parse Slack Payload": {
+        "main": [
+          [
+            {
+              "node": "Check if Approved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Send Status": {
+        "main": [
+          [
+            {
+              "node": "Post Success status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Post Error status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Error status to Slack": {
+        "main": [
+          []
+        ]
+      },
+      "Post Success status to Slack": {
+        "main": [
+          []
+        ]
+      },
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Slack",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Parse Slack Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Prospect": {
+        "main": [
+          [
+            {
+              "node": "Check Send Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check if Approved": {
+        "main": [
+          [
+            {
+              "node": "Update Message - Approved",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Message - Rejected",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Respond to Prospect",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version fb21f262",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
