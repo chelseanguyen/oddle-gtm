@@ -1,0 +1,3320 @@
+{
+  "updatedAt": "2026-01-28T08:14:21.268Z",
+  "createdAt": "2026-01-27T09:02:31.185Z",
+  "id": "eXEVf6BDPaBy3uWd",
+  "name": "[WhatsApp] AU SDR Agent - Alex",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d990cbd6-a408-4ec4-a889-41be698918d9",
+              "name": "message_type",
+              "type": "string",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.type }}"
+            },
+            {
+              "id": "23b785c3-f38e-4706-80b7-51f333bba3bd",
+              "name": "message_text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
+              "name": "message_caption",
+              "type": "string",
+              "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+            },
+            {
+              "id": "9612af65-3421-4b94-b3c3-4231c762b351",
+              "name": "chat_id",
+              "value": "={{ $('Receive Reply').item.json.body.messages[0].chat_id }}",
+              "type": "string"
+            },
+            {
+              "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
+              "name": "channel_id",
+              "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8262cd7-ad42-4c33-866b-007c61da8870",
+      "name": "Get User's Message",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1824,
+        -96
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec5e944c-7656-4860-adb7-edcfa8b95ed0",
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "05b30af4-967b-4824-abdc-84a8292ac0e5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "image"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "75e367cd-3913-4ea4-a2ea-b0442b3325fb",
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "voice",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "audio",
+                    "id": "1113da73-5d4e-450e-90b3-960e6bec2e3c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "82aa5ff4-c9b6-4187-a27e-c7c5d9bfdda0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "video"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "rightValue": "link_preview",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Link provided"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Other Message Type"
+        }
+      },
+      "id": "7002f063-73b1-48dc-bbb8-5ad88c4ea5d4",
+      "name": "Redirect Message Types",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        144,
+        -96
+      ],
+      "typeVersion": 3.2
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "id": "acfa88d3-e156-4c98-985b-7a41b03c1bb1",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        3168,
+        928
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bird-message-received",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "68d2ea4f-e61e-446f-a274-cb6c325bf380",
+      "name": "Receive Reply",
+      "webhookId": "8d6624db-8953-470c-9561-14e365250265"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        960,
+        -400
+      ],
+      "name": "Topic Output Parser",
+      "id": "f572ac09-cfee-464b-8148-816977b47d75"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Receive Reply').item.json.body.payload.body.text.text }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        784,
+        -560
+      ],
+      "name": "Check if Bot Message",
+      "id": "d03ec1bb-b420-43ef-9bea-e1dbbf4d1259"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -400
+      ],
+      "name": "Google Gemini LLM",
+      "id": "d95428b7-07e9-4e8f-9585-74b80e6e4d72",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://gate.whapi.cloud/messages/list/{{ $json.chat_id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "20"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "application/json"
+            },
+            {
+              "name": "authorization",
+              "value": "Bearer XRrTS2TMfTogsCgLuVQ2xrZLkBIw8OIR"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2064,
+        -96
+      ],
+      "id": "8f69744a-b47a-4cee-8495-ecaa0f2cb93f",
+      "name": "Get Chat History"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    // Filter out system actions/reactions\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Restaurant's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'Veronica' : 'Restaurant';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    isFromMe: isFromMe,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological (Oldest to Newest)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// 4. CALCULATE RESPONSE TIME (Numeric)\nlet responseTimeMinutes = 0; // Default to 0 for the IF node\n\nconst lastMsgIndex = chronologicalMessages.length - 1;\n\n// Only calculate if there are at least 2 messages and the latest is from the Contact\nif (lastMsgIndex > 0) {\n  const lastMsg = chronologicalMessages[lastMsgIndex];\n  \n  if (!lastMsg.isFromMe) {\n    // Look backwards for the first message from \"Me\" (Veronica)\n    for (let i = lastMsgIndex - 1; i >= 0; i--) {\n      if (chronologicalMessages[i].isFromMe) {\n        const diffInSeconds = lastMsg.timestamp - chronologicalMessages[i].timestamp;\n        const diffInMinutes = diffInSeconds / 60;\n        \n        // Logic: less than 1 min = 1, otherwise Round Up\n        if (diffInMinutes <= 1) {\n          responseTimeMinutes = 1;\n        } else {\n          responseTimeMinutes = Math.ceil(diffInMinutes);\n        }\n        break; // Found the latest response pair, exit loop\n      }\n    }\n  }\n}\n\n// 5. FORMAT THREAD FOR DISPLAY\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\n// 6. RETURN RESULTS\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Restaurant' : `Restaurant (${latestInput.message_type})`\n    }\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2272,
+        -96
+      ],
+      "name": "Parse Chat History",
+      "id": "2bda49c6-a531-4d48-afc6-d026c6e40450"
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3424,
+        928
+      ],
+      "id": "2bf673d6-6e58-4520-be0c-2ad56fe77558",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This node extracts image URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst imagesFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is image and has a link\n    if (msg.type === 'image' && msg.image && msg.image.link) {\n      imagesFound.push({\n        imageUrl: msg.image.link,\n        caption: msg.image.caption || \"\",\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// If no images were found, you might want to return an empty item \n// or a specific message to avoid errors in later nodes\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -176
+      ],
+      "id": "59bb1307-c910-47d9-a62e-5ef4531095f6",
+      "name": "Get image URL"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This node extracts voice/audio URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst audioFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Whapi uses 'voice' for voice notes and 'audio' for uploaded files\n    const audioData = msg.voice || msg.audio;\n    \n    if ((msg.type === 'voice' || msg.type === 'audio') && audioData && audioData.link) {\n      audioFound.push({\n        audioUrl: audioData.link,\n        chatId: msg.chat_id,\n        sender: msg.from_name,\n        seconds: audioData.seconds || 0,\n        mime_type: audioData.mime_type\n      });\n    }\n  }\n}\n\n// If no audio was found, return a null object to prevent workflow crashes\nreturn audioFound.length > 0 ? audioFound : [{ audioUrl: null, status: \"no audio found\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        32
+      ],
+      "id": "bc5b4173-76ce-4ddb-a34b-bda751cd4e2d",
+      "name": "Get Voice URL"
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "audioUrls": "={{ $json.audioUrl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        32
+      ],
+      "id": "09d38da2-cbed-45f7-b234-d836b50bc26a",
+      "name": "Transcribe voice message",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash"
+        },
+        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+        "imageUrls": "={{ $json.imageUrl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        -176
+      ],
+      "id": "6f91ce86-0f78-4f92-8b9d-2135946008a6",
+      "name": "Analyze image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// This node extracts video URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst videosFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is video and has a link\n    if (msg.type === 'video' && msg.video && msg.video.link) {\n      videosFound.push({\n        videoUrl: msg.video.link,\n        caption: msg.video.caption || \"\",\n        seconds: msg.video.seconds || 0,\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// Return video data or a null object to keep the workflow from breaking\nreturn videosFound.length > 0 ? videosFound : [{ videoUrl: null, status: \"no video found\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        240
+      ],
+      "id": "4463a16e-3605-404e-ba4a-fbbb67be0911",
+      "name": "Get video URL"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b49750fe-8d3f-4f91-8008-8f3c2544b970",
+      "name": "Format image description",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1216,
+        -176
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-3-flash-preview",
+          "mode": "list",
+          "cachedResultName": "models/gemini-3-flash-preview"
+        },
+        "text": "Here is an video sent by the user. Describe the video briefly and transcribe any voice/audio message in the video.",
+        "videoUrls": "={{ $json.videoUrl }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        960,
+        240
+      ],
+      "id": "1c88376f-aaa1-4478-a2b6-1756056e80d8",
+      "name": "Analyze video",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "dc19b68d-ea42-45c0-9559-f02f6f6c142d",
+      "name": "Format video description",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1216,
+        240
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.content.parts[0].text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a8187f86-d654-4e42-8e4b-401058d1126a",
+      "name": "Format voice transcription",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1216,
+        32
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $('Redirect Message Types').item.json.body.payload.body.text.text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "84d7f465-f4e1-4291-b661-838d5e657923",
+      "name": "Format response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1344,
+        -576
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3936,
+        720
+      ],
+      "id": "c401782e-6887-46e2-9684-b2b434513d34",
+      "name": "Send to Slack for Approval",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Redirect Message Types').item.json.body.messages[0].type }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this file or message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on WhatsApp to reply to the prospect.\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        736,
+        656
+      ],
+      "id": "275d2a79-f472-4632-9a53-b9c2429fb81b",
+      "name": "Notify in Slack",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "3fb404a2-ac30-43cb-8535-60b7b4cc78bb",
+              "leftValue": "={{ $json.responseTimeMinutes }}",
+              "rightValue": 30,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2480,
+        -96
+      ],
+      "id": "0fa443fa-16c4-478d-808c-1da66308a55d",
+      "name": "Check if respond after 30 mins"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "id": "747ef30f-a467-4561-9eb0-63b677996335",
+      "name": "Google Gemini Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        3152,
+        -208
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3408,
+        -208
+      ],
+      "id": "234f0127-4800-4979-b7ae-cc030ff5f020",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3920,
+        -416
+      ],
+      "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
+      "name": "Send to Slack for Approval1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentenced\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\nScenarios & Instruction to reply\n- If they reply this message, it means that they've replied more than half an hour later, then just reply this \"Sorry, we decided to go ahead with another restaurant cos we couldn't find a way to book a table with you online. You should really consider getting an online reservation system 😅\"\n- If you already replied them with the message above from the chat history, then STOP replying them"
+        }
+      },
+      "id": "a05cd147-70e5-4992-b8eb-648a04a27292",
+      "name": "Response Agent #1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3216,
+        -400
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentences\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation, ask if they have a reservation link to book online because you need to coordinate some details with your friends.\n- If the restaurant asks why you need to reserve online, say that it's because I need to coordinate with your friends before you could make a reservation.\n- If the restaurant asks when is your booking date, say that you're not sure yet and still checking with your friends, then ask if they have a booking link\n- If the restaurant asks for other details of your reservation, answer according to your knowledge and if you don't know, come up with something generic\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+        }
+      },
+      "id": "6752269e-8417-487f-85de-aa7b067f3834",
+      "name": "Response Agent #2",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3232,
+        736
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3920,
+        -176
+      ],
+      "id": "f009dbe5-a05a-4227-9f6d-65d1c410fda1",
+      "name": "Skip agent 1's response"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3952,
+        960
+      ],
+      "id": "47360925-fa04-4e1e-a573-5f47accef1f6",
+      "name": "Skip agent 2's response"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+              "leftValue": "={{ $json.output.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3616,
+        -400
+      ],
+      "id": "b9d06053-2f84-4827-a8e4-6f2674b75051",
+      "name": "If agent 1 continues to respond"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
+              "leftValue": "={{ $json.output.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3648,
+        736
+      ],
+      "id": "81075e4c-a51b-4b91-bb5b-6e48ed14dd61",
+      "name": "If agent 2 continues to respond"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2752,
+        -416
+      ],
+      "id": "696014ee-2599-4b36-9c35-2edef39e6be2",
+      "name": "Check for booking link"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "78141ca4-f380-4d9a-908a-2f9db44e9c88",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))",
+              "operator": {
+                "type": "string",
+                "operation": "regex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2752,
+        352
+      ],
+      "id": "100c77a0-056a-46d6-99fb-e79f45d99647",
+      "name": "Check for booking link_2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Redirect Message Types').item.json.body.messages[0].link_preview?.body ? JSON.stringify($('Redirect Message Types').item.json.body.messages[0].link_preview.body).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        736,
+        448
+      ],
+      "id": "5748ebd4-e38a-49cb-8dab-5a459450fe56",
+      "name": "Send link to Slack",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3728,
+        -688
+      ],
+      "id": "83c0f3a9-2316-419b-981f-123020c121a5",
+      "name": "Send booking link to Slack 2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Booking Link Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:calendar: New Booking Link Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Reservation Booking Link:*\\n{{ $json.extractedBookingUrl }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3760,
+        464
+      ],
+      "id": "3de36228-2ece-4b8a-97c7-0c5944c77351",
+      "name": "Send booking link to Slack 3",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.classification }}",
+                    "rightValue": "human",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f620673b-58a0-4990-b57d-aeceafc007f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Human reply"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ef99233a-2a44-4831-b14d-9a6928d5afce",
+                    "leftValue": "={{ $json.output.classification }}",
+                    "rightValue": "auto_bot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Auto reply"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        -560
+      ],
+      "id": "be2f3d14-d695-4223-839e-cb8581404412",
+      "name": "Switch"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        -384
+      ],
+      "id": "c1176ead-632f-44d8-bb2c-420fa0622419",
+      "name": "Skip auto reply"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reservation Link": "={{ $('Redirect Message Types').item.json.body.messages[0].link_preview.url }}",
+            "Number": "={{ $json.body.messages[0].from }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        448
+      ],
+      "id": "06ebf62b-a597-4ffb-9726-c9d2b6e61bd7",
+      "name": "Add reservation link to Google Sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+            "Reservation Link": "={{ $('Extract booking link1').item.json.extractedBookingUrl }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3952,
+        -688
+      ],
+      "id": "d75a922b-0540-4bc5-82b3-f49a531fc1bf",
+      "name": "Add reservation link to Google Sheet_2",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $('Parse Chat History').first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3536,
+        464
+      ],
+      "id": "5138e66a-d61c-4c93-96a9-32416157e910",
+      "name": "Extract booking link"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $('Parse Chat History').first().json.leadMessage || \"\";\n  \n  // Regex to capture domains/URLs even without http/https\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n  \n  const match = message.match(urlRegex);\n  \n  if (match) {\n    let extractedUrl = match[0];\n    \n    // Prepend https:// if the lead only provided the domain (e.g., barregio.com.au)\n    if (!extractedUrl.startsWith('http')) {\n      extractedUrl = 'https://' + extractedUrl;\n    }\n    \n    item.json.extractedBookingUrl = extractedUrl;\n  } else {\n    item.json.extractedBookingUrl = 'No URL found';\n  }\n\n  // Remove the conversationThreadFormatted field\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        -688
+      ],
+      "id": "f4a3eca1-fb4c-458a-89a0-3d7ce123ac78",
+      "name": "Extract booking link1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Reservation Link": "={{ $('Extract booking link').item.json.extractedBookingUrl }}",
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+            "Trap Set": "NA"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Trap Set",
+              "displayName": "Trap Set",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3968,
+        464
+      ],
+      "id": "550729d1-b1f4-45fe-84fa-399609a488c8",
+      "name": "Add reservation link to Google Sheet_3",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $('Parse Chat History').first().json.leadMessage || \"\";\n  \n  // Define specific regex for both types\n  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/i;\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n\n  const emailMatch = message.match(emailRegex);\n  const urlMatch = message.match(urlRegex);\n\n  // Logic: Check for email first to prevent overlap\n  if (emailMatch) {\n    item.json.extractedType = 'email';\n    item.json.extractedValue = emailMatch[0];\n  } else if (urlMatch) {\n    item.json.extractedType = 'url';\n    let url = urlMatch[0];\n    // Prepend https:// if it's a naked domain like barregio.com.au\n    item.json.extractedValue = url.startsWith('http') ? url : 'https://' + url;\n  } else {\n    item.json.extractedValue = 'No match found';\n  }\n\n  // Remove the conversationThreadFormatted field to keep output clean\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3536,
+        240
+      ],
+      "id": "085575b6-96bd-4257-a497-ca87f6c6f006",
+      "name": "Extract email"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+            "Reservation Link": "Manual",
+            "Trap Set": "NA",
+            "Email": "={{ $json.extractedValue }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Trap Set",
+              "displayName": "Trap Set",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3776,
+        240
+      ],
+      "id": "56ff7266-2c92-4d18-bb97-c0af3c16879c",
+      "name": "Add email to Gsheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const message = $('Parse Chat History').first().json.leadMessage || \"\";\n  \n  // Define specific regex for both types\n  const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/i;\n  const urlRegex = /([-a-zA-Z0-9@:%._\\+~#=]{1,256}\\.[a-zA-Z0-9()]{1,6}\\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*))/i;\n\n  const emailMatch = message.match(emailRegex);\n  const urlMatch = message.match(urlRegex);\n\n  // Logic: Check for email first to prevent overlap\n  if (emailMatch) {\n    item.json.extractedType = 'email';\n    item.json.extractedValue = emailMatch[0];\n  } else if (urlMatch) {\n    item.json.extractedType = 'url';\n    let url = urlMatch[0];\n    // Prepend https:// if it's a naked domain like barregio.com.au\n    item.json.extractedValue = url.startsWith('http') ? url : 'https://' + url;\n  } else {\n    item.json.extractedValue = 'No match found';\n  }\n\n  // Remove the conversationThreadFormatted field to keep output clean\n  delete item.json.conversationThreadFormatted;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3488,
+        -896
+      ],
+      "id": "0c417837-a4df-49e9-b4db-338a9f1ee527",
+      "name": "Extract email1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0",
+          "mode": "list",
+          "cachedResultName": "AU OR Outreach - 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1716060325,
+          "mode": "list",
+          "cachedResultName": "Target_List",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Ac5r_6CcArtudeUw7PPG6gzAinxgSNtq3YMz8wZVfV0/edit#gid=1716060325"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Number": "={{ $('Redirect Message Types').item.json.body.messages[0].from }}",
+            "Reservation Link": "Manual",
+            "Trap Set": "Done",
+            "Email": "={{ $json.extractedValue }}"
+          },
+          "matchingColumns": [
+            "Number"
+          ],
+          "schema": [
+            {
+              "id": "Number",
+              "displayName": "Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "1st Msg",
+              "displayName": "1st Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "2nd Msg",
+              "displayName": "2nd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "3rd Msg",
+              "displayName": "3rd Msg",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Queue Status",
+              "displayName": "Message Queue Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message Delivery Status",
+              "displayName": "Message Delivery Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Response",
+              "displayName": "First Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Sender",
+              "displayName": "Sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Restaurant Name",
+              "displayName": "Restaurant Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Batch Number",
+              "displayName": "Batch Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Remarks",
+              "displayName": "Remarks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 1",
+              "displayName": "Message 1",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 2",
+              "displayName": "Message 2",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Message 3",
+              "displayName": "Message 3",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Entry ID",
+              "displayName": "Entry ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Record ID",
+              "displayName": "Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "record (attio)",
+              "displayName": "record (attio)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Reservation Link",
+              "displayName": "Reservation Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Trap Set",
+              "displayName": "Trap Set",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3824,
+        -896
+      ],
+      "id": "68a48c8b-b087-4d39-a058-2425476c6088",
+      "name": "Add email to Gsheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5c09f968-7624-4e62-813b-f197da23608f",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3232,
+        336
+      ],
+      "id": "d4017662-837a-4fc6-9364-e546a89cb200",
+      "name": "Check for email"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "5c09f968-7624-4e62-813b-f197da23608f",
+              "leftValue": "={{ $('Parse Chat History').item.json.leadMessage }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3216,
+        -816
+      ],
+      "id": "311fc78c-07eb-4ccc-be56-0c82f30e1b65",
+      "name": "Check for email1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Email address Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:e-mail: New Email Address Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Email Address:*\\n{{ $json.extractedValue }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3824,
+        -1104
+      ],
+      "id": "91c1a125-65c9-4132-941a-a5c0db0aab88",
+      "name": "Send email to Slack ",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"🚨 Email address Received!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*:e-mail: New Email Address Received*\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Email Address:*\\n{{ $json.extractedValue }}\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Full Message:*\\n```{{ $('Parse Chat History').item.json.leadMessage ? JSON.stringify($('Parse Chat History').item.json.leadMessage).slice(1, -1) : 'NA' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3776,
+        64
+      ],
+      "id": "acfa4de2-2e78-4f83-a15f-131e6e380738",
+      "name": "Send email to Slack 1",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "jByqEazESu9xXEeO",
+          "name": "Slack's WhatsApp Agent 5234"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### get conversation ID\nhttps://docs.bird.com/api/conversations-api/api-reference/conversation-participants/list-participant-conversations-by-id"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1904,
+        -336
+      ],
+      "typeVersion": 1,
+      "id": "f8089e9c-447b-4dde-b2fe-1573f90e3e51",
+      "name": "Sticky Note"
+    }
+  ],
+  "connections": {
+    "Get User's Message": {
+      "main": [
+        [
+          {
+            "node": "Get Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redirect Message Types": {
+      "main": [
+        [
+          {
+            "node": "Check if Bot Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get image URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Voice URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [],
+        [
+          {
+            "node": "Get video URL",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send link to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Response Agent #2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Reply": {
+      "main": [
+        [
+          {
+            "node": "Redirect Message Types",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Topic Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Check if Bot Message",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Check if Bot Message",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Bot Message": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat History": {
+      "main": [
+        [
+          {
+            "node": "Parse Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Chat History": {
+      "main": [
+        [
+          {
+            "node": "Check if respond after 30 mins",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Response Agent #2",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get image URL": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Voice URL": {
+      "main": [
+        [
+          {
+            "node": "Transcribe voice message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Format image description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe voice message": {
+      "main": [
+        [
+          {
+            "node": "Format voice transcription",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format image description": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get video URL": {
+      "main": [
+        [
+          {
+            "node": "Analyze video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze video": {
+      "main": [
+        [
+          {
+            "node": "Format video description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format video description": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format voice transcription": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format response": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if respond after 30 mins": {
+      "main": [
+        [
+          {
+            "node": "Check for booking link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Check for booking link_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Agent #1": {
+      "main": [
+        [
+          {
+            "node": "If agent 1 continues to respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Agent #2": {
+      "main": [
+        [
+          {
+            "node": "If agent 2 continues to respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent 1 continues to respond": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip agent 1's response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If agent 2 continues to respond": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip agent 2's response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Skip agent 1's response": {
+      "main": [
+        []
+      ]
+    },
+    "Check for booking link": {
+      "main": [
+        [
+          {
+            "node": "Check for email1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Agent #1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for booking link_2": {
+      "main": [
+        [
+          {
+            "node": "Check for email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Response Agent #2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Format response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip auto reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send link to Slack": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send booking link to Slack 2": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet_2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract booking link": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send booking link to Slack 3": {
+      "main": [
+        [
+          {
+            "node": "Add reservation link to Google Sheet_3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract booking link1": {
+      "main": [
+        [
+          {
+            "node": "Send booking link to Slack 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract email": {
+      "main": [
+        [
+          {
+            "node": "Add email to Gsheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send email to Slack 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract email1": {
+      "main": [
+        [
+          {
+            "node": "Add email to Gsheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send email to Slack ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for email": {
+      "main": [
+        [
+          {
+            "node": "Extract email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract booking link",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for email1": {
+      "main": [
+        [
+          {
+            "node": "Extract email1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract booking link1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Receive Reply": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "user-agent": "Messagebird/Requests develop:8c9cc536",
+            "content-type": "application/json; charset=utf-8",
+            "messagebird-request-id": "9013a853-a652-4282-8943-5cf81542812c",
+            "messagebird-request-timestamp": "1769504830",
+            "content-length": "877",
+            "x-cloud-trace-context": "040b757e5a4aad09e8a2904c4dcdf726/1606784068944717596",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-040b757e5a4aad09e8a2904c4dcdf726-164c7198fc34e71c-00",
+            "x-forwarded-for": "13.127.212.189",
+            "forwarded": "for=\"13.127.212.189\";proto=https",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "service": "channels",
+            "event": "whatsapp.inbound",
+            "payload": {
+              "id": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+              "channelId": "6e133ad8-1149-52a1-89e5-b3e33491816d",
+              "sender": {
+                "contact": {
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "annotations": {
+                    "name": "Chelsea Nguyen"
+                  }
+                }
+              },
+              "receiver": {
+                "connector": {
+                  "id": "0d04e53b-771c-4679-a7f0-79629a721804",
+                  "identifierValue": "+61485909274"
+                }
+              },
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hey Alan"
+                }
+              },
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1769504828",
+                  "user_locale": "cmn"
+                }
+              },
+              "reference": "",
+              "parts": [
+                {
+                  "platformReference": "wamid.HBgKNjU5MDU3MDY1NBUCABIYFDNBNzU4QkNCMDM2QjQ5Q0U4OEQyAA=="
+                }
+              ],
+              "status": "delivered",
+              "reason": "",
+              "direction": "incoming",
+              "chargeableUnits": 1,
+              "lastStatusAt": "2026-01-27T09:07:10.501Z",
+              "createdAt": "2026-01-27T09:07:10.324Z",
+              "updatedAt": "2026-01-27T09:07:10.501Z",
+              "batchId": null
+            }
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook-test/bird-message-received",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "1bec5433-433c-47ae-b563-cbe510210f43",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-27T09:02:31.185Z",
+      "createdAt": "2026-01-27T09:02:31.185Z",
+      "role": "workflow:owner",
+      "workflowId": "eXEVf6BDPaBy3uWd",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
