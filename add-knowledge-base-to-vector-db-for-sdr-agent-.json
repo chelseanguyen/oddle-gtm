@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-02T02:56:34.460Z",
+  "updatedAt": "2026-02-02T03:29:13.511Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -186,13 +186,6 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "hour": 12
-            }
-          ]
-        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -221,13 +214,6 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "hour": 12
-            }
-          ]
-        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -494,6 +480,13 @@
     },
     {
       "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -613,6 +606,13 @@
     },
     {
       "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -745,7 +745,7 @@
       "typeVersion": 1,
       "position": [
         -128,
-        -128
+        112
       ],
       "id": "90a816a8-0fb4-41f2-9a2f-3ff3d143edf4",
       "name": "Delete a row2",
@@ -759,7 +759,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Loop through every item received from the current node\nreturn items.map((item, index) => {\n  // Explicitly extract the original data from the 'Row updated' node using the current item's index\n  const rowData = $('Row updated').item.json;\n\n  // Prepare variables with fallbacks to avoid errors if cells are empty\n  const topic = rowData.topic || 'General';\n  const prospectMessage = rowData.content || '';\n  const response_sent = rowData.response_sent || '';\n  const type = rowData.type || 'unknown';\n\n  // Construct the documentText using backticks to preserve line breaks (\\n)\n  // This matches your requested structure with double-spacing before \"How we respond\"\n  const documentText = `Topic: ${topic}\nProspect’s message: \"${prospectMessage}\"\n\nHow we respond: \n\n${response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: type,\n        topic: topic,\n        created_at: new Date().toISOString()\n      }\n    }\n  };\n});"
+        "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Topic: ${data.topic}\nProspect’s message: \"${data.content}\"\n\nHow we respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n        topic: data.topic\n      }\n    }\n  };\n});"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -857,7 +857,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        384,
+        336,
         64
       ],
       "name": "Google Gemini Embeddings7",
@@ -888,7 +888,7 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        576,
+        528,
         64
       ],
       "id": "97e2cfe2-2bfe-4e4d-bd30-9a235d6e4dad",
@@ -902,7 +902,7 @@
       "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
       "typeVersion": 1,
       "position": [
-        576,
+        528,
         240
       ],
       "id": "0ad5222a-b89e-47a7-82a4-ab6b29503ffe",
@@ -922,7 +922,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1,
       "position": [
-        448,
+        400,
         -128
       ],
       "name": "Store Objections Guide to DB2",
@@ -965,6 +965,21 @@
       "typeVersion": 1,
       "id": "6ef26a51-1649-40af-b45f-6114982cb518",
       "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -128,
+        -128
+      ],
+      "id": "0222d720-2e97-4ca4-bae1-681984208540",
+      "name": "Wait",
+      "webhookId": "d9fa627d-b247-4a2a-857e-445ba474d8ee"
     }
   ],
   "connections": {
@@ -1212,13 +1227,7 @@
     },
     "Delete a row2": {
       "main": [
-        [
-          {
-            "node": "Parse training content1",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Row added": {
@@ -1235,6 +1244,11 @@
     "Row updated": {
       "main": [
         [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Delete a row2",
             "type": "main",
@@ -1281,6 +1295,17 @@
         [
           {
             "node": "Store Objections Guide to DB2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Parse training content1",
             "type": "main",
             "index": 0
           }
@@ -1523,119 +1548,9 @@
           "item": 0
         }
       }
-    ],
-    "Row updated": [
-      {
-        "json": {
-          "type": "nowbookit_01",
-          "topic": "Objection",
-          "content": "NowBookIt already sends reminders",
-          "response_sent": "Hi Chelsea,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "nowbookit_02",
-          "topic": "Objection",
-          "content": "We don’t have time to switch.",
-          "response_sent": "Hi Chelsea,\n\nTha'ts totally fair. Finding the time to switch systems is usually the biggest hurdle for any busy venue.\n\nThat is exactly why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident.\n\nThe goal is to make the transition feel like an upgrade that happens in the background, not a project that slows you down.\n\nWould you be open to a quick sharing to understand how we handle the heavy lifting for you?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "nowbookit_03",
-          "topic": "Objection",
-          "content": "Is this just cheaper?",
-          "response_sent": "Hi Chelsea,\n\nThat’s a great question. While we are highly competitive on price, the real win here is the outcome you get from the automation.\n\nCost is usually secondary, and for multi-outlet groups, avoiding per-outlet wastage makes it cheaper by design. Essentially, you get a more powerful automation layer that scales across all your locations without the typical price bloat.\n\nWould you be open to a quick sharing to understand how it works for your brand?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "nowbookit_04",
-          "topic": "Objection",
-          "content": "We’ll think about it later.",
-          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nEarly venues lock in the rate forever, so it's worth doing a quick fit check today to protect that margin if switching is a possibility on your roadmap. \n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "SevenRooms_01",
-          "topic": "Objection",
-          "content": "SevenRooms is best-in-class. We don’t want to downgrade",
-          "response_sent": "Hi Chelsea,\n\nThat's totally fair, SevenRooms has a massive feature set.\n\nThat is why we always start with utilization. What are the 5-10 features your team actually uses weekly? And if Oddle covers those while improving your automation, then it isn't a downgrade. It is simply removing the bloat you are paying for but not using.\n\nWould you be open to a quick chat so we can share how we actually drive your revenue?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "SevenRooms_02",
-          "topic": "Objection",
-          "content": "We use a lot of SevenRooms's features.",
-          "response_sent": "Hi Chelsea,\n\nThat is great to hear. Since you are a power user, the best thing to do is to quickly map your actual usage.\n\nIf you are deeply utilizing their most advanced capabilities, I will be completely transparent with you if we aren't the right fit. However, if we can match that performance while streamlining your workflow, I'd say it's worth a look.\n\nAre you open to a quick chat so we can share how those specific workflows would look on our end?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "SevenRooms_03",
-          "topic": "Objection",
-          "content": "Switching is risky for us.",
-          "response_sent": "Hi Chelsea,\n\nI completely understand. The biggest risk is always the transition, which is why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident. The migration process is managed so you don’t lose bookings.\n\nThe goal is to make the change invisible to your guests and stress-free for your team.\n\nWould you be open to a quick chat so we can share our migration checklist with you?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "SevenRooms_04",
-          "topic": "Objection",
-          "content": "Is this mainly about price?",
-          "response_sent": "Hi Chelsea,\n\nPrice is definitely part of the conversation because our model eliminates the per-outlet pricing wastage you often see elsewhere.\n\nHowever, the bigger win is the ROI. We focus on automation outcomes and a specific settings strategy designed to protect your conversion rates. It is less about just saving on costs and more about ensuring you aren't leaving money on the table.\n\nAre you open to a quick chat so we can share how that strategy looks in practice?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      },
-      {
-        "json": {
-          "type": "SevenRooms_05",
-          "topic": "Objection",
-          "content": "We’ll look later.",
-          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nWe are offering early Australian partners the chance to lock in the early-access rate forever. I'd say it's worth doing a quick fit check today just to protect that long-term margin if switching is a possibility on your roadmap.\n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
-          "added to DB?": ""
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
     ]
   },
-  "versionId": "35c8240c-06be-472f-9330-13c67852ed6e",
+  "versionId": "2cff0d74-886e-44ff-ae55-266c73801d8d",
   "activeVersionId": "3a4c65da-ae1b-46a5-bf6a-d00f9a338fad",
   "triggerCount": 2,
   "shared": [
