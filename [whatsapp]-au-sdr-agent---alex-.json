@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-28T08:14:21.268Z",
+  "updatedAt": "2026-01-30T04:17:44.689Z",
   "createdAt": "2026-01-27T09:02:31.185Z",
   "id": "eXEVf6BDPaBy3uWd",
   "name": "[WhatsApp] AU SDR Agent - Alex",
@@ -227,7 +227,7 @@
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3168,
+        3648,
         928
       ],
       "typeVersion": 1,
@@ -307,48 +307,12 @@
     },
     {
       "parameters": {
-        "url": "=https://gate.whapi.cloud/messages/list/{{ $json.chat_id }}",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "count",
-              "value": "20"
-            }
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "accept",
-              "value": "application/json"
-            },
-            {
-              "name": "authorization",
-              "value": "Bearer XRrTS2TMfTogsCgLuVQ2xrZLkBIw8OIR"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        2064,
-        -96
-      ],
-      "id": "8f69744a-b47a-4cee-8495-ecaa0f2cb93f",
-      "name": "Get Chat History"
-    },
-    {
-      "parameters": {
-        "jsCode": "// Helper function to format timestamp\nfunction formatTimestamp(timestamp) {\n  const date = new Date(timestamp * 1000);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// 1. GET DATA FROM PREVIOUS NODES\nconst inputData = $input.all();\nconst latestInput = $(\"Get User's Message\").first().json; \nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.messages) {\n    // Filter out system actions/reactions\n    rawMessages = firstItem.messages.filter(msg => msg.type !== 'action' && msg.type !== 'reaction');\n  }\n}\n\n// 2. DEFINE THE LEAD MESSAGE (Caption first, then Media Description)\nlet leadMessage = \"\";\n\nif (latestInput.message_type === 'text') {\n    leadMessage = latestInput.message_text;\n} else {\n    // Media Message Logic\n    const caption = latestInput.message_caption ? `Restaurant's Caption: \"${latestInput.message_caption}\"` : \"User sent a media file with no caption.\";\n    const description = latestInput.message_text ? `\\n\\n[Explanation of the ${latestInput.message_type}]:\\n${latestInput.message_text}` : \"\";\n    \n    leadMessage = `${caption}${description}`;\n}\n\n// 3. PROCESS THE CHAT HISTORY THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isFromMe = item.from_me === true;\n  const role = isFromMe ? 'Veronica' : 'Restaurant';\n  let text = item.text?.body || (item.caption ? item.caption : `[${item.type} file]`);\n  \n  return {\n    timestamp: item.timestamp,\n    formattedTime: formatTimestamp(item.timestamp),\n    role: role,\n    isFromMe: isFromMe,\n    message: text.substring(0, 1000)\n  };\n});\n\n// Sort chronological (Oldest to Newest)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => a.timestamp - b.timestamp);\n\n// 4. CALCULATE RESPONSE TIME (Numeric)\nlet responseTimeMinutes = 0; // Default to 0 for the IF node\n\nconst lastMsgIndex = chronologicalMessages.length - 1;\n\n// Only calculate if there are at least 2 messages and the latest is from the Contact\nif (lastMsgIndex > 0) {\n  const lastMsg = chronologicalMessages[lastMsgIndex];\n  \n  if (!lastMsg.isFromMe) {\n    // Look backwards for the first message from \"Me\" (Veronica)\n    for (let i = lastMsgIndex - 1; i >= 0; i--) {\n      if (chronologicalMessages[i].isFromMe) {\n        const diffInSeconds = lastMsg.timestamp - chronologicalMessages[i].timestamp;\n        const diffInMinutes = diffInSeconds / 60;\n        \n        // Logic: less than 1 min = 1, otherwise Round Up\n        if (diffInMinutes <= 1) {\n          responseTimeMinutes = 1;\n        } else {\n          responseTimeMinutes = Math.ceil(diffInMinutes);\n        }\n        break; // Found the latest response pair, exit loop\n      }\n    }\n  }\n}\n\n// 5. FORMAT THREAD FOR DISPLAY\nconst conversationThread = chronologicalMessages.map(msg => {\n  return `[${msg.formattedTime}] ${msg.role}: ${msg.message}`;\n}).join('\\n\\n');\n\n// 6. RETURN RESULTS\nreturn {\n  json: {\n    leadMessage: leadMessage, \n    chatId: latestInput.chat_id,\n    conversationThreadFormatted: conversationThread,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: chronologicalMessages.length,\n      latestRole: latestInput.message_type === 'text' ? 'Restaurant' : `Restaurant (${latestInput.message_type})`\n    }\n  }\n};"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  // 1. Sort messages by createdAt (Oldest to Newest)\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(a.createdAt) - new Date(b.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    \n    // Standardize on createdAt\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toISOString().replace('T', ' ').substring(0, 16);\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // Build Thread\n    conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n\n    if (isProspect) {\n      latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      // Reset reply tracker so we find the SDR message that follows THIS prospect message\n      firstSdrReplyTime = null;\n    } else if (msg.sender.type === 'user' && lastProspectTime && !firstSdrReplyTime) {\n      // Capture the first SDR reply that occurs after the most recent Prospect message\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  // 2. Calculate Response Time (Minutes)\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = firstSdrReplyTime - lastProspectTime;\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.join('\\n\\n'),\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[sortedMessages.length - 1].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2272,
+        2624,
         -96
       ],
       "name": "Parse Chat History",
@@ -361,7 +325,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3424,
+        3904,
         928
       ],
       "id": "2bf673d6-6e58-4520-be0c-2ad56fe77558",
@@ -606,7 +570,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3936,
+        4416,
         720
       ],
       "id": "c401782e-6887-46e2-9684-b2b434513d34",
@@ -680,7 +644,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2480,
+        2960,
         -96
       ],
       "id": "0fa443fa-16c4-478d-808c-1da66308a55d",
@@ -695,7 +659,7 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3152,
+        3632,
         -208
       ],
       "typeVersion": 1,
@@ -713,7 +677,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3408,
+        3888,
         -208
       ],
       "id": "234f0127-4800-4979-b7ae-cc030ff5f020",
@@ -742,7 +706,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3920,
+        4400,
         -416
       ],
       "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
@@ -767,7 +731,7 @@
       "name": "Response Agent #1",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3216,
+        3696,
         -400
       ],
       "typeVersion": 1.6
@@ -785,7 +749,7 @@
       "name": "Response Agent #2",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3232,
+        3712,
         736
       ],
       "typeVersion": 1.6
@@ -795,7 +759,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3920,
+        4400,
         -176
       ],
       "id": "f009dbe5-a05a-4227-9f6d-65d1c410fda1",
@@ -806,7 +770,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3952,
+        4432,
         960
       ],
       "id": "47360925-fa04-4e1e-a573-5f47accef1f6",
@@ -840,7 +804,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3616,
+        4096,
         -400
       ],
       "id": "b9d06053-2f84-4827-a8e4-6f2674b75051",
@@ -874,7 +838,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3648,
+        4128,
         736
       ],
       "id": "81075e4c-a51b-4b91-bb5b-6e48ed14dd61",
@@ -909,7 +873,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2752,
+        3232,
         -416
       ],
       "id": "696014ee-2599-4b36-9c35-2edef39e6be2",
@@ -944,7 +908,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2752,
+        3232,
         352
       ],
       "id": "100c77a0-056a-46d6-99fb-e79f45d99647",
@@ -1008,7 +972,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3728,
+        4208,
         -688
       ],
       "id": "83c0f3a9-2316-419b-981f-123020c121a5",
@@ -1043,7 +1007,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3760,
+        4240,
         464
       ],
       "id": "3de36228-2ece-4b8a-97c7-0c5944c77351",
@@ -1636,7 +1600,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3952,
+        4432,
         -688
       ],
       "id": "d75a922b-0540-4bc5-82b3-f49a531fc1bf",
@@ -1655,7 +1619,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3536,
+        4016,
         464
       ],
       "id": "5138e66a-d61c-4c93-96a9-32416157e910",
@@ -1668,7 +1632,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3488,
+        3968,
         -688
       ],
       "id": "f4a3eca1-fb4c-458a-89a0-3d7ce123ac78",
@@ -1931,7 +1895,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3968,
+        4448,
         464
       ],
       "id": "550729d1-b1f4-45fe-84fa-399609a488c8",
@@ -1950,7 +1914,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3536,
+        4016,
         240
       ],
       "id": "085575b6-96bd-4257-a497-ca87f6c6f006",
@@ -2222,7 +2186,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3776,
+        4256,
         240
       ],
       "id": "56ff7266-2c92-4d18-bb97-c0af3c16879c",
@@ -2241,7 +2205,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3488,
+        3968,
         -896
       ],
       "id": "0c417837-a4df-49e9-b4db-338a9f1ee527",
@@ -2513,7 +2477,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3824,
+        4304,
         -896
       ],
       "id": "68a48c8b-b087-4d39-a058-2425476c6088",
@@ -2552,7 +2516,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3232,
+        3712,
         336
       ],
       "id": "d4017662-837a-4fc6-9364-e546a89cb200",
@@ -2585,7 +2549,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3216,
+        3696,
         -816
       ],
       "id": "311fc78c-07eb-4ccc-be56-0c82f30e1b65",
@@ -2614,7 +2578,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3824,
+        4304,
         -1104
       ],
       "id": "91c1a125-65c9-4132-941a-a5c0db0aab88",
@@ -2649,7 +2613,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3776,
+        4256,
         64
       ],
       "id": "acfa4de2-2e78-4f83-a15f-131e6e380738",
@@ -2663,16 +2627,75 @@
     },
     {
       "parameters": {
-        "content": "### get conversation ID\nhttps://docs.bird.com/api/conversations-api/api-reference/conversation-participants/list-participant-conversations-by-id"
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/participants/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}/conversations",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "channelId",
+              "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "authorization",
+              "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+            }
+          ]
+        },
+        "options": {}
       },
-      "type": "n8n-nodes-base.stickyNote",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
       "position": [
-        1904,
-        -336
+        2064,
+        -96
       ],
-      "typeVersion": 1,
-      "id": "f8089e9c-447b-4dde-b2fe-1573f90e3e51",
-      "name": "Sticky Note"
+      "id": "8f69744a-b47a-4cee-8495-ecaa0f2cb93f",
+      "name": "Get conversation ID"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/conversations/{{ $json.results[0].id }}/messages",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "20"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "authorization",
+              "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2336,
+        -96
+      ],
+      "id": "c525f8af-0d1a-4272-9bc0-0d43f24a9d19",
+      "name": "Get Chat History"
     }
   ],
   "connections": {
@@ -2680,7 +2703,7 @@
       "main": [
         [
           {
-            "node": "Get Chat History",
+            "node": "Get conversation ID",
             "type": "main",
             "index": 0
           }
@@ -2783,17 +2806,6 @@
         [
           {
             "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Chat History": {
-      "main": [
-        [
-          {
-            "node": "Parse Chat History",
             "type": "main",
             "index": 0
           }
@@ -3211,6 +3223,28 @@
           }
         ]
       ]
+    },
+    "Get conversation ID": {
+      "main": [
+        [
+          {
+            "node": "Get Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat History": {
+      "main": [
+        [
+          {
+            "node": "Parse Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -3301,9 +3335,104 @@
           "item": 0
         }
       }
+    ],
+    "Get conversation ID": [
+      {
+        "json": {
+          "results": [
+            {
+              "id": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "name": "",
+              "description": "",
+              "status": "active",
+              "style": "default",
+              "visibility": "public",
+              "accessibility": "open",
+              "featuredParticipants": [
+                {
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "type": "contact",
+                  "status": "active",
+                  "displayName": "Chelsea Nguyen",
+                  "avatarUrl": "",
+                  "contact": {
+                    "identifierKey": "phonenumber",
+                    "identifierValue": "+6590570654",
+                    "platformAddressSelector": "identifiers.phonenumber",
+                    "platformAddress": "+6590570654"
+                  }
+                },
+                {
+                  "id": "3ee61feb-67be-4327-b8b9-c807dc94e4a6",
+                  "type": "user",
+                  "status": "active",
+                  "displayName": "Chelsea",
+                  "avatarUrl": ""
+                },
+                {
+                  "id": "7a2155ed-74c6-4bbf-aae5-23f037394b2e",
+                  "type": "user",
+                  "status": "active",
+                  "displayName": "Chloe",
+                  "avatarUrl": ""
+                }
+              ],
+              "activeParticipantCount": 3,
+              "pendingParticipantCount": 0,
+              "initiatingParticipant": {
+                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                "type": "contact",
+                "status": "active",
+                "displayName": "Chelsea Nguyen",
+                "avatarUrl": "",
+                "contact": {
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654"
+                }
+              },
+              "channelId": "6e133ad8-1149-52a1-89e5-b3e33491816d",
+              "lastMessage": {
+                "id": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+                "type": "text",
+                "preview": {
+                  "text": "Hey Alan"
+                },
+                "recipients": [],
+                "status": "delivered",
+                "sender": {
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "type": "contact",
+                  "status": "active",
+                  "displayName": "Chelsea Nguyen",
+                  "avatarUrl": "",
+                  "contact": {
+                    "identifierKey": "phonenumber",
+                    "identifierValue": "+6590570654",
+                    "platformAddressSelector": "identifiers.phonenumber",
+                    "platformAddress": "+6590570654"
+                  }
+                },
+                "createdAt": "2026-01-27T09:07:10.324Z",
+                "draft": false
+              },
+              "createdAt": "2025-10-28T03:42:26.298Z",
+              "updatedAt": "2026-01-27T09:07:10.324Z",
+              "platformStyle": "direct",
+              "lastMessageOutgoingAt": "2025-11-20T08:00:18.466Z",
+              "lastMessageIncomingAt": "2026-01-27T09:07:10.324Z",
+              "hasDraft": false
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
-  "versionId": "1bec5433-433c-47ae-b563-cbe510210f43",
+  "versionId": "57738e67-3bbb-4612-af50-89faacc05656",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
