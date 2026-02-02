@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-16T08:05:30.079Z",
+  "updatedAt": "2026-02-02T01:41:56.266Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -477,7 +477,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Prepare training document for Vector Store\nconst leadMessage = $('Parse Conversation History').first().json.leadMessage;\nconst responseSent = $('Parse Slack Payload').item.json.ai_generated_response;\nconst topic = $json.output?.topic || $json.topic || 'general_inquiry';\n\nconst now = new Date();\nconst timestamp = now.toLocaleString('en-SG', {\n  timeZone: 'Asia/Singapore',\n  year: 'numeric',\n  month: 'long',\n  day: 'numeric',\n  hour: '2-digit',\n  minute: '2-digit',\n  hour12: true\n});\n\nconst cleanedResponse = responseSent\n  .replace(/\\\\n/g, ' ')\n  .replace(/\\s+/g, ' ')\n  .trim();\n\n// Return as a single item\nreturn {\n  json: {\n    pageContent: leadMessage, //Standard key for text\n    custom_metadata: {\n      topic: topic,\n      response_sent: cleanedResponse,\n      created_at: timestamp\n    }\n  }\n};"
+        "jsCode": "// Retrieve data\nconst leadMessage = $('Parse Conversation History').first().json.leadMessage;\nconst responseSent = $('Parse Slack Payload').first().json.ai_generated_response;\nconst rawTopic = $('Categorize Lead Message Topic').first().json.output?.topic || 'general_inquiry';\n\n// Capitalize the first letter of the topic (e.g., 'objection' -> 'Objection')\nconst topic = rawTopic.charAt(0).toUpperCase() + rawTopic.slice(1);\n\n// Construct the structured pageContent string\n// Note: This uses backticks to maintain the line breaks exactly as they will appear in the DB\nconst formattedContent = `Topic: ${topic}\nProspect’s message: \n\"${leadMessage}\"\n\nHow we respond: \n\n${responseSent}`;\n\nreturn {\n  json: {\n    pageContent: formattedContent,\n    metadata: {\n      topic: topic,\n      created_at: new Date().toISOString() // Recommended for DB sorting\n    }\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -493,9 +493,9 @@
         "mode": "insert",
         "tableName": {
           "__rl": true,
-          "value": "outbound_responses",
+          "value": "objections_handling_guide",
           "mode": "list",
-          "cachedResultName": "outbound_responses"
+          "cachedResultName": "objections_handling_guide"
         },
         "options": {}
       },
@@ -519,16 +519,7 @@
         "jsonMode": "expressionData",
         "jsonData": "={{ $json.pageContent }}",
         "textSplittingMode": "custom",
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "metadata",
-                "value": "={{ $json.custom_metadata }}"
-              }
-            ]
-          }
-        }
+        "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
@@ -1066,7 +1057,7 @@
       }
     ]
   },
-  "versionId": "b1219c99-8ae2-403b-a990-a14cfcdf5f02",
+  "versionId": "c74eb80d-384d-4e9b-923e-a8d40d020576",
   "activeVersionId": "0563e157-cfe8-4a69-88c5-4fd964131eb5",
   "triggerCount": 1,
   "shared": [
