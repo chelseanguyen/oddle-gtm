@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-29T10:17:33.497Z",
+  "updatedAt": "2026-02-02T02:56:34.460Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -8,244 +8,15 @@
   "nodes": [
     {
       "parameters": {
-        "modelName": "text-embedding-004"
-      },
-      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        208,
-        128
-      ],
-      "name": "Google Gemini Embeddings",
-      "id": "d1f92cff-3ee1-461e-857e-3d22bbf9ff36",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "jsCode": "// Get all items from the previous node\nconst items = $input.all();\nconst timestamp = new Date().toISOString();\n\n// Map each item to the new format\nreturn items.map(item => {\n  return {\n    json: {\n      pageContent: item.json.content, // Maps 'content' to 'pageContent'\n      custom_metadata: {\n        topic: item.json.topic,\n        response_sent: item.json.response_sent,\n        created_at: timestamp\n      }\n    }\n  };\n});"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        32,
-        -80
-      ],
-      "name": "Prepare Training Document",
-      "id": "cce6a8b5-c0e6-4c7c-9845-d1af2197e7f8"
-    },
-    {
-      "parameters": {
-        "jsonMode": "expressionData",
-        "jsonData": "={{ $json.pageContent }}",
-        "textSplittingMode": "custom",
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "metadata",
-                "value": "={{ $json.custom_metadata }}"
-              }
-            ]
-          }
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-      "typeVersion": 1.1,
-      "position": [
-        400,
-        128
-      ],
-      "id": "bf5d2b7e-a038-45b5-bd97-ce95193c6fc0",
-      "name": "Default Data Loader"
-    },
-    {
-      "parameters": {
-        "separator": "*&^%$&*()",
-        "chunkSize": 1000000
-      },
-      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-      "typeVersion": 1,
-      "position": [
-        400,
-        304
-      ],
-      "id": "5d400f4e-015e-4b1a-b562-ed0679632273",
-      "name": "Character Text Splitter"
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        -400,
-        -80
-      ],
-      "id": "dfc00a09-473b-4956-981c-fef08a0eb5a0",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
-      "parameters": {
-        "documentId": {
-          "__rl": true,
-          "value": "1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0",
-          "mode": "list",
-          "cachedResultName": "Sales Journey Research 2026",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 388720136,
-          "mode": "list",
-          "cachedResultName": "Objection Handling",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0/edit#gid=388720136"
-        },
-        "filtersUI": {
-          "values": [
-            {
-              "lookupColumn": "added to DB"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        -192,
-        -80
-      ],
-      "id": "32580e90-d3d9-4259-bdf8-2f1c2fe57288",
-      "name": "Get row(s) in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "documentId": {
-          "__rl": true,
-          "value": "1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0",
-          "mode": "list",
-          "cachedResultName": "Sales Journey Research 2026",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0/edit?usp=drivesdk"
-        },
-        "sheetName": {
-          "__rl": true,
-          "value": 388720136,
-          "mode": "list",
-          "cachedResultName": "Objection Handling",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Z0YCvoNKqfXstFNCJu7xRPaGVcX8ntj1kqmG0I3ZeA0/edit#gid=388720136"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "added to DB?": "yes",
-            "content": "={{ $('Get row(s) in sheet').item.json.content }}"
-          },
-          "matchingColumns": [
-            "content"
-          ],
-          "schema": [
-            {
-              "id": "group",
-              "displayName": "group",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "topic",
-              "displayName": "topic",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "content",
-              "displayName": "content",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "response_sent",
-              "displayName": "response_sent",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": true
-            },
-            {
-              "id": "added to DB?",
-              "displayName": "added to DB?",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "row_number",
-              "displayName": "row_number",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "number",
-              "canBeUsedToMatch": true,
-              "readOnly": true,
-              "removed": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleSheets",
-      "typeVersion": 4.7,
-      "position": [
-        624,
-        -80
-      ],
-      "id": "ffd28796-114d-44f2-96b9-64915a948e2e",
-      "name": "Update row in sheet",
-      "credentials": {
-        "googleSheetsOAuth2Api": {
-          "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "## Add Objections Handling from Google Sheet",
-        "height": 80,
-        "width": 688
+        "content": "## Add Objections Handling guide from Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
+        "height": 608,
+        "width": 1296,
+        "color": 3
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -400,
-        -208
+        -448,
+        -880
       ],
       "typeVersion": 1,
       "id": "6b1b0b8c-dc48-4989-955f-73346852874d",
@@ -352,40 +123,15 @@
     },
     {
       "parameters": {
-        "mode": "insert",
-        "tableName": {
-          "__rl": true,
-          "value": "outbound_responses",
-          "mode": "list",
-          "cachedResultName": "outbound_responses"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1,
-      "position": [
-        272,
-        -80
-      ],
-      "name": "Store Objections Guide to DB",
-      "id": "d03d3b23-1d31-4456-9ac7-67413a805731",
-      "credentials": {
-        "supabaseApi": {
-          "id": "aJzMx5t2Q4kcZ8EL",
-          "name": "Supabase Account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "content": "## Add Prospecting Guide from Google Docs",
-        "height": 80,
-        "width": 688
+        "height": 544,
+        "width": 1200,
+        "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -368,
-        496
+        -448,
+        512
       ],
       "typeVersion": 1,
       "id": "e7784c48-7ec5-4f92-9082-0de5497cf968",
@@ -411,7 +157,7 @@
       "typeVersion": 3,
       "position": [
         80,
-        1216
+        1200
       ],
       "id": "f0c3564e-bbff-4cd4-b7ec-8b6f6c485a9a",
       "name": "Download file1",
@@ -426,13 +172,13 @@
     {
       "parameters": {
         "content": "## Update changes from Google Docs files\nOnly update one doc at a time",
-        "height": 80,
-        "width": 688
+        "height": 496,
+        "width": 1200
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -352,
-        1072
+        -448,
+        1104
       ],
       "typeVersion": 1,
       "id": "85028e8e-3b0c-475d-8e0f-2be9ac03a740",
@@ -451,7 +197,9 @@
         "folderToWatch": {
           "__rl": true,
           "value": "1O0RNTr8h8dlhLt4ntedPGHzJmgsIrTrH",
-          "mode": "list"
+          "mode": "list",
+          "cachedResultName": "AU Prospecting Guide for SDR Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1O0RNTr8h8dlhLt4ntedPGHzJmgsIrTrH"
         },
         "event": "fileCreated",
         "options": {}
@@ -495,7 +243,7 @@
       "typeVersion": 1,
       "position": [
         -352,
-        1216
+        1200
       ],
       "id": "a6e1d41a-c967-41ec-927b-bb0e2dc06db0",
       "name": "When doc is edited",
@@ -517,7 +265,7 @@
       "typeVersion": 1,
       "position": [
         -144,
-        1216
+        1200
       ],
       "id": "78f791be-7d8a-4e86-8625-db4ee5a79eb1",
       "name": "Delete a row",
@@ -537,7 +285,7 @@
       "typeVersion": 1,
       "position": [
         272,
-        1424
+        1408
       ],
       "name": "Google Gemini Embeddings2",
       "id": "a3c4b007-e5f3-456c-a4d8-7f2bde741f38",
@@ -566,7 +314,7 @@
       "typeVersion": 1.1,
       "position": [
         480,
-        1424
+        1408
       ],
       "id": "5f7d39f3-5375-4125-a380-3a6d250c2ef2",
       "name": "Default Data Loader2"
@@ -586,7 +334,7 @@
       "typeVersion": 1,
       "position": [
         384,
-        1216
+        1200
       ],
       "name": "Store Prospecting Guide to DB1",
       "id": "bf6aaa1d-dce0-441d-b777-834a211f1ce8",
@@ -596,75 +344,630 @@
           "name": "Supabase Account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('When doc is added').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1680,
+        -576
+      ],
+      "id": "2f9f3b8f-a974-43ac-a639-978186650ae8",
+      "name": "Download file3",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1904,
+        -368
+      ],
+      "name": "Google Gemini Embeddings4",
+      "id": "a300df1e-5d25-435e-a92d-99abc845646e",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{$json.id}}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2112,
+        -368
+      ],
+      "id": "a8670634-06fc-4323-84a0-347b5d0a49cd",
+      "name": "Default Data Loader4"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "objections_handling_guide",
+          "mode": "list",
+          "cachedResultName": "objections_handling_guide"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2016,
+        -576
+      ],
+      "name": "Store Prospecting Guide to DB2",
+      "id": "827c3f1a-a831-4ffa-9335-2cb041588176",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $('When doc is edited1').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {
+          "googleFileConversion": {
+            "conversion": {
+              "docsToFormat": "application/pdf"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1904,
+        -32
+      ],
+      "id": "bc018207-a04d-441b-a530-1a42ca416081",
+      "name": "Download file4",
+      "executeOnce": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## [Obsolete] Update changes from Objections Handling guide doc\nOnly update one doc at a time",
+        "height": 528,
+        "width": 1200,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1376,
+        -160
+      ],
+      "typeVersion": 1,
+      "id": "80395666-28cf-4e98-b4bc-fe91e69cfd27",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1iF1668fEviYPD3AAzbB9AuWqd0XyNp4i",
+          "mode": "list",
+          "cachedResultName": "AU Objections Handling Guide for SDR Email Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iF1668fEviYPD3AAzbB9AuWqd0XyNp4i"
+        },
+        "event": "fileUpdated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        -32
+      ],
+      "id": "f51baa6f-e9d0-4c6e-8784-a10240e0abb6",
+      "name": "When doc is edited1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "objections_handling_guide",
+        "filterType": "string",
+        "filterString": "=metadata->>file_id=eq.{{ $json.id }}"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        -32
+      ],
+      "id": "29365ec8-0679-43b8-af7f-2220d5d93620",
+      "name": "Delete a row1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "text-embedding-004"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2096,
+        192
+      ],
+      "name": "Google Gemini Embeddings5",
+      "id": "24bc29ef-076e-40b9-886f-3fd40eb783c4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "file_id",
+                "value": "={{ $('When doc is edited1').item.json.id }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        2304,
+        192
+      ],
+      "id": "140e8b16-1a69-4e8c-8a7b-bcc8b0cfa5d3",
+      "name": "Default Data Loader5"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "objections_handling_guide",
+          "mode": "list",
+          "cachedResultName": "objections_handling_guide"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        2208,
+        -32
+      ],
+      "name": "Store Prospecting Guide to DB3",
+      "id": "4dd110b0-e3ba-4ee5-b6d5-0f6447ba9ac3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "1iF1668fEviYPD3AAzbB9AuWqd0XyNp4i",
+          "mode": "list",
+          "cachedResultName": "AU Objections Handling Guide for SDR Email Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iF1668fEviYPD3AAzbB9AuWqd0XyNp4i"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        1472,
+        -576
+      ],
+      "id": "91982201-72ad-40a1-ba25-31ff73cf075d",
+      "name": "When doc is added",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Topic: ${data.topic}\nProspect’s message: \"${data.content}\"\n\nHow we respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n        topic: data.topic\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        -784
+      ],
+      "id": "bf516147-4c1b-4d7e-a18a-ac26f52321e1",
+      "name": "Parse training content"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        128,
+        -592
+      ],
+      "name": "Google Gemini Embeddings6",
+      "id": "ade7612e-f227-4fff-8dc5-d61cf383f931",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "type",
+                "value": "={{ $json.metadata.type }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        320,
+        -592
+      ],
+      "id": "0322f487-b192-4404-b747-1116680f9509",
+      "name": "Default Data Loader6"
+    },
+    {
+      "parameters": {
+        "separator": "*&^%$&*()",
+        "chunkSize": 1000000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -416
+      ],
+      "id": "3982aef3-957d-4715-9399-cf79779365d7",
+      "name": "Character Text Splitter1"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "objections_handling_guide",
+          "mode": "list",
+          "cachedResultName": "objections_handling_guide"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -784
+      ],
+      "name": "Store Objections Guide to DB1",
+      "id": "abbc3a67-1ec4-4596-8ff7-c86cba9bb46f",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "objections_handling_guide",
+        "filterType": "string",
+        "filterString": "=metadata->>type=eq.{{ $json.type }}"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        -128
+      ],
+      "id": "90a816a8-0fb4-41f2-9a2f-3ff3d143edf4",
+      "name": "Delete a row2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through every item received from the current node\nreturn items.map((item, index) => {\n  // Explicitly extract the original data from the 'Row updated' node using the current item's index\n  const rowData = $('Row updated').item.json;\n\n  // Prepare variables with fallbacks to avoid errors if cells are empty\n  const topic = rowData.topic || 'General';\n  const prospectMessage = rowData.content || '';\n  const response_sent = rowData.response_sent || '';\n  const type = rowData.type || 'unknown';\n\n  // Construct the documentText using backticks to preserve line breaks (\\n)\n  // This matches your requested structure with double-spacing before \"How we respond\"\n  const documentText = `Topic: ${topic}\nProspect’s message: \"${prospectMessage}\"\n\nHow we respond: \n\n${response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: type,\n        topic: topic,\n        created_at: new Date().toISOString()\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -128
+      ],
+      "id": "d54119d7-92f0-4367-ac4c-3a927ad1ff9f",
+      "name": "Parse training content1"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 19
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
+          "mode": "list",
+          "cachedResultName": "Objections Handling guide for AU",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        -784
+      ],
+      "id": "6d19e4f6-d510-4487-8d96-12af8d9047db",
+      "name": "Row added",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pDR6QZ9oC3DsT1h3",
+          "name": "Google Sheets Account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 19
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
+          "mode": "list",
+          "cachedResultName": "Objections Handling guide for AU",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -128
+      ],
+      "id": "9cd7400d-a109-48a4-8d57-601a16e9b7d6",
+      "name": "Row updated",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pDR6QZ9oC3DsT1h3",
+          "name": "Google Sheets Account 2"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        384,
+        64
+      ],
+      "name": "Google Gemini Embeddings7",
+      "id": "572eea84-3958-497e-9fcc-ac4a4640c9d1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "type",
+                "value": "={{ $json.metadata.type }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        576,
+        64
+      ],
+      "id": "97e2cfe2-2bfe-4e4d-bd30-9a235d6e4dad",
+      "name": "Default Data Loader7"
+    },
+    {
+      "parameters": {
+        "separator": "*&^%$&*()",
+        "chunkSize": 1000000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        576,
+        240
+      ],
+      "id": "0ad5222a-b89e-47a7-82a4-ab6b29503ffe",
+      "name": "Character Text Splitter2"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "objections_handling_guide",
+          "mode": "list",
+          "cachedResultName": "objections_handling_guide"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        -128
+      ],
+      "name": "Store Objections Guide to DB2",
+      "id": "a432b620-bc41-4338-b41d-a966b33cc297",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## [Obsolete] Add Objections Handling guide from Google Drive",
+        "height": 496,
+        "width": 1200,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1376,
+        -688
+      ],
+      "typeVersion": 1,
+      "id": "d6636043-f868-4bc6-89ac-1fb9ff8113b7",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Update changes from Objections Handling Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0\n",
+        "height": 656,
+        "width": 1296,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -448,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "6ef26a51-1649-40af-b45f-6114982cb518",
+      "name": "Sticky Note5"
     }
   ],
   "connections": {
-    "Google Gemini Embeddings": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Store Objections Guide to DB",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prepare Training Document": {
-      "main": [
-        [
-          {
-            "node": "Store Objections Guide to DB",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Default Data Loader": {
-      "ai_document": [
-        [
-          {
-            "node": "Store Objections Guide to DB",
-            "type": "ai_document",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Character Text Splitter": {
-      "ai_textSplitter": [
-        [
-          {
-            "node": "Default Data Loader",
-            "type": "ai_textSplitter",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s) in sheet": {
-      "main": [
-        [
-          {
-            "node": "Prepare Training Document",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Google Gemini Embeddings1": {
       "ai_embedding": [
         [
@@ -692,17 +995,6 @@
         [
           {
             "node": "Store Prospecting Guide to DB",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Store Objections Guide to DB": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet",
             "type": "main",
             "index": 0
           }
@@ -774,6 +1066,226 @@
           }
         ]
       ]
+    },
+    "Download file3": {
+      "main": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings4": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader4": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB2",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file4": {
+      "main": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When doc is edited1": {
+      "main": [
+        [
+          {
+            "node": "Delete a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row1": {
+      "main": [
+        [
+          {
+            "node": "Download file4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings5": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB3",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader5": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Prospecting Guide to DB3",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When doc is added": {
+      "main": [
+        [
+          {
+            "node": "Download file3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings6": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Objections Guide to DB1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader6": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Objections Guide to DB1",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter1": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader6",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse training content": {
+      "main": [
+        [
+          {
+            "node": "Store Objections Guide to DB1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row2": {
+      "main": [
+        [
+          {
+            "node": "Parse training content1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row added": {
+      "main": [
+        [
+          {
+            "node": "Parse training content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row updated": {
+      "main": [
+        [
+          {
+            "node": "Delete a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Embeddings7": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Objections Guide to DB2",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader7": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Objections Guide to DB2",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter2": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader7",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse training content1": {
+      "main": [
+        [
+          {
+            "node": "Store Objections Guide to DB2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -782,17 +1294,348 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-01-29T10:17:40Z"
+      "lastTimeChecked": "2026-02-02T01:11:55Z"
     },
     "node:When doc is edited": {
-      "lastTimeChecked": "2026-01-29T10:17:40Z"
+      "lastTimeChecked": "2026-02-02T01:11:56Z"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "3a4c65da-ae1b-46a5-bf6a-d00f9a338fad",
+  "pinData": {
+    "Parse training content": [
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"NowBookIt already sends reminders\"\n\nHow we respond: \n\nHi Chelsea,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?",
+          "metadata": {
+            "type": "nowbookit_01",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"We don’t have time to switch.\"\n\nHow we respond: \n\nHi Chelsea,\n\nTha'ts totally fair. Finding the time to switch systems is usually the biggest hurdle for any busy venue.\n\nThat is exactly why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident.\n\nThe goal is to make the transition feel like an upgrade that happens in the background, not a project that slows you down.\n\nWould you be open to a quick sharing to understand how we handle the heavy lifting for you?",
+          "metadata": {
+            "type": "nowbookit_02",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 1
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"Is this just cheaper?\"\n\nHow we respond: \n\nHi Chelsea,\n\nThat’s a great question. While we are highly competitive on price, the real win here is the outcome you get from the automation.\n\nCost is usually secondary, and for multi-outlet groups, avoiding per-outlet wastage makes it cheaper by design. Essentially, you get a more powerful automation layer that scales across all your locations without the typical price bloat.\n\nWould you be open to a quick sharing to understand how it works for your brand?",
+          "metadata": {
+            "type": "nowbookit_03",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 2
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"We’ll think about it later.\"\n\nHow we respond: \n\nHi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nEarly venues lock in the rate forever, so it's worth doing a quick fit check today to protect that margin if switching is a possibility on your roadmap. \n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "metadata": {
+            "type": "nowbookit_04",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 3
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"SevenRooms is best-in-class. We don’t want to downgrade\"\n\nHow we respond: \n\nHi Chelsea,\n\nThat's totally fair, SevenRooms has a massive feature set.\n\nThat is why we always start with utilization. What are the 5-10 features your team actually uses weekly? And if Oddle covers those while improving your automation, then it isn't a downgrade. It is simply removing the bloat you are paying for but not using.\n\nWould you be open to a quick chat so we can share how we actually drive your revenue?",
+          "metadata": {
+            "type": "SevenRooms_01",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 4
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"We use a lot of SevenRooms's features.\"\n\nHow we respond: \n\nHi Chelsea,\n\nThat is great to hear. Since you are a power user, the best thing to do is to quickly map your actual usage.\n\nIf you are deeply utilizing their most advanced capabilities, I will be completely transparent with you if we aren't the right fit. However, if we can match that performance while streamlining your workflow, I'd say it's worth a look.\n\nAre you open to a quick chat so we can share how those specific workflows would look on our end?",
+          "metadata": {
+            "type": "SevenRooms_02",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 5
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"Switching is risky for us.\"\n\nHow we respond: \n\nHi Chelsea,\n\nI completely understand. The biggest risk is always the transition, which is why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident. The migration process is managed so you don’t lose bookings.\n\nThe goal is to make the change invisible to your guests and stress-free for your team.\n\nWould you be open to a quick chat so we can share our migration checklist with you?",
+          "metadata": {
+            "type": "SevenRooms_03",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 6
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"Is this mainly about price?\"\n\nHow we respond: \n\nHi Chelsea,\n\nPrice is definitely part of the conversation because our model eliminates the per-outlet pricing wastage you often see elsewhere.\n\nHowever, the bigger win is the ROI. We focus on automation outcomes and a specific settings strategy designed to protect your conversion rates. It is less about just saving on costs and more about ensuring you aren't leaving money on the table.\n\nAre you open to a quick chat so we can share how that strategy looks in practice?",
+          "metadata": {
+            "type": "SevenRooms_04",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 7
+        }
+      },
+      {
+        "json": {
+          "content": "Topic: Objection\nProspect’s message: \"We’ll look later.\"\n\nHow we respond: \n\nHi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nWe are offering early Australian partners the chance to lock in the early-access rate forever. I'd say it's worth doing a quick fit check today just to protect that long-term margin if switching is a possibility on your roadmap.\n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "metadata": {
+            "type": "SevenRooms_05",
+            "topic": "Objection"
+          }
+        },
+        "pairedItem": {
+          "item": 8
+        }
+      }
+    ],
+    "Row added": [
+      {
+        "json": {
+          "type": "nowbookit_01",
+          "topic": "Objection",
+          "content": "NowBookIt already sends reminders",
+          "response_sent": "Hi Chelsea,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_02",
+          "topic": "Objection",
+          "content": "We don’t have time to switch.",
+          "response_sent": "Hi Chelsea,\n\nTha'ts totally fair. Finding the time to switch systems is usually the biggest hurdle for any busy venue.\n\nThat is exactly why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident.\n\nThe goal is to make the transition feel like an upgrade that happens in the background, not a project that slows you down.\n\nWould you be open to a quick sharing to understand how we handle the heavy lifting for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_03",
+          "topic": "Objection",
+          "content": "Is this just cheaper?",
+          "response_sent": "Hi Chelsea,\n\nThat’s a great question. While we are highly competitive on price, the real win here is the outcome you get from the automation.\n\nCost is usually secondary, and for multi-outlet groups, avoiding per-outlet wastage makes it cheaper by design. Essentially, you get a more powerful automation layer that scales across all your locations without the typical price bloat.\n\nWould you be open to a quick sharing to understand how it works for your brand?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_04",
+          "topic": "Objection",
+          "content": "We’ll think about it later.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nEarly venues lock in the rate forever, so it's worth doing a quick fit check today to protect that margin if switching is a possibility on your roadmap. \n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_01",
+          "topic": "Objection",
+          "content": "SevenRooms is best-in-class. We don’t want to downgrade",
+          "response_sent": "Hi Chelsea,\n\nThat's totally fair, SevenRooms has a massive feature set.\n\nThat is why we always start with utilization. What are the 5-10 features your team actually uses weekly? And if Oddle covers those while improving your automation, then it isn't a downgrade. It is simply removing the bloat you are paying for but not using.\n\nWould you be open to a quick chat so we can share how we actually drive your revenue?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_02",
+          "topic": "Objection",
+          "content": "We use a lot of SevenRooms's features.",
+          "response_sent": "Hi Chelsea,\n\nThat is great to hear. Since you are a power user, the best thing to do is to quickly map your actual usage.\n\nIf you are deeply utilizing their most advanced capabilities, I will be completely transparent with you if we aren't the right fit. However, if we can match that performance while streamlining your workflow, I'd say it's worth a look.\n\nAre you open to a quick chat so we can share how those specific workflows would look on our end?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_03",
+          "topic": "Objection",
+          "content": "Switching is risky for us.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The biggest risk is always the transition, which is why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident. The migration process is managed so you don’t lose bookings.\n\nThe goal is to make the change invisible to your guests and stress-free for your team.\n\nWould you be open to a quick chat so we can share our migration checklist with you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_04",
+          "topic": "Objection",
+          "content": "Is this mainly about price?",
+          "response_sent": "Hi Chelsea,\n\nPrice is definitely part of the conversation because our model eliminates the per-outlet pricing wastage you often see elsewhere.\n\nHowever, the bigger win is the ROI. We focus on automation outcomes and a specific settings strategy designed to protect your conversion rates. It is less about just saving on costs and more about ensuring you aren't leaving money on the table.\n\nAre you open to a quick chat so we can share how that strategy looks in practice?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_05",
+          "topic": "Objection",
+          "content": "We’ll look later.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nWe are offering early Australian partners the chance to lock in the early-access rate forever. I'd say it's worth doing a quick fit check today just to protect that long-term margin if switching is a possibility on your roadmap.\n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Row updated": [
+      {
+        "json": {
+          "type": "nowbookit_01",
+          "topic": "Objection",
+          "content": "NowBookIt already sends reminders",
+          "response_sent": "Hi Chelsea,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_02",
+          "topic": "Objection",
+          "content": "We don’t have time to switch.",
+          "response_sent": "Hi Chelsea,\n\nTha'ts totally fair. Finding the time to switch systems is usually the biggest hurdle for any busy venue.\n\nThat is exactly why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident.\n\nThe goal is to make the transition feel like an upgrade that happens in the background, not a project that slows you down.\n\nWould you be open to a quick sharing to understand how we handle the heavy lifting for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_03",
+          "topic": "Objection",
+          "content": "Is this just cheaper?",
+          "response_sent": "Hi Chelsea,\n\nThat’s a great question. While we are highly competitive on price, the real win here is the outcome you get from the automation.\n\nCost is usually secondary, and for multi-outlet groups, avoiding per-outlet wastage makes it cheaper by design. Essentially, you get a more powerful automation layer that scales across all your locations without the typical price bloat.\n\nWould you be open to a quick sharing to understand how it works for your brand?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "nowbookit_04",
+          "topic": "Objection",
+          "content": "We’ll think about it later.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nEarly venues lock in the rate forever, so it's worth doing a quick fit check today to protect that margin if switching is a possibility on your roadmap. \n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_01",
+          "topic": "Objection",
+          "content": "SevenRooms is best-in-class. We don’t want to downgrade",
+          "response_sent": "Hi Chelsea,\n\nThat's totally fair, SevenRooms has a massive feature set.\n\nThat is why we always start with utilization. What are the 5-10 features your team actually uses weekly? And if Oddle covers those while improving your automation, then it isn't a downgrade. It is simply removing the bloat you are paying for but not using.\n\nWould you be open to a quick chat so we can share how we actually drive your revenue?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_02",
+          "topic": "Objection",
+          "content": "We use a lot of SevenRooms's features.",
+          "response_sent": "Hi Chelsea,\n\nThat is great to hear. Since you are a power user, the best thing to do is to quickly map your actual usage.\n\nIf you are deeply utilizing their most advanced capabilities, I will be completely transparent with you if we aren't the right fit. However, if we can match that performance while streamlining your workflow, I'd say it's worth a look.\n\nAre you open to a quick chat so we can share how those specific workflows would look on our end?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_03",
+          "topic": "Objection",
+          "content": "Switching is risky for us.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The biggest risk is always the transition, which is why we use a low-risk rollout instead of a \"rip and replace\" approach: setup, short training, soft launch, then full switch only when your staff is confident. The migration process is managed so you don’t lose bookings.\n\nThe goal is to make the change invisible to your guests and stress-free for your team.\n\nWould you be open to a quick chat so we can share our migration checklist with you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_04",
+          "topic": "Objection",
+          "content": "Is this mainly about price?",
+          "response_sent": "Hi Chelsea,\n\nPrice is definitely part of the conversation because our model eliminates the per-outlet pricing wastage you often see elsewhere.\n\nHowever, the bigger win is the ROI. We focus on automation outcomes and a specific settings strategy designed to protect your conversion rates. It is less about just saving on costs and more about ensuring you aren't leaving money on the table.\n\nAre you open to a quick chat so we can share how that strategy looks in practice?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      },
+      {
+        "json": {
+          "type": "SevenRooms_05",
+          "topic": "Objection",
+          "content": "We’ll look later.",
+          "response_sent": "Hi Chelsea,\n\nI completely understand. The only reason I’d suggest looking now is our Founder Access pricing.\n\nWe are offering early Australian partners the chance to lock in the early-access rate forever. I'd say it's worth doing a quick fit check today just to protect that long-term margin if switching is a possibility on your roadmap.\n\nWould you be open to a 15-minute chat to see if the timing makes sense for you?",
+          "added to DB?": ""
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "35c8240c-06be-472f-9330-13c67852ed6e",
   "activeVersionId": "3a4c65da-ae1b-46a5-bf6a-d00f9a338fad",
   "triggerCount": 2,
   "shared": [
