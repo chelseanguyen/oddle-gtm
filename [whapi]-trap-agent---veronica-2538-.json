@@ -1,22 +1,11 @@
 {
-  "updatedAt": "2026-01-29T02:52:48.841Z",
+  "updatedAt": "2026-01-30T03:16:33.570Z",
   "createdAt": "2026-01-21T09:15:28.211Z",
   "id": "QAsTHdspRA6bfxQr",
   "name": "[Whapi] Trap Agent - Veronica 2538",
   "active": true,
   "isArchived": false,
   "nodes": [
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        -384,
-        480
-      ],
-      "id": "32f03db8-f2de-4672-a60b-8d3d7756f27d",
-      "name": "No Operation, do nothing"
-    },
     {
       "parameters": {
         "assignments": {
@@ -238,8 +227,8 @@
       "name": "Google Gemini Chat Model",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3168,
-        928
+        3488,
+        944
       ],
       "typeVersion": 1,
       "credentials": {
@@ -439,8 +428,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3424,
-        928
+        3744,
+        944
       ],
       "id": "868f4d2d-a359-48ae-bec6-bed831eeea38",
       "name": "Structured Output Parser"
@@ -522,40 +511,6 @@
       ],
       "id": "ebcadf9b-f68f-42d8-bfe8-da9455d8c12e",
       "name": "Get image URL"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "df3cc619-934d-4d62-9bff-db91d69107e5",
-              "leftValue": "={{ $json.body.conversation.messages[0].sender.type === 'agent_bot' }}",
-              "rightValue": "contact",
-              "operator": {
-                "type": "boolean",
-                "operation": "false",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "or"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        -656,
-        464
-      ],
-      "id": "c7094572-5e84-41ee-a305-13a4ff351e9b",
-      "name": "Check if human or bot"
     },
     {
       "parameters": {
@@ -783,8 +738,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3936,
-        720
+        4256,
+        736
       ],
       "id": "92a065a2-a86f-4be5-bb5e-8547e04914f3",
       "name": "Send to Slack for Approval",
@@ -819,7 +774,7 @@
       "typeVersion": 4.3,
       "position": [
         736,
-        656
+        768
       ],
       "id": "700da0fa-0a99-4004-8d46-66a0da18d94e",
       "name": "Notify in Slack",
@@ -872,8 +827,8 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        3152,
-        -208
+        3472,
+        -288
       ],
       "typeVersion": 1,
       "credentials": {
@@ -890,8 +845,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3408,
-        -208
+        3728,
+        -288
       ],
       "id": "449f7720-f0e2-40c9-b2f2-f2cd5dbb93eb",
       "name": "Structured Output Parser1"
@@ -919,8 +874,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3920,
-        -416
+        4240,
+        -496
       ],
       "id": "46e98a1e-847a-4baa-8fd8-7646d4f7ef12",
       "name": "Send to Slack for Approval1",
@@ -944,8 +899,8 @@
       "name": "Response Agent #1",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3216,
-        -400
+        3536,
+        -480
       ],
       "typeVersion": 1.6
     },
@@ -962,8 +917,8 @@
       "name": "Response Agent #2",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        3232,
-        736
+        3552,
+        752
       ],
       "typeVersion": 1.6
     },
@@ -994,8 +949,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3920,
-        -176
+        4240,
+        -256
       ],
       "id": "7fdd977e-db00-40c1-b100-cef54bb2da8f",
       "name": "Skip agent 1's response"
@@ -1005,8 +960,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        3952,
-        960
+        4272,
+        976
       ],
       "id": "5d361054-229b-4361-8ad0-36cecb1d66af",
       "name": "Skip agent 2's response"
@@ -1039,8 +994,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3616,
-        -400
+        3936,
+        -480
       ],
       "id": "518b04af-f0e5-49a3-a37c-7af870989ad1",
       "name": "If agent 1 continues to respond"
@@ -1073,8 +1028,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3648,
-        736
+        3968,
+        752
       ],
       "id": "83bfdd63-8231-4972-a05e-cc06c2d6934f",
       "name": "If agent 2 continues to respond"
@@ -1108,8 +1063,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2752,
-        -416
+        2944,
+        -496
       ],
       "id": "5a1c4c48-9d20-4a4f-bc8f-61b9e8ebfd38",
       "name": "Check for booking link"
@@ -1143,8 +1098,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        2752,
-        352
+        2944,
+        336
       ],
       "id": "db0c5db7-97bd-4172-9683-7c5ebb41cfcd",
       "name": "Check for booking link_2"
@@ -1173,7 +1128,7 @@
       "typeVersion": 4.3,
       "position": [
         736,
-        448
+        544
       ],
       "id": "fe622d85-393d-4b32-99e2-3876fae8415e",
       "name": "Send link to Slack",
@@ -1207,8 +1162,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3728,
-        -688
+        4048,
+        -768
       ],
       "id": "8b7f90ef-6c93-4bcc-94f1-dc81fe6353a3",
       "name": "Send booking link to Slack 2",
@@ -1242,8 +1197,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3760,
-        464
+        4080,
+        448
       ],
       "id": "3f8602c9-e005-435f-a626-5327a3cb058c",
       "name": "Send booking link to Slack 3",
@@ -1578,7 +1533,7 @@
       "typeVersion": 4.7,
       "position": [
         944,
-        448
+        544
       ],
       "id": "e4cbb2d9-bf52-4daa-93db-cd838f478a24",
       "name": "Add reservation link to Google Sheet",
@@ -1835,8 +1790,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3952,
-        -688
+        4272,
+        -768
       ],
       "id": "5e51507f-f611-4ddb-937e-f76e92dfa007",
       "name": "Add reservation link to Google Sheet_2",
@@ -1854,8 +1809,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3536,
-        464
+        3856,
+        448
       ],
       "id": "9757e4cb-9a2a-4098-b90f-c7bb5daaea85",
       "name": "Extract booking link"
@@ -1867,8 +1822,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3488,
-        -688
+        3808,
+        -768
       ],
       "id": "adfb34ec-fc52-493e-9bfa-ea6caa80cb3e",
       "name": "Extract booking link1"
@@ -2130,8 +2085,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3968,
-        464
+        4288,
+        448
       ],
       "id": "fa778326-99a2-45f4-8da3-246a65bd895e",
       "name": "Add reservation link to Google Sheet_3",
@@ -2149,8 +2104,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3536,
-        240
+        3856,
+        224
       ],
       "id": "326ba0e4-485a-47e6-b3a7-4d3a6a1fa6cd",
       "name": "Extract email"
@@ -2421,8 +2376,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3776,
-        240
+        4096,
+        224
       ],
       "id": "82cb2c55-dce5-4526-955e-3e20bbca8913",
       "name": "Add email to Gsheet",
@@ -2440,8 +2395,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3488,
-        -896
+        3808,
+        -976
       ],
       "id": "5e0f7a97-a5a2-4f80-8585-406c97159885",
       "name": "Extract email1"
@@ -2712,8 +2667,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        3824,
-        -896
+        4144,
+        -976
       ],
       "id": "e2e45e0d-26b7-437c-b5ff-ec1ebfc8545b",
       "name": "Add email to Gsheet1",
@@ -2751,8 +2706,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3232,
-        336
+        3552,
+        320
       ],
       "id": "3677762b-2c3c-42b0-a95e-83f0a9ea91d8",
       "name": "Check for email"
@@ -2784,8 +2739,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3216,
-        -816
+        3536,
+        -896
       ],
       "id": "451c5edd-39d2-4ebf-8b7b-2cff512664d7",
       "name": "Check for email1"
@@ -2813,8 +2768,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3824,
-        -1104
+        4144,
+        -1184
       ],
       "id": "f581f915-8185-4f0e-989a-f3bdfc8d5a22",
       "name": "Send email to Slack ",
@@ -2848,8 +2803,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3776,
-        64
+        4096,
+        48
       ],
       "id": "ddb456dd-a568-438a-98dd-d025ea857227",
       "name": "Send email to Slack 1",
@@ -2859,6 +2814,133 @@
           "name": "Slack's WhatsApp Agent 2538"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "## Receive & categorize message\n- Whether it's incoming message from prospect or outgoing message from our number\n- Message type: text, image, video, voice or others ",
+        "height": 640,
+        "width": 1168
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -784,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "d1cba349-7b48-4895-829b-945b7f0c3455",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### Record booking link provided\nIf prospect provides a link for their reservation, record it in the designated google sheet",
+        "height": 256,
+        "width": 1328,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        464
+      ],
+      "typeVersion": 1,
+      "id": "b9a6edfc-d15b-413c-b39c-c89787d82d77",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "### Process incoming message & standardize into text",
+        "height": 1040,
+        "width": 1328,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        656,
+        -624
+      ],
+      "typeVersion": 1,
+      "id": "64066dcd-3b5d-4673-af23-ed85e1a5042f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "### Retrive chat history\nAs a context for AI agent to generate response",
+        "height": 352,
+        "width": 432,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2016,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "f8dc4900-e8e6-4381-96f5-785cf722f986",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "### Record booking link/email provided\nIf prospect provides a link or email address for their reservation, record it in the designated google sheet",
+        "height": 704,
+        "width": 1104,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3424,
+        -1280
+      ],
+      "typeVersion": 1,
+      "id": "23729247-8a0d-4e62-8b58-ad5297ee55fe",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "### Record booking link/email provided\nIf prospect provides a link or email address for their reservation, record it in the designated google sheet",
+        "height": 704,
+        "width": 1104,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3424,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "0aeabfa3-e700-4b41-96c1-cfca5fbe2242",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "### Generate a response & send to human for approval in Slack",
+        "height": 480,
+        "width": 1104,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3424,
+        688
+      ],
+      "typeVersion": 1,
+      "id": "84b49ae9-655a-4f49-81de-422af6d5a043",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "### Generate a response & send to human for approval in Slack",
+        "height": 448,
+        "width": 1104,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3424,
+        -544
+      ],
+      "typeVersion": 1,
+      "id": "441af4da-28de-47d1-9e47-8d5d930c68d7",
+      "name": "Sticky Note7"
     }
   ],
   "connections": {
@@ -3049,18 +3131,6 @@
         [
           {
             "node": "Analyze image",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check if human or bot": {
-      "main": [
-        [],
-        [
-          {
-            "node": "No Operation, do nothing",
             "type": "main",
             "index": 0
           }
@@ -3508,7 +3578,7 @@
       }
     ]
   },
-  "versionId": "dd4923d6-871d-4c0b-ac15-de73995df220",
+  "versionId": "0a4154c7-a120-4469-8874-3ba54ef40e50",
   "activeVersionId": "ffc7ed94-ac99-4994-a121-c07fa7f58350",
   "triggerCount": 1,
   "shared": [
