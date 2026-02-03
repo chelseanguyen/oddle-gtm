@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-30T10:09:02.348Z",
+  "updatedAt": "2026-02-03T07:43:24.113Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] AU SDR Agent - Sophie",
@@ -59,7 +59,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -320,
+        -128,
         -224
       ],
       "name": "Google Gemini Flash",
@@ -142,7 +142,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        656,
+        688,
         -432
       ],
       "id": "5aa9e056-a669-480e-9325-edb50a3e98f6",
@@ -163,45 +163,12 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -224,
-        -576
+        -304,
+        -736
       ],
       "typeVersion": 1,
       "id": "90f770b5-7c9d-4db6-8216-cb5bb4923590",
       "name": "Sticky Note"
-    },
-    {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -352,
-        112
-      ],
-      "id": "672c90e6-1154-4932-9e38-78de9d165f54",
-      "name": "Embeddings Google Gemini",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "### Additional tasks/materials for Sophie\n- Once appt fixed, send a meeting agenda\n- Appt booking link to add to agent's prompt (ADDED)",
-        "height": 96,
-        "width": 496,
-        "color": 4
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        -224,
-        -688
-      ],
-      "typeVersion": 1,
-      "id": "6167b1c6-50e4-4057-9f1f-5b15296bf5b7",
-      "name": "Sticky Note4"
     },
     {
       "parameters": {
@@ -212,8 +179,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1424,
-        -656
+        -1472,
+        -816
       ],
       "typeVersion": 1,
       "id": "f37b9d75-cabf-4542-a5d1-18509810338c",
@@ -225,13 +192,13 @@
         "text": "=- Email from: {{ $('Parse Conversation History').item.json.leadEmail }}\n- Company: {{ $('Parse Conversation History').item.json.companyName }}\n- Subject: {{ $('Parse Conversation History').item.json.subject }}\n- Lead's's latest reply: {{ $('Parse Conversation History').item.json.leadMessage }}\n- Topic: {{ $json.output.topic }}\n- Conversation History: {{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR) AI. Your goal is to manage incoming replies from outbound email prospects, address their queries/objections categorized by topic using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Refer to Objections Handling Knowledge Base for objections handling and response handling examples.\n- Refer to Protecting Guide Knowledge Base for general prospecting approach.\n\n**Step 1: Information Retrieval & Analysis**\n- Use the Objections Handling Knowledge Base tool to retrieve 3-5 examples related to the *Topic*. Analyze the prospect’s message of the relevant topic and *How we respond:* to mirror tone and logic.\n- Analyze the *Conversation History* to ensure you do not repeat yourself and that you are addressing the specific context of the thread.\n\n**Step 2: Scenario Categorization & Response Instructions**\n1) Scenario: Interested\n- Draft a response and send the scheduling link (https://forms.oddle.me/oddle-discovery-call) if the lead demonstrates high intent, such as requesting a demo or expressing clear interest in a meeting.\n\n2) Scenario: Questions / General Reply\n- Draft a response. Answer questions clearly based on your knowledge.\n\n3) Scenario: Not Interested / Objection\n- Address the objection (e.g., Competitor, Budget, Timing) using the value propositions in Protecting Guide Knowledge Base and how objections were handled in Objections Handling Knowledge Base and try to persuade them at least once. \n- After trying once or twice, if they insist and are firm on \"No,\" acknowledge gracefully and end the thread.\n\n4) Scenario: Request us to send more information about product offerings or demo\n- If they ask for product details, search on our official website https://www.oddle.me/au and send them the relevant page\n- If they ask for product demo, ask them which part specifically do they want to see the demo for\n\n5) Scenario: Wrong Contact / Wrong Brand\n- Reply generally thanking them for letting us know, saying that we will update our records and wish them a good day.\n- Then escalate to human to notify Oddle team with the remarks “Wrong contact” or “Wrong brand”\n\n6) Scenario: Refer to Another Person (Internal)\n- Ask for the colleague's name and email address.\n\n7) Scenario: Request us to send to a Different Email Address\n- If they provide us with a contact (email or phone number), then escalate to human to notify Oddle team with the remark “Lead requested to contact another person”, and send to human the contact details (email or phone number).\n- If they don’t provide us with a contact, then ask for the colleague's name and email address or phone number, then then escalate to human to notify Oddle team with the remark “Lead requested to contact another person”, and send to human the contact details (email or phone number).\n\n\n**Step 3: Generate a response & Output Requirement**\n- Generate a response that will be sent to the prospect after human approval.\n\n**Response Guidelines**\n- Personalization: Reference the *Company* name and specific points from their *Latest Reply*.\n- Tone: Professional, friendly, and consultative. Never pushy.\n- Brevity: Use bullet points for features. Keep the total email under 100 words.\n- Continuous Learning: If the retrieved examples show a \"Human-Corrected\" version of a previous AI mistake, mirror the Human's tone and logic exactly.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Don't use — symbol in your response, replace it with commas or natural sentence breaks.\n- Don't bold any text.\n- Use a simple hyphen (-) for all list items.\n- Return the message in Markdown format.\n\n**Email signature:**\nFollow the format below, where SDR’s first name can be found from previous emails in the thread from the *Conversation History*\n\nCheers,\nSDR’s first name"
+          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base: Use this tool to retrieve 3-5 examples. Priority: Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Identity: Find the SDR’s first name in the Conversation History.\n- Salutation: Use the lead's name from their signature. If unavailable, use \"Hi [Company Name] team.\"\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction: Find the Response Handling Knowledge Base example that most closely matches this intent. You must adopt the specific \"Anchor Logic\" of that example (e.g., if the example asks a question about ROI, you must ask a question about ROI; if the example uses a specific \"I'll step back\" concession, you must use that concession).\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base or Website.\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategy: Identify the primary sales pivot used in the retrieved Response Handling Knowledge Base example (e.g., challenging the current status quo, questioning hidden costs, or offering a specific concession). Apply this exact logical framework to your response. Do not introduce arguments, features, or pricing not found in that specific example.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"I am 100% not interested\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Use a short \"filler\" transitions (e.g., \"I totally understand,\" \"That makese send,\" or \"Usually, I find that...\"). Start the rebuttal with the same directness as the Response Handling Knowledge Base examples.\n- If a lead’s response is short and direct, your response should be equally lean. Match the \"density\" of the Response Handling Knowledge Base examples.\n- Brevity: Use a simple hyphen (-) for list items. No other symbols.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format.\n\n**Email Signature:**\nFollow the format below, using the SDR’s first name found in the *Conversation History*:\n\nCheers,\n[SDR’s first name]"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        -176,
+        16,
         -432
       ],
       "name": "Email Agent",
@@ -245,13 +212,13 @@
         "text": "=Lead's message: {{ $json.leadMessage }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are an AI assistant that categorizes prospect messages into topics.\n\nAnalyze the lead's message and categorize it into ONE of the following topics:\n\n**Valid Topics:**\n- pricing: Questions about cost, pricing plans, discounts, payment terms\n- product_feature: Questions about specific features, functionality, capabilities\n- competitor_comparison: Comparisons with competitors, asking why choose us\n- objection: Concerns, doubts, hesitations, or pushback\n- interested: Expressing interest, wanting to learn more, positive signals\n- not_interested: Clearly not interested, politely declining, no need\n- timing: Questions about implementation timeline, when to start, availability\n- technical: Technical questions, integrations, API, security, compliance\n- scheduling: Requesting a demo, meeting, call, or follow-up\n- general_inquiry: General questions that don't fit other categories\n- auto_reply: Auto-replies, bot replies, out of office messages\n\n**Instructions:**\n1. Read the prospect's message carefully\n2. Identify the main intent or topic\n3. Return ONLY the topic keyword (e.g., \"pricing\", \"product_feature\")\n4. Use lowercase and underscores for multi-word topics\n5. Choose the MOST relevant single topic\n\n**Output Format:**\nReturn a JSON object with the topic:\n{\n  \"topic\": \"<topic_keyword>\"\n}\n\n**Examples:**\nMessage: \"How much does this cost?\"\nOutput: {\"topic\": \"pricing\"}\n\nMessage: \"Does it integrate with POS?\"\nOutput: {\"topic\": \"technical\"}\n\nMessage: \"Not interested right now, thanks.\"\nOutput: {\"topic\": \"not_interested\"}\n\nMessage: \"Can you tell me more about the reporting features?\"\nOutput: {\"topic\": \"product_feature\"}"
+          "systemMessage": "You are an AI assistant that categorizes prospect messages into topics.\n\nAnalyze the lead's message and categorize it into ONE of the following topics:\n\n**Valid Topics:**\n- pricing: Questions about cost, pricing plans, discounts, payment terms\n- product_feature: Questions about specific features, functionality, capabilities\n- competitor_comparison: Comparisons with competitors, asking why choose us\n- objection: Concerns, doubts, hesitations, or pushback about price, features, migration etc\n- interested: Expressing interest, wanting to learn more, positive signals\n- not_interested: Clearly not interested, politely declining, no need\n- timing: Questions about implementation timeline, when to start, availability\n- technical: Technical questions, integrations, API, security, compliance\n- transfer: Suggesting to transfer the message to the management or another person in charge\n- wrong contact: Wrong email address or company\n- scheduling: Requesting a demo, meeting, call, or follow-up\n- general_inquiry: General questions that don't fit other categories\n- auto_reply: Auto-replies, bot replies, out of office messages\n\n**Instructions:**\n1. Read the prospect's message carefully\n2. Identify the main intent or topic\n3. Return ONLY the topic keyword (e.g., \"pricing\", \"product_feature\")\n4. Use lowercase and underscores for multi-word topics\n5. Choose the MOST relevant single topic\n\n**Output Format:**\nReturn a JSON object with the topic:\n{\n  \"topic\": \"<topic_keyword>\"\n}\n\n**Examples:**\nMessage: \"How much does this cost?\"\nOutput: {\"topic\": \"pricing\"}\n\nMessage: \"Does it integrate with POS?\"\nOutput: {\"topic\": \"technical\"}\n\nMessage: \"Not interested right now, thanks.\"\nOutput: {\"topic\": \"not_interested\"}\n\nMessage: \"Can you tell me more about the reporting features?\"\nOutput: {\"topic\": \"product_feature\"}"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        -1088,
+        -1168,
         -416
       ],
       "name": "Categorize Lead Message Topic",
@@ -265,7 +232,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -1152,
+        -1232,
         -208
       ],
       "name": "Google Gemini Chat",
@@ -284,7 +251,7 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -864,
+        -944,
         -208
       ],
       "name": "Topic Output Parser",
@@ -295,7 +262,7 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        -528,
+        -608,
         -336
       ],
       "id": "f0c123da-99aa-4064-8ef5-864c02073d8c",
@@ -328,7 +295,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -736,
+        -816,
         -416
       ],
       "id": "bb9fe3dc-de49-4c68-a9b0-85386e221154",
@@ -361,7 +328,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        656,
+        688,
         -176
       ],
       "id": "55fbd77a-acb4-4de1-b0f2-0e9634ca5cb7",
@@ -369,32 +336,18 @@
     },
     {
       "parameters": {
-        "content": "## Workflow 1: Handling prospect's reply\n\n",
-        "height": 100,
-        "width": 640
+        "content": "## Process prospect's reply & retrieve conversation history for context\n\n",
+        "height": 420,
+        "width": 912
       },
       "id": "a89cca53-ace2-435f-b80d-7f36f1fd4565",
       "name": "Sticky Note15",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -2208,
-        -752
+        -2256,
+        -576
       ],
       "typeVersion": 1
-    },
-    {
-      "parameters": {
-        "jsonSchemaExample": "{\n\t\"content\": \"Hi Yong Xiang,\\n\\nThanks for the reply. I understand you're happy with your current Sevenrooms grandfathered plan.\\n\\nHowever, let's consider if you're truly maximizing your investment, here's what Oddle Reserve can offer:\\n\\n- A$249/month per brand, which can be more cost-effective if you have multiple outlets.\\n- Simpler alternative with a focus on core reservation workflows.\\n- Founder Access at A$65/month locked in forever.\"\n}",
-        "autoFix": true
-      },
-      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-      "typeVersion": 1.3,
-      "position": [
-        -32,
-        -224
-      ],
-      "id": "12b66a89-8c8a-4e8d-861d-73178f755167",
-      "name": "Structured Output Parser"
     },
     {
       "parameters": {
@@ -419,7 +372,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        880,
+        912,
         -160
       ],
       "id": "d37ae642-9da3-4f62-8b8c-20c7897c2050",
@@ -436,68 +389,11 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -80,
-        304
+        240,
+        560
       ],
       "id": "70ef3f10-fcdd-48ae-941f-5c28daeb7563",
       "name": "Embeddings Google Gemini1",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "mode": "retrieve-as-tool",
-        "toolDescription": "Use this tool to find similar past prospect emails and our approved responses (found in metadata.response_sent) to help draft new replies",
-        "tableName": {
-          "__rl": true,
-          "value": "objections_handling_guide",
-          "mode": "list",
-          "cachedResultName": "objections_handling_guide"
-        },
-        "topK": 10,
-        "options": {
-          "metadata": {
-            "metadataValues": [
-              {
-                "name": "topic",
-                "value": "={{ $json.output.topic }}"
-              }
-            ]
-          }
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1.3,
-      "position": [
-        -352,
-        -48
-      ],
-      "id": "c9d82a8b-a0c5-4cba-9018-028c2313ca95",
-      "name": "Objections Handling Knowledge Base",
-      "credentials": {
-        "supabaseApi": {
-          "id": "aJzMx5t2Q4kcZ8EL",
-          "name": "Supabase Account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-2.0-flash",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -32,
-        -80
-      ],
-      "id": "df6cad4b-89f6-4bfd-9e05-35dcb1705bd6",
-      "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
           "id": "RYsSfOkTTr5PB58p",
@@ -522,8 +418,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        -80,
-        144
+        240,
+        400
       ],
       "id": "d02c9c7d-9966-445f-ae65-da22eb24730d",
       "name": "Prostecting Guide Knowledge Base",
@@ -533,6 +429,118 @@
           "name": "Supabase Account"
         }
       }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        128
+      ],
+      "id": "f968f8b0-5307-4e37-ba14-4be03757b6b2",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_guide",
+          "mode": "list",
+          "cachedResultName": "response_handling_guide"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -160,
+        -48
+      ],
+      "id": "5c481557-d203-442f-9454-100527efef6e",
+      "name": "Response Handling Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"content\": \"Hi Yong Xiang,\\n\\nThanks for the reply. I understand you're happy with your current Sevenrooms grandfathered plan.\\n\\nHowever, let's consider if you're truly maximizing your investment, here's what Oddle Reserve can offer:\\n\\n- A$249/month per brand, which can be more cost-effective if you have multiple outlets.\\n- Simpler alternative with a focus on core reservation workflows.\\n- Founder Access at A$65/month locked in forever.\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        192,
+        -224
+      ],
+      "id": "817e6e60-98a8-4db6-b8f4-ecd209ce5ad8",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        192,
+        -64
+      ],
+      "id": "4393068e-14c5-4e1d-bbc7-f7c5fa8b3d97",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Categorize prospect's message to topic\n\n",
+        "height": 516,
+        "width": 912
+      },
+      "id": "f6e70eeb-e73b-45b9-a140-a4db1bcfa3dc",
+      "name": "Sticky Note16",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1296,
+        -576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "## Generate response based on guideline & response handling knowledge base\nResponse handling sheet: https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
+        "height": 864,
+        "width": 896,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -304,
+        -576
+      ],
+      "typeVersion": 1,
+      "id": "35ac9885-0eef-47b1-8af6-21a030028cfd",
+      "name": "Sticky Note1"
     }
   ],
   "connections": {
@@ -594,17 +602,6 @@
     "Send to Slack for Approval": {
       "main": [
         []
-      ]
-    },
-    "Embeddings Google Gemini": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Objections Handling Knowledge Base",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
       ]
     },
     "Email Agent": {
@@ -681,17 +678,6 @@
         ]
       ]
     },
-    "Structured Output Parser": {
-      "ai_outputParser": [
-        [
-          {
-            "node": "Email Agent",
-            "type": "ai_outputParser",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Embeddings Google Gemini1": {
       "ai_embedding": [
         [
@@ -703,7 +689,23 @@
         ]
       ]
     },
-    "Objections Handling Knowledge Base": {
+    "Prostecting Guide Knowledge Base": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Response Handling Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Handling Knowledge Base": {
       "ai_tool": [
         [
           {
@@ -714,20 +716,26 @@
         ]
       ]
     },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
+    "Structured Output Parser1": {
+      "ai_outputParser": [
         [
           {
-            "node": "Structured Output Parser",
-            "type": "ai_languageModel",
+            "node": "Email Agent",
+            "type": "ai_outputParser",
             "index": 0
           }
         ]
       ]
     },
-    "Prostecting Guide Knowledge Base": {
-      "ai_tool": [
-        []
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -740,7 +748,7 @@
   },
   "staticData": {
     "node:Reply Received": {
-      "webhookId": "hoo_CGJM4QYSrLHjnsudb"
+      "webhookId": "hoo_CveQ6rHE2Gb2G73qH"
     }
   },
   "meta": {
@@ -802,7 +810,7 @@
       }
     ]
   },
-  "versionId": "c6a8b4ed-089f-4171-9e6c-8f8409f1a7e0",
+  "versionId": "cbeeb7fe-454f-454b-a6dc-7705dbfa0efc",
   "activeVersionId": "42e58bed-fb45-4e9e-86d4-eef7338ca038",
   "triggerCount": 1,
   "shared": [
