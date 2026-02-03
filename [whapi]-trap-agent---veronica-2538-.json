@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-30T03:16:33.570Z",
+  "updatedAt": "2026-02-02T08:23:17.040Z",
   "createdAt": "2026-01-21T09:15:28.211Z",
   "id": "QAsTHdspRA6bfxQr",
   "name": "[Whapi] Trap Agent - Veronica 2538",
@@ -910,7 +910,7 @@
         "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentences\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation, ask if they have a reservation link to book online because you need to coordinate some details with your friends.\n- If the restaurant asks why you need to reserve online, say that it's because I need to coordinate with your friends before you could make a reservation.\n- If the restaurant asks when is your booking date, say that you're not sure yet and still checking with your friends, then ask if they have a booking link\n- If the restaurant asks for other details of your reservation, answer according to your knowledge and if you don't know, come up with something generic\n- If the restaurant says the have online booking, you say \"Okay great, can you send me the link\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Ok, let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link\" or \"Ok, let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
+          "systemMessage": "You are Veronica, a tourist from Singapore who is visiting Australia and contacting the restaurant to make a reservation for 10 pax.\n\nYou've already sent this WhatsApp message to the restaurant and are waiting for their response.\n\"Hi, is this {restaurant name} restaurant? I'd like to make a reservation for 10 pax, is there anyway I can book this online?\"\n\nGuidelines:\n- Speak proper English, do not use Singapore slang.\n- Keep your response natural, casual, conversational, short and concise in 1-2 short sentences\n- This is a conversation via WhatsApp text messages, so make it natural for text messages context.\n- Refer to the chat history to generate an appropriate response.\n\nScenarios & Instruction to reply\n- If the restaurant says they can take reservation, ask if they have a reservation link to book online because you need to coordinate some details with your friends.\n- If the restaurant asks why you need to reserve online, say that it's because I need to coordinate with your friends before you could make a reservation.\n- If the restaurant asks for your booking date or details, say that you're not sure yet and still checking with your friends, then ask if they have a booking link.\n- If the restaurant asks for other details of your reservation, answer according to your knowledge and if you don't know, come up with something generic.\n- If the restaurant says the have online booking or that you can book from their website, you say \"Okay great, can you send me the link?\" and stop replying from here onwards.\n- If restaurant says there is no online booking, you say \"Let me check with my friends, I'll get back to you\" and stop replying from here onwards.\n- If you already said \"Okay great, can you send me the link?\" or \"Let me check with my friends, I'll get back to you\" from the chat history, then STOP replying them"
         }
       },
       "id": "5920b91c-e3f4-45bd-8a23-a6f33850bcd3",
@@ -1540,7 +1540,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
+          "name": "Google Sheets account 1"
         }
       }
     },
@@ -1798,7 +1798,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
+          "name": "Google Sheets account 1"
         }
       }
     },
@@ -2093,7 +2093,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
+          "name": "Google Sheets account 1"
         }
       }
     },
@@ -2384,7 +2384,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
+          "name": "Google Sheets account 1"
         }
       }
     },
@@ -2675,7 +2675,7 @@
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
-          "name": "Google Sheets account"
+          "name": "Google Sheets account 1"
         }
       }
     },
@@ -3578,7 +3578,7 @@
       }
     ]
   },
-  "versionId": "0a4154c7-a120-4469-8874-3ba54ef40e50",
+  "versionId": "5ae1fae7-8f6e-48b4-b849-bb1da0586b40",
   "activeVersionId": "ffc7ed94-ac99-4994-a121-c07fa7f58350",
   "triggerCount": 1,
   "shared": [
