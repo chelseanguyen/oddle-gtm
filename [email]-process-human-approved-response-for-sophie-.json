@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-02T01:41:56.266Z",
+  "updatedAt": "2026-02-03T07:37:57.047Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -477,7 +477,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Retrieve data\nconst leadMessage = $('Parse Conversation History').first().json.leadMessage;\nconst responseSent = $('Parse Slack Payload').first().json.ai_generated_response;\nconst rawTopic = $('Categorize Lead Message Topic').first().json.output?.topic || 'general_inquiry';\n\n// Capitalize the first letter of the topic (e.g., 'objection' -> 'Objection')\nconst topic = rawTopic.charAt(0).toUpperCase() + rawTopic.slice(1);\n\n// Construct the structured pageContent string\n// Note: This uses backticks to maintain the line breaks exactly as they will appear in the DB\nconst formattedContent = `Topic: ${topic}\nProspect’s message: \n\"${leadMessage}\"\n\nHow we respond: \n\n${responseSent}`;\n\nreturn {\n  json: {\n    pageContent: formattedContent,\n    metadata: {\n      topic: topic,\n      created_at: new Date().toISOString() // Recommended for DB sorting\n    }\n  }\n};"
+        "jsCode": "// Retrieve data\nconst leadMessage = $('Parse Conversation History').first().json.leadMessage;\nconst responseSent = $('Parse Slack Payload').first().json.ai_generated_response;\nconst rawTopic = $('Categorize Lead Message Topic').first().json.output?.topic || 'general_inquiry';\n\n// Capitalize the first letter of the topic (e.g., 'objection' -> 'Objection')\nconst topic = rawTopic.charAt(0).toUpperCase() + rawTopic.slice(1);\n\n// Construct the structured pageContent string\n// Note: This uses backticks to maintain the line breaks exactly as they will appear in the DB\nconst formattedContent = `Prospect’s message: \n\"${leadMessage}\"\n\nHow to respond: \n\n${responseSent}`;\n\nreturn {\n  json: {\n    pageContent: formattedContent,\n    metadata: {\n      topic: topic,\n      created_at: new Date().toISOString() // Recommended for DB sorting\n    }\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -493,9 +493,9 @@
         "mode": "insert",
         "tableName": {
           "__rl": true,
-          "value": "objections_handling_guide",
+          "value": "response_handling_guide",
           "mode": "list",
-          "cachedResultName": "objections_handling_guide"
+          "cachedResultName": "response_handling_guide"
         },
         "options": {}
       },
@@ -1057,7 +1057,7 @@
       }
     ]
   },
-  "versionId": "c74eb80d-384d-4e9b-923e-a8d40d020576",
+  "versionId": "808b6f4f-55d6-4470-bf7e-8b83a020672c",
   "activeVersionId": "0563e157-cfe8-4a69-88c5-4fd964131eb5",
   "triggerCount": 1,
   "shared": [
