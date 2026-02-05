@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-02T08:25:02.861Z",
+  "updatedAt": "2026-02-05T02:38:23.977Z",
   "createdAt": "2026-01-15T03:39:59.529Z",
   "id": "dgCCa2SjvGETsfVC",
   "name": "[Whapi] Trap Agent - Veronica 5234",
@@ -3522,7 +3522,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "errorWorkflow": "2SWvtvGbkteCtlr0",
+    "timezone": "Asia/Singapore"
   },
   "staticData": null,
   "meta": {
@@ -3578,7 +3580,7 @@
       }
     ]
   },
-  "versionId": "6f89fce4-89a4-49cf-9101-91516eda116c",
+  "versionId": "232cf252-083b-4825-9d11-4dd3f119873a",
   "activeVersionId": "e8871480-ea6c-4594-96e0-70e10b201e84",
   "triggerCount": 1,
   "shared": [
