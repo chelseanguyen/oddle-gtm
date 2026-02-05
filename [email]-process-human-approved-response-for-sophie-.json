@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-03T07:37:57.047Z",
+  "updatedAt": "2026-02-05T02:44:11.237Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -792,7 +792,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": null,
   "meta": null,
