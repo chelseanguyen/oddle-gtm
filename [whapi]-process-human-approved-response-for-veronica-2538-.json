@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-29T02:53:05.478Z",
+  "updatedAt": "2026-02-05T02:48:45.129Z",
   "createdAt": "2026-01-21T08:24:58.389Z",
   "id": "SkFSENNbsHm6FOWZ",
   "name": "[Whapi] Process human-approved response for Veronica 2538",
@@ -458,7 +458,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": null,
   "meta": null,
