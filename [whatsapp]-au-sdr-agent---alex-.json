@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-02-05T02:44:30.449Z",
+  "updatedAt": "2026-02-05T10:37:02.504Z",
   "createdAt": "2026-01-27T09:02:31.185Z",
   "id": "eXEVf6BDPaBy3uWd",
   "name": "[WhatsApp] AU SDR Agent - Alex",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -68,7 +68,7 @@
                 "conditions": [
                   {
                     "id": "ec5e944c-7656-4860-adb7-edcfa8b95ed0",
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "text",
                     "operator": {
                       "type": "string",
@@ -96,7 +96,7 @@
                       "type": "string",
                       "operation": "equals"
                     },
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "image"
                   }
                 ],
@@ -116,7 +116,7 @@
                 "conditions": [
                   {
                     "id": "75e367cd-3913-4ea4-a2ea-b0442b3325fb",
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "voice",
                     "operator": {
                       "type": "string",
@@ -143,7 +143,7 @@
                       "type": "string",
                       "operation": "equals"
                     },
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "audio",
                     "id": "1113da73-5d4e-450e-90b3-960e6bec2e3c"
                   }
@@ -168,7 +168,7 @@
                       "type": "string",
                       "operation": "equals"
                     },
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "video"
                   }
                 ],
@@ -188,7 +188,7 @@
                 "conditions": [
                   {
                     "id": "89131ef6-0956-449c-b0ea-31fffced6303",
-                    "leftValue": "={{ $json.body.payload.body.type }}",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
                     "rightValue": "link_preview",
                     "operator": {
                       "type": "string",
@@ -227,8 +227,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -128,
-        -16
+        -384,
+        0
       ],
       "id": "68d2ea4f-e61e-446f-a274-cb6c325bf380",
       "name": "Receive Reply",
@@ -287,12 +287,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst output = [];\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  // 1. Sort messages by createdAt (Oldest to Newest)\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(a.createdAt) - new Date(b.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    \n    // Standardize on createdAt\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toISOString().replace('T', ' ').substring(0, 16);\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // Build Thread\n    conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n\n    if (isProspect) {\n      latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      // Reset reply tracker so we find the SDR message that follows THIS prospect message\n      firstSdrReplyTime = null;\n    } else if (msg.sender.type === 'user' && lastProspectTime && !firstSdrReplyTime) {\n      // Capture the first SDR reply that occurs after the most recent Prospect message\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  // 2. Calculate Response Time (Minutes)\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = firstSdrReplyTime - lastProspectTime;\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.join('\\n\\n'),\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[sortedMessages.length - 1].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\n\nreturn output;"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  // 1. Sort messages by createdAt (Newest to Oldest)\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let contactParticipantId = null;\n  let userParticipantId = null; // Initialize variable for internal user\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    \n    // Capture contactParticipantId from the first 'contact' type found\n    if (isProspect && !contactParticipantId) {\n      contactParticipantId = msg.sender.id;\n    }\n\n    // Capture userParticipantId from the first 'user' type found\n    if (isUser && !userParticipantId) {\n      userParticipantId = msg.sender.id;\n    }\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toISOString().replace('T', ' ').substring(0, 16);\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // Build Thread (Latest -> Earliest)\n    conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  // 2. Calculate Response Time (Minutes)\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    contactParticipantId: contactParticipantId,\n    userParticipantId: userParticipantId, // Added new field here\n    conversationThreadFormatted: conversationThread.join('\\n\\n'),\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2624,
+        2848,
         -96
       ],
       "name": "Parse Chat History",
@@ -531,7 +531,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Redirect Message Types').item.json.body.messages[0].type }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this file or message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on WhatsApp to reply to the prospect.\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Redirect Message Types').item.json.body.messages[0].type }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -544,8 +544,8 @@
       "name": "Notify in Slack",
       "credentials": {
         "httpBearerAuth": {
-          "id": "jByqEazESu9xXEeO",
-          "name": "Slack's WhatsApp Agent 5234"
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
         }
       }
     },
@@ -558,7 +558,7 @@
       "name": "Google Gemini Chat Model1",
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "position": [
-        2832,
+        3328,
         96
       ],
       "typeVersion": 1,
@@ -576,91 +576,11 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        3152,
+        3648,
         96
       ],
       "id": "234f0127-4800-4979-b7ae-cc030ff5f020",
       "name": "Structured Output Parser1"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://slack.com/api/chat.postMessage",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].type }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Media caption:*\\n```{{ $('Get User\\'s Message').item.json.message_caption ? JSON.stringify($('Get User\\'s Message').item.json.message_caption).slice(1, -1) : 'NA' }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Redirect Message Types').item.json.body.messages[0].chat_id }}\"\n        }\n      ]\n    }\n  ]\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        3648,
-        -112
-      ],
-      "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
-      "name": "Send to Slack for Approval1",
-      "credentials": {
-        "httpBearerAuth": {
-          "id": "jByqEazESu9xXEeO",
-          "name": "Slack's WhatsApp Agent 5234"
-        }
-      }
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        3648,
-        128
-      ],
-      "id": "f009dbe5-a05a-4227-9f6d-65d1c410fda1",
-      "name": "Skip agent 1's response"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "462e3c61-8795-4b23-8431-8d3769d961a4",
-              "leftValue": "={{ $json.output.text }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        3344,
-        -96
-      ],
-      "id": "b9d06053-2f84-4827-a8e4-6f2674b75051",
-      "name": "If agent 1 continues to respond"
     },
     {
       "parameters": {
@@ -769,7 +689,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2064,
+        2288,
         -96
       ],
       "id": "8f69744a-b47a-4cee-8495-ecaa0f2cb93f",
@@ -805,7 +725,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2336,
+        2560,
         -96
       ],
       "id": "c525f8af-0d1a-4272-9bc0-0d43f24a9d19",
@@ -814,17 +734,17 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=- Prospect's latest message: {{ $('Parse Chat History').item.json.leadMessage }}\n- Message type: {{ $('Receive Reply').item.json.body.messages[0].type }}\n- Chat history: {{ $('Parse Chat History').item.json.conversationThreadFormatted }}",
+        "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base: Use this tool to retrieve 3-5 examples. Priority: Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Identity: Find the SDR’s first name in the Conversation History.\n- Salutation: Use the lead's name from their signature. If unavailable, use \"Hi [Company Name] team.\"\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction: Find the Response Handling Knowledge Base example that most closely matches this intent. You must adopt the specific \"Anchor Logic\" of that example (e.g., if the example asks a question about ROI, you must ask a question about ROI; if the example uses a specific \"I'll step back\" concession, you must use that concession).\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base or Website.\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategy: Identify the primary sales pivot used in the retrieved Response Handling Knowledge Base example (e.g., challenging the current status quo, questioning hidden costs, or offering a specific concession). Apply this exact logical framework to your response. Do not introduce arguments, features, or pricing not found in that specific example.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"I am 100% not interested\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Use a short \"filler\" transitions (e.g., \"I totally understand,\" \"That makese send,\" or \"Usually, I find that...\"). Start the rebuttal with the same directness as the Response Handling Knowledge Base examples.\n- If a lead’s response is short and direct, your response should be equally lean. Match the \"density\" of the Response Handling Knowledge Base examples.\n- Brevity: Use a simple hyphen (-) for list items. No other symbols.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format.\n\n**Email Signature:**\nFollow the format below, using the SDR’s first name found in the *Conversation History*:\n\nCheers,\n[SDR’s first name]"
+          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via *WhatsApp Business*. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 3-5 examples. **Crucial:** Extract the *logical pivot* (the rebuttal/strategy) but ignore the email-style formatting.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n- Social Proof (Australia): If a lead asks about current users in Australia, mention exactly 3 names from this list: The Penny Drop Cafe, Thai Ute Restaurant, Lumen People, Catalina Kitchen Cafe, Bar & Restaurant, Arcadia Liquors, or Mister Minh.\n\n**Step 1: Logic Extraction & Adaptation**\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent (e.g., \"Happy with current provider,\" \"No time,\" \"Price\").\n- Logic Extraction: Find the KB example that matches this intent. Adopt the specific \"Anchor Logic\" (e.g., if the example challenges \"Cost vs Results,\" you must do the same).\n- Medium Conversion: Convert the formal email logic into a **short, snappy WhatsApp message**. Remove all formal \"email fluff\" (e.g., \"I hope you're having a productive week\").\n\n**Step 2: Scenario Logic**\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB or Website.\n- If they ask about current Australian clients, provide 3 names from the Social Proof list.\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategy: Identify the primary sales pivot used in the retrieved KB example (e.g., challenging the current status quo, questioning hidden costs, or offering a specific concession). Apply this exact logical framework to your response. Do not introduce arguments, features, or pricing not found in that specific example.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's phone number or email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 60 words. Be extremely concise.\n- Tone: Professional, direct, and conversational. WhatsApp is more casual than email.\n- Structure: Use 1-2 short paragraphs maximum. Match the \"density\" of the lead's message.\n- Salutation: Get the prospect's name from chat history. If the name is unknown, omit the salutation and start with the answer.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items (if any). No other symbols.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
         }
       },
       "id": "a05cd147-70e5-4992-b8eb-648a04a27292",
       "name": "Response Agent",
       "type": "@n8n/n8n-nodes-langchain.agent",
       "position": [
-        2912,
+        3408,
         -96
       ],
       "typeVersion": 1.6
@@ -834,7 +754,7 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        2848,
+        3344,
         432
       ],
       "id": "f9a86692-f717-4be1-950d-8d3762b53b50",
@@ -864,7 +784,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        2848,
+        3344,
         272
       ],
       "id": "892f7cd7-f124-4d24-82a6-5bc072fbc644",
@@ -875,6 +795,431 @@
           "name": "Supabase Account"
         }
       }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/contacts/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "attribute",
+              "value": "=company"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "authorization",
+              "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2064,
+        -96
+      ],
+      "id": "4f957f65-9f94-435d-9f4f-42c7770256a0",
+      "name": "Get company name"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3808,
+        -96
+      ],
+      "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
+      "name": "Send to Slack for Approval",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14648e8e-b352-4ea4-8f5a-b9a6335dbc6b",
+              "name": "lead_message",
+              "value": "={{ $json.Body }}",
+              "type": "string"
+            },
+            {
+              "id": "458a8b87-069c-423f-b662-e31d5e01d4eb",
+              "name": "chat_history",
+              "value": "=[2026-02-05 08:10] SDR: \"Hi Miss Saigon team, Alan from Oddle here. Noticed you're on SevenRooms—are you getting full value from it?\n\nWe’re offering AU brands 'Founder Access' at A$65/mo, locked in forever. We use your data to drive revenue, not just switch software.\n\nOpen to a brief 10-min chat this week?\"",
+              "type": "string"
+            },
+            {
+              "id": "a1f86e3c-8e7a-40ae-9e1a-0a7e74578d88",
+              "name": "message_type",
+              "value": "text",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3056,
+        112
+      ],
+      "id": "2fddec5b-0f66-4921-bfd2-9997fe40308e",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 308065534,
+          "mode": "list",
+          "cachedResultName": "au_whatsapp",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.6,
+      "position": [
+        2816,
+        112
+      ],
+      "id": "87a70714-f4a1-48a3-ad9e-a386f42dc8df",
+      "name": "When fetching a dataset row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32819e6c-b831-4634-9f34-1b9e4b0ae992",
+              "name": "lead_message",
+              "value": "={{ $json.leadMessage }}",
+              "type": "string"
+            },
+            {
+              "id": "367e8059-b953-48de-b357-2d862d36b76f",
+              "name": "chat_history",
+              "value": "={{ $json.conversationThreadFormatted }}",
+              "type": "string"
+            },
+            {
+              "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
+              "name": "message_type",
+              "value": "={{ $('Redirect Message Types').item.json.body.payload.body.type }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3056,
+        -96
+      ],
+      "id": "234337e5-30bc-48de-b58f-65a1dafebef7",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list",
+          "cachedResultName": "Evaluation for Email SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 308065534,
+          "mode": "list",
+          "cachedResultName": "au_whatsapp",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "Actual Response",
+              "outputValue": "={{ $('Response Agent').item.json.output.text }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        4016,
+        -480
+      ],
+      "id": "77765a6a-9141-4eae-8267-bd4bc7bb90ba",
+      "name": "Set Output",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "checkIfEvaluating"
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        3808,
+        -352
+      ],
+      "id": "4ecb9efe-3c19-47e8-b34b-161d8f8959d6",
+      "name": "Evaluation"
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "metric": "customMetrics",
+        "metrics": {
+          "assignments": [
+            {
+              "name": "Accuracy",
+              "value": "={{ $json.Correctness }}",
+              "type": "number",
+              "id": "89160e24-b3f9-4bb7-80b4-48575b983260"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        4576,
+        -480
+      ],
+      "id": "88130973-6b97-4bd8-bf2d-cb46ae351510",
+      "name": "Score"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4368,
+        -304
+      ],
+      "id": "972a7f5f-bfd9-4691-a64f-1cb0d13a33ad",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list",
+          "cachedResultName": "Evaluation for Email SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 308065534,
+          "mode": "list",
+          "cachedResultName": "au_whatsapp",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Body": "={{ $('When fetching a dataset row').item.json.Body }}",
+            "Accuracy": "={{ $json.Accuracy }}"
+          },
+          "matchingColumns": [
+            "Body"
+          ],
+          "schema": [
+            {
+              "id": "Body",
+              "displayName": "Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expected Response",
+              "displayName": "Expected Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Actual Response",
+              "displayName": "Actual Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Accuracy",
+              "displayName": "Accuracy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        4784,
+        -480
+      ],
+      "id": "ec9c2151-2f08-4a48-bf75-30623a8d459c",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "expectedAnswer": "={{ $('When fetching a dataset row').item.json['Expected Response'] }}",
+        "actualAnswer": "={{ $('Response Agent').item.json.output.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        4224,
+        -480
+      ],
+      "id": "fb7cd0bb-4a85-450b-a72d-9968291f506e",
+      "name": "Evaluation1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        144,
+        272
+      ],
+      "id": "edcc89dc-96af-4139-b7ec-343bf98079f3",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "2c761342-1b37-4add-b95d-3d09c764111d",
+              "leftValue": "={{ $json.body.payload.sender.contact.identifierValue }}",
+              "rightValue": "+61",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -176,
+        0
+      ],
+      "id": "628fc839-8d81-4667-97c4-3b0d0e24de53",
+      "name": "Check for reply from AU"
     }
   ],
   "connections": {
@@ -882,7 +1227,7 @@
       "main": [
         [
           {
-            "node": "Get conversation ID",
+            "node": "Get company name",
             "type": "main",
             "index": 0
           }
@@ -940,7 +1285,7 @@
       "main": [
         [
           {
-            "node": "Redirect Message Types",
+            "node": "Check for reply from AU",
             "type": "main",
             "index": 0
           }
@@ -984,7 +1329,7 @@
       "main": [
         [
           {
-            "node": "Response Agent",
+            "node": "Map fields",
             "type": "main",
             "index": 0
           }
@@ -1123,29 +1468,6 @@
         ]
       ]
     },
-    "If agent 1 continues to respond": {
-      "main": [
-        [
-          {
-            "node": "Send to Slack for Approval1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Skip agent 1's response",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Skip agent 1's response": {
-      "main": [
-        []
-      ]
-    },
     "Switch": {
       "main": [
         [
@@ -1190,7 +1512,12 @@
       "main": [
         [
           {
-            "node": "If agent 1 continues to respond",
+            "node": "Evaluation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send to Slack for Approval",
             "type": "main",
             "index": 0
           }
@@ -1218,6 +1545,123 @@
           }
         ]
       ]
+    },
+    "Get company name": {
+      "main": [
+        [
+          {
+            "node": "Get conversation ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Output": {
+      "main": [
+        [
+          {
+            "node": "Evaluation1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Set Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Evaluation1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation1": {
+      "main": [
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for reply from AU": {
+      "main": [
+        [
+          {
+            "node": "Redirect Message Types",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1239,14 +1683,14 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "user-agent": "Messagebird/Requests develop:8c9cc536",
             "content-type": "application/json; charset=utf-8",
-            "messagebird-request-id": "9013a853-a652-4282-8943-5cf81542812c",
-            "messagebird-request-timestamp": "1769504830",
-            "content-length": "877",
-            "x-cloud-trace-context": "040b757e5a4aad09e8a2904c4dcdf726/1606784068944717596",
+            "messagebird-request-id": "548c3314-b941-4f2a-bcd4-239806d3bca4",
+            "messagebird-request-timestamp": "1770279003",
+            "user-agent": "Messagebird/Requests develop:8c9cc536",
+            "content-length": "879",
+            "x-cloud-trace-context": "757f5e66be6c5ed2975008fcdd3c56f4/6099950359027603939;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-040b757e5a4aad09e8a2904c4dcdf726-164c7198fc34e71c-00",
+            "traceparent": "00-757f5e66be6c5ed2975008fcdd3c56f4-54a76088595b59e3-01",
             "x-forwarded-for": "13.127.212.189",
             "forwarded": "for=\"13.127.212.189\";proto=https",
             "accept-encoding": "gzip"
@@ -1257,7 +1701,7 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+              "id": "6d65a5db-8eef-4f82-8c46-771911ee633c",
               "channelId": "6e133ad8-1149-52a1-89e5-b3e33491816d",
               "sender": {
                 "contact": {
@@ -1278,33 +1722,106 @@
               "body": {
                 "type": "text",
                 "text": {
-                  "text": "Hey Alan"
+                  "text": "Are you there?"
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1769504828",
+                  "timestamp": "1770279000",
                   "user_locale": "cmn"
                 }
               },
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU5MDU3MDY1NBUCABIYFDNBNzU4QkNCMDM2QjQ5Q0U4OEQyAA=="
+                  "platformReference": "wamid.HBgKNjU5MDU3MDY1NBUCABIYFDNBQzU5MDZENkZBQjc0OTIwRTk2AA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-01-27T09:07:10.501Z",
-              "createdAt": "2026-01-27T09:07:10.324Z",
-              "updatedAt": "2026-01-27T09:07:10.501Z",
+              "lastStatusAt": "2026-02-05T08:10:03.068Z",
+              "createdAt": "2026-02-05T08:10:03Z",
+              "updatedAt": "2026-02-05T08:10:03.068Z",
               "batchId": null
             }
           },
           "webhookUrl": "https://workflow.oddle.center/webhook-test/bird-message-received",
           "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Get company name": [
+      {
+        "json": {
+          "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+          "computedDisplayName": "Chelsea Nguyen",
+          "featuredIdentifiers": [
+            {
+              "key": "phonenumber",
+              "value": "+6590570654"
+            },
+            {
+              "key": "emailaddress",
+              "value": "chelsea@oddle.me"
+            }
+          ],
+          "identifierCount": 2,
+          "attributes": {
+            "avatarUrl": "",
+            "company": "Chelsea's Cafe",
+            "country": "",
+            "displayName": "Chelsea Nguyen",
+            "emailaddress": [
+              "chelsea@oddle.me"
+            ],
+            "firstName": "Chelsea",
+            "gender": "",
+            "lastName": "Nguyen",
+            "locales": [],
+            "phonenumber": [
+              "+6590570654"
+            ],
+            "reachableIdentifiersForEmailMarketing": [
+              "chelsea@oddle.me"
+            ],
+            "reachableIdentifiersForEmailTransactional": [
+              "chelsea@oddle.me"
+            ],
+            "reachableIdentifiersForSmsMarketing": [
+              "+6590570654"
+            ],
+            "reachableIdentifiersForSmsTransactional": [
+              "+6590570654"
+            ],
+            "reachableIdentifiersForWhatsAppMarketing": [
+              "+6590570654"
+            ],
+            "reachableIdentifiersForWhatsAppTransactional": [
+              "+6590570654"
+            ],
+            "subscribedEmail": true,
+            "subscribedPush": true,
+            "subscribedRcs": true,
+            "subscribedSms": true,
+            "subscribedWhatsApp": true,
+            "timezone": "Asia/Singapore"
+          },
+          "listIds": [
+            "098291e0-4aa8-481b-b8aa-f98b9f7ed9c4",
+            "38175f8a-a4bc-4fda-80ac-7e2768e04632",
+            "409353bc-aa2a-4313-9684-619d925994f9",
+            "a7b3c0ab-8320-4bc1-893b-b5a0b6b93a47",
+            "c74e7fe9-e302-4e17-bfeb-c0ce80975990",
+            "ef4f8d9f-9154-4d66-806a-6e9840994f24"
+          ],
+          "isAnonymous": false,
+          "createdAt": "2023-12-18T09:31:26.237Z",
+          "updatedAt": "2025-12-05T10:04:24.747Z"
         },
         "pairedItem": {
           "item": 0
@@ -1369,10 +1886,10 @@
               },
               "channelId": "6e133ad8-1149-52a1-89e5-b3e33491816d",
               "lastMessage": {
-                "id": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+                "id": "6d65a5db-8eef-4f82-8c46-771911ee633c",
                 "type": "text",
                 "preview": {
-                  "text": "Hey Alan"
+                  "text": "Are you there?"
                 },
                 "recipients": [],
                 "status": "delivered",
@@ -1389,14 +1906,14 @@
                     "platformAddress": "+6590570654"
                   }
                 },
-                "createdAt": "2026-01-27T09:07:10.324Z",
+                "createdAt": "2026-02-05T08:10:03Z",
                 "draft": false
               },
               "createdAt": "2025-10-28T03:42:26.298Z",
-              "updatedAt": "2026-01-27T09:07:10.324Z",
+              "updatedAt": "2026-02-05T08:10:03Z",
               "platformStyle": "direct",
               "lastMessageOutgoingAt": "2025-11-20T08:00:18.466Z",
-              "lastMessageIncomingAt": "2026-01-27T09:07:10.324Z",
+              "lastMessageIncomingAt": "2026-02-05T08:10:03Z",
               "hasDraft": false
             }
           ]
@@ -1405,10 +1922,468 @@
           "item": 0
         }
       }
+    ],
+    "Get Chat History": [
+      {
+        "json": {
+          "results": [
+            {
+              "id": "6d65a5db-8eef-4f82-8c46-771911ee633c",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "6d65a5db-8eef-4f82-8c46-771911ee633c",
+              "sender": {
+                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                "type": "contact",
+                "status": "active",
+                "displayName": "Chelsea Nguyen",
+                "avatarUrl": "",
+                "contact": {
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654"
+                }
+              },
+              "draft": false,
+              "status": "delivered",
+              "source": "channels",
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Are you there?"
+                }
+              },
+              "interactions": null,
+              "createdAt": "2026-02-05T08:10:03Z",
+              "updatedAt": "2026-02-05T08:10:03Z",
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1770279000",
+                  "user_locale": "cmn"
+                }
+              }
+            },
+            {
+              "id": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "cf56706d-53e6-4dd7-b387-70915bb74d2b",
+              "sender": {
+                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                "type": "contact",
+                "status": "active",
+                "displayName": "Chelsea Nguyen",
+                "avatarUrl": "",
+                "contact": {
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654"
+                }
+              },
+              "draft": false,
+              "status": "delivered",
+              "source": "channels",
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hey Alan"
+                }
+              },
+              "interactions": null,
+              "createdAt": "2026-01-27T09:07:10.324Z",
+              "updatedAt": "2026-01-27T09:07:10.324Z",
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1769504828",
+                  "user_locale": "cmn"
+                }
+              }
+            },
+            {
+              "id": "6c35010d-0913-4607-86cb-018fa67183ab",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "kR7pJBOMJtGPfiVVDH2Wcd",
+              "sender": {
+                "id": "7a2155ed-74c6-4bbf-aae5-23f037394b2e",
+                "type": "user",
+                "status": "active",
+                "displayName": "Chloe",
+                "avatarUrl": ""
+              },
+              "draft": false,
+              "recipients": [
+                {
+                  "type": "to",
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654",
+                  "contactAnnotation": {
+                    "name": "Chelsea Nguyen"
+                  }
+                }
+              ],
+              "status": "delivered",
+              "source": "conversations",
+              "template": {
+                "projectId": "24410393-a9b8-4bc9-9d0d-3e626fe5058d",
+                "version": "46f6ef39-10ae-4ffa-a3a4-54362a023a99",
+                "name": "",
+                "locale": "en",
+                "variables": null,
+                "shortLinks": {
+                  "enabled": true,
+                  "domain": "brd1.to"
+                },
+                "parameters": [
+                  {
+                    "type": "shortLink",
+                    "key": "link_0",
+                    "value": "",
+                    "sourceUrl": {
+                      "value": "https://bit.ly/4pFb5pF",
+                      "fullyReplaced": true
+                    }
+                  }
+                ]
+              },
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hi again! Before we wrap up our Oddle Reserve Early Partner Program, here’s a quick link for you to check out how the platform works:\n{{link_0}}\n\nIf you’ve got any questions, happy to jump on a quick call!"
+                }
+              },
+              "interactions": [
+                {
+                  "id": "ec3b975c-411b-47dc-9da5-0fe367e43661",
+                  "type": "clicked",
+                  "createdAt": "2025-11-20T08:00:22.613Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/4pFb5pF"
+                    }
+                  }
+                },
+                {
+                  "id": "655f82bc-0e9a-48b6-9251-c444b87cabdb",
+                  "type": "clicked",
+                  "createdAt": "2025-11-20T08:00:35.587Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/4pFb5pF"
+                    }
+                  }
+                }
+              ],
+              "createdAt": "2025-11-20T08:00:18.466Z",
+              "updatedAt": "2025-11-20T08:00:35.634Z"
+            },
+            {
+              "id": "53157fe9-9dd3-4af2-be58-1248878e0fea",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "53157fe9-9dd3-4af2-be58-1248878e0fea",
+              "sender": {
+                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                "type": "contact",
+                "status": "active",
+                "displayName": "Chelsea Nguyen",
+                "avatarUrl": "",
+                "contact": {
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654"
+                }
+              },
+              "draft": false,
+              "status": "delivered",
+              "source": "channels",
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hmmm"
+                }
+              },
+              "interactions": null,
+              "createdAt": "2025-11-20T07:58:30.01Z",
+              "updatedAt": "2025-11-20T07:58:30.01Z",
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1763625507",
+                  "user_locale": "cmn"
+                }
+              }
+            },
+            {
+              "id": "04399616-6966-48d4-a68a-4a079095b6f7",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "8ZoKRROpe_3Kwl3zAfJvMF",
+              "sender": {
+                "id": "7a2155ed-74c6-4bbf-aae5-23f037394b2e",
+                "type": "user",
+                "status": "active",
+                "displayName": "Chloe",
+                "avatarUrl": ""
+              },
+              "draft": false,
+              "recipients": [
+                {
+                  "type": "to",
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654",
+                  "contactAnnotation": {
+                    "name": "Chelsea Nguyen"
+                  }
+                }
+              ],
+              "status": "delivered",
+              "source": "conversations",
+              "template": {
+                "projectId": "44946f57-0493-4763-9559-f610400e829f",
+                "version": "cdf9a226-ce5d-42bb-bacb-b42e033d320e",
+                "name": "",
+                "locale": "en",
+                "variables": null,
+                "shortLinks": {
+                  "enabled": true,
+                  "domain": "brd1.to"
+                },
+                "parameters": [
+                  {
+                    "type": "shortLink",
+                    "key": "link_0",
+                    "value": "",
+                    "sourceUrl": {
+                      "value": "https://bit.ly/or-restaurant",
+                      "fullyReplaced": true
+                    }
+                  },
+                  {
+                    "type": "shortLink",
+                    "key": "link_1",
+                    "value": "",
+                    "sourceUrl": {
+                      "value": "https://bit.ly/or-customer",
+                      "fullyReplaced": true
+                    }
+                  }
+                ]
+              },
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hey! Just wanted to check in and see how things are on your side, totally fine if it’s been a busy one.\n\nWe’re just about to wrap up our *Oddle Reserve early-partner program*, so I’m sharing a couple of quick demos for you to have a look:\n1) Restaurant view video: {{link_0}}\n2) Customer view video: {{link_1}}\n\nHappy to arrange a quick call whenever suits you! :)"
+                }
+              },
+              "interactions": [
+                {
+                  "id": "4a5b66aa-c44e-495b-9ba9-49309d821eb4",
+                  "type": "clicked",
+                  "createdAt": "2025-11-20T07:50:57.987Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-restaurant"
+                    }
+                  }
+                },
+                {
+                  "id": "27282b2d-3539-425f-be11-5309b846a35f",
+                  "type": "clicked",
+                  "createdAt": "2025-11-20T07:51:55.36Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-restaurant"
+                    }
+                  }
+                },
+                {
+                  "id": "6881ee15-8b22-485b-ae05-02b2b04b48c8",
+                  "type": "clicked",
+                  "createdAt": "2025-11-20T07:52:24.132Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-customer"
+                    }
+                  }
+                },
+                {
+                  "id": "d449e03c-3654-486b-aae0-e333d52afa34",
+                  "type": "clicked",
+                  "createdAt": "2025-12-10T06:08:38.007Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-restaurant"
+                    }
+                  }
+                },
+                {
+                  "id": "d2026173-1824-4671-9265-cced3b60d39f",
+                  "type": "clicked",
+                  "createdAt": "2025-12-10T06:08:42.606Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-customer"
+                    }
+                  }
+                },
+                {
+                  "id": "bf2fc165-60ee-4343-aa1e-fade0e406cbe",
+                  "type": "clicked",
+                  "createdAt": "2025-12-10T06:09:21.11Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-restaurant"
+                    }
+                  }
+                },
+                {
+                  "id": "f4858a88-b987-4c20-8045-feae9b4ccdcc",
+                  "type": "clicked",
+                  "createdAt": "2025-12-10T06:09:21.825Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-customer"
+                    }
+                  }
+                },
+                {
+                  "id": "be7a1a91-ae8f-4ba6-b4b4-2a987e50a4de",
+                  "type": "clicked",
+                  "createdAt": "2025-12-10T06:09:30.725Z",
+                  "metadata": {
+                    "link": {
+                      "name": "",
+                      "url": "https://bit.ly/or-restaurant"
+                    }
+                  }
+                }
+              ],
+              "createdAt": "2025-11-20T07:50:51.175Z",
+              "updatedAt": "2025-12-10T06:09:30.77Z"
+            },
+            {
+              "id": "3935cd9e-6ce2-41cc-997e-219221f64807",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "7PIaI3utdLtZYKfVnlnVlw",
+              "sender": {
+                "id": "3ee61feb-67be-4327-b8b9-c807dc94e4a6",
+                "type": "user",
+                "status": "active",
+                "displayName": "Chelsea",
+                "avatarUrl": ""
+              },
+              "draft": false,
+              "recipients": [
+                {
+                  "type": "to",
+                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654",
+                  "contactAnnotation": {
+                    "name": "Chelsea Nguyen"
+                  }
+                }
+              ],
+              "status": "delivered",
+              "source": "conversations",
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "yes Chelsea?"
+                }
+              },
+              "interactions": null,
+              "createdAt": "2025-10-28T03:42:45.786Z",
+              "updatedAt": "2025-10-28T03:42:50.391Z"
+            },
+            {
+              "id": "b2248fcd-b561-479c-886c-e8cba1d27c33",
+              "conversationId": "9417efce-39fa-47a7-958c-e6b9bf40712c",
+              "reference": "b2248fcd-b561-479c-886c-e8cba1d27c33",
+              "sender": {
+                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                "type": "contact",
+                "status": "active",
+                "displayName": "Chelsea Nguyen",
+                "avatarUrl": "",
+                "contact": {
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+6590570654",
+                  "platformAddressSelector": "identifiers.phonenumber",
+                  "platformAddress": "+6590570654"
+                }
+              },
+              "draft": false,
+              "status": "delivered",
+              "source": "channels",
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Hey Alan"
+                }
+              },
+              "interactions": null,
+              "createdAt": "2025-10-28T03:42:26.298Z",
+              "updatedAt": "2025-10-28T03:42:26.298Z",
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1761622944",
+                  "user_locale": "cmn"
+                }
+              }
+            }
+          ]
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Response Agent": [
+      {
+        "json": {
+          "output": {
+            "text": "Hi Chelsea, yes I am here! \n\nWere you looking to chat about the Reserve program for your venue? You can grab a quick time for us to chat here: https://forms.oddle.me/oddle-discovery-call"
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "When fetching a dataset row": [
+      {
+        "json": {
+          "row_number": 2,
+          "Body": "NowBookIt already sends reminders",
+          "Expected Response": "Fair point, we look at it slightly differently though. Reminders handle the bookings you already have, we focus on generating new ones and growing your database, like:\n• Cancellation recovery: auto win back guests who drop off\n• Targeted broadcasts: re-engage diners who haven't visited in months\n\nWould you like me to show you the difference?",
+          "Actual Response": "",
+          "Accuracy": "",
+          "_rowsLeft": 16
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
-  "versionId": "b5e2ef5b-9a5f-417f-991d-3e5598a7e23b",
-  "activeVersionId": null,
+  "versionId": "b2f56577-03d5-4f77-8dfa-59234b6fdecd",
+  "activeVersionId": "b2f56577-03d5-4f77-8dfa-59234b6fdecd",
   "triggerCount": 1,
   "shared": [
     {
@@ -1419,6 +2394,1674 @@
       "projectId": "tAHBdayTR1Nb6OKK"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-02-05T10:37:15.250Z",
+    "createdAt": "2026-02-05T10:37:02.507Z",
+    "versionId": "b2f56577-03d5-4f77-8dfa-59234b6fdecd",
+    "workflowId": "eXEVf6BDPaBy3uWd",
+    "nodes": [
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "d990cbd6-a408-4ec4-a889-41be698918d9",
+                "name": "message_type",
+                "type": "string",
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.type }}"
+              },
+              {
+                "id": "23b785c3-f38e-4706-80b7-51f333bba3bd",
+                "name": "message_text",
+                "type": "string",
+                "value": "={{ $json.text }}"
+              },
+              {
+                "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
+                "name": "message_caption",
+                "type": "string",
+                "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+              },
+              {
+                "id": "9612af65-3421-4b94-b3c3-4231c762b351",
+                "name": "chat_id",
+                "value": "={{ $('Receive Reply').item.json.body.messages[0].chat_id }}",
+                "type": "string"
+              },
+              {
+                "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
+                "name": "channel_id",
+                "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b8262cd7-ad42-4c33-866b-007c61da8870",
+        "name": "Get User's Message",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1824,
+          -96
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "ec5e944c-7656-4860-adb7-edcfa8b95ed0",
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "text",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Text Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "version": 2,
+                    "leftValue": "",
+                    "caseSensitive": true,
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "id": "05b30af4-967b-4824-abdc-84a8292ac0e5",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "image"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Image Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "75e367cd-3913-4ea4-a2ea-b0442b3325fb",
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "voice",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Voice Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "version": 2,
+                    "leftValue": "",
+                    "caseSensitive": true,
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "audio",
+                      "id": "1113da73-5d4e-450e-90b3-960e6bec2e3c"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Audio Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "version": 2,
+                    "leftValue": "",
+                    "caseSensitive": true,
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "id": "82aa5ff4-c9b6-4187-a27e-c7c5d9bfdda0",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "video"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Video Message"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 2
+                  },
+                  "conditions": [
+                    {
+                      "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                      "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                      "rightValue": "link_preview",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Link provided"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra",
+            "renameFallbackOutput": "Other Message Type"
+          }
+        },
+        "id": "7002f063-73b1-48dc-bbb8-5ad88c4ea5d4",
+        "name": "Redirect Message Types",
+        "type": "n8n-nodes-base.switch",
+        "position": [
+          144,
+          -96
+        ],
+        "typeVersion": 3.2
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "bird-message-received",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -384,
+          0
+        ],
+        "id": "68d2ea4f-e61e-446f-a274-cb6c325bf380",
+        "name": "Receive Reply",
+        "webhookId": "8d6624db-8953-470c-9561-14e365250265"
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          960,
+          -400
+        ],
+        "name": "Topic Output Parser",
+        "id": "f572ac09-cfee-464b-8148-816977b47d75"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "={{ $('Receive Reply').item.json.body.payload.body.text.text }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.6,
+        "position": [
+          784,
+          -560
+        ],
+        "name": "Check if Bot Message",
+        "id": "d03ec1bb-b420-43ef-9bea-e1dbbf4d1259"
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-3-flash-preview",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          736,
+          -400
+        ],
+        "name": "Google Gemini LLM",
+        "id": "d95428b7-07e9-4e8f-9585-74b80e6e4d72",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const items = $input.all();\nconst output = [];\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  // 1. Sort messages by createdAt (Newest to Oldest)\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let contactParticipantId = null;\n  let userParticipantId = null; // Initialize variable for internal user\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    \n    // Capture contactParticipantId from the first 'contact' type found\n    if (isProspect && !contactParticipantId) {\n      contactParticipantId = msg.sender.id;\n    }\n\n    // Capture userParticipantId from the first 'user' type found\n    if (isUser && !userParticipantId) {\n      userParticipantId = msg.sender.id;\n    }\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toISOString().replace('T', ' ').substring(0, 16);\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // Build Thread (Latest -> Earliest)\n    conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  // 2. Calculate Response Time (Minutes)\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    contactParticipantId: contactParticipantId,\n    userParticipantId: userParticipantId, // Added new field here\n    conversationThreadFormatted: conversationThread.join('\\n\\n'),\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\n\nreturn output;"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2848,
+          -96
+        ],
+        "name": "Parse Chat History",
+        "id": "2bda49c6-a531-4d48-afc6-d026c6e40450"
+      },
+      {
+        "parameters": {
+          "jsCode": "// This node extracts image URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst imagesFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is image and has a link\n    if (msg.type === 'image' && msg.image && msg.image.link) {\n      imagesFound.push({\n        imageUrl: msg.image.link,\n        caption: msg.image.caption || \"\",\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// If no images were found, you might want to return an empty item \n// or a specific message to avoid errors in later nodes\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          736,
+          -176
+        ],
+        "id": "59bb1307-c910-47d9-a62e-5ef4531095f6",
+        "name": "Get image URL"
+      },
+      {
+        "parameters": {
+          "jsCode": "// This node extracts voice/audio URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst audioFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Whapi uses 'voice' for voice notes and 'audio' for uploaded files\n    const audioData = msg.voice || msg.audio;\n    \n    if ((msg.type === 'voice' || msg.type === 'audio') && audioData && audioData.link) {\n      audioFound.push({\n        audioUrl: audioData.link,\n        chatId: msg.chat_id,\n        sender: msg.from_name,\n        seconds: audioData.seconds || 0,\n        mime_type: audioData.mime_type\n      });\n    }\n  }\n}\n\n// If no audio was found, return a null object to prevent workflow crashes\nreturn audioFound.length > 0 ? audioFound : [{ audioUrl: null, status: \"no audio found\" }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          736,
+          32
+        ],
+        "id": "bc5b4173-76ce-4ddb-a34b-bda751cd4e2d",
+        "name": "Get Voice URL"
+      },
+      {
+        "parameters": {
+          "resource": "audio",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3-flash-preview",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3-flash-preview"
+          },
+          "audioUrls": "={{ $json.audioUrl }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          960,
+          32
+        ],
+        "id": "09d38da2-cbed-45f7-b234-d836b50bc26a",
+        "name": "Transcribe voice message",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "resource": "image",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-2.0-flash",
+            "mode": "list",
+            "cachedResultName": "models/gemini-2.0-flash"
+          },
+          "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+          "imageUrls": "={{ $json.imageUrl }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          960,
+          -176
+        ],
+        "id": "6f91ce86-0f78-4f92-8b9d-2135946008a6",
+        "name": "Analyze image",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// This node extracts video URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst videosFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is video and has a link\n    if (msg.type === 'video' && msg.video && msg.video.link) {\n      videosFound.push({\n        videoUrl: msg.video.link,\n        caption: msg.video.caption || \"\",\n        seconds: msg.video.seconds || 0,\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// Return video data or a null object to keep the workflow from breaking\nreturn videosFound.length > 0 ? videosFound : [{ videoUrl: null, status: \"no video found\" }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          736,
+          240
+        ],
+        "id": "4463a16e-3605-404e-ba4a-fbbb67be0911",
+        "name": "Get video URL"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+                "name": "text",
+                "type": "string",
+                "value": "={{ $json.content.parts[0].text }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "b49750fe-8d3f-4f91-8008-8f3c2544b970",
+        "name": "Format image description",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1216,
+          -176
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "resource": "video",
+          "operation": "analyze",
+          "modelId": {
+            "__rl": true,
+            "value": "models/gemini-3-flash-preview",
+            "mode": "list",
+            "cachedResultName": "models/gemini-3-flash-preview"
+          },
+          "text": "Here is an video sent by the user. Describe the video briefly and transcribe any voice/audio message in the video.",
+          "videoUrls": "={{ $json.videoUrl }}",
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.googleGemini",
+        "typeVersion": 1.1,
+        "position": [
+          960,
+          240
+        ],
+        "id": "1c88376f-aaa1-4478-a2b6-1756056e80d8",
+        "name": "Analyze video",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+                "name": "text",
+                "type": "string",
+                "value": "={{ $json.content.parts[0].text }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "dc19b68d-ea42-45c0-9559-f02f6f6c142d",
+        "name": "Format video description",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1216,
+          240
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+                "name": "text",
+                "type": "string",
+                "value": "={{ $json.content.parts[0].text }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "a8187f86-d654-4e42-8e4b-401058d1126a",
+        "name": "Format voice transcription",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1216,
+          32
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+                "name": "text",
+                "type": "string",
+                "value": "={{ $('Redirect Message Types').item.json.body.payload.body.text.text }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "84d7f465-f4e1-4291-b661-838d5e657923",
+        "name": "Format response",
+        "type": "n8n-nodes-base.set",
+        "position": [
+          1344,
+          -576
+        ],
+        "typeVersion": 3.4
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.messages[0].from }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Redirect Message Types').item.json.body.messages[0].type }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          736,
+          512
+        ],
+        "id": "275d2a79-f472-4632-9a53-b9c2429fb81b",
+        "name": "Notify in Slack",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8F3Mb23D8ZFkrAh6",
+            "name": "Slack's WhatsApp Agent Alex"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-3-flash-preview",
+          "options": {}
+        },
+        "id": "747ef30f-a467-4561-9eb0-63b677996335",
+        "name": "Google Gemini Chat Model1",
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "position": [
+          3328,
+          96
+        ],
+        "typeVersion": 1,
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          3648,
+          96
+        ],
+        "id": "234f0127-4800-4979-b7ae-cc030ff5f020",
+        "name": "Structured Output Parser1"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.output.classification }}",
+                      "rightValue": "human",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      },
+                      "id": "f620673b-58a0-4990-b57d-aeceafc007f7"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Human reply"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "ef99233a-2a44-4831-b14d-9a6928d5afce",
+                      "leftValue": "={{ $json.output.classification }}",
+                      "rightValue": "auto_bot",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals",
+                        "name": "filter.operator.equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Auto reply"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1104,
+          -560
+        ],
+        "id": "be2f3d14-d695-4223-839e-cb8581404412",
+        "name": "Switch"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          1344,
+          -384
+        ],
+        "id": "c1176ead-632f-44d8-bb2c-420fa0622419",
+        "name": "Skip auto reply"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/participants/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}/conversations",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "channelId",
+                "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "*/*"
+              },
+              {
+                "name": "authorization",
+                "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2288,
+          -96
+        ],
+        "id": "8f69744a-b47a-4cee-8495-ecaa0f2cb93f",
+        "name": "Get conversation ID"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/conversations/{{ $json.results[0].id }}/messages",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "count",
+                "value": "20"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "*/*"
+              },
+              {
+                "name": "authorization",
+                "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2560,
+          -96
+        ],
+        "id": "c525f8af-0d1a-4272-9bc0-0d43f24a9d19",
+        "name": "Get Chat History"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via *WhatsApp Business*. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 3-5 examples. **Crucial:** Extract the *logical pivot* (the rebuttal/strategy) but ignore the email-style formatting.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n- Social Proof (Australia): If a lead asks about current users in Australia, mention exactly 3 names from this list: The Penny Drop Cafe, Thai Ute Restaurant, Lumen People, Catalina Kitchen Cafe, Bar & Restaurant, Arcadia Liquors, or Mister Minh.\n\n**Step 1: Logic Extraction & Adaptation**\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent (e.g., \"Happy with current provider,\" \"No time,\" \"Price\").\n- Logic Extraction: Find the KB example that matches this intent. Adopt the specific \"Anchor Logic\" (e.g., if the example challenges \"Cost vs Results,\" you must do the same).\n- Medium Conversion: Convert the formal email logic into a **short, snappy WhatsApp message**. Remove all formal \"email fluff\" (e.g., \"I hope you're having a productive week\").\n\n**Step 2: Scenario Logic**\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB or Website.\n- If they ask about current Australian clients, provide 3 names from the Social Proof list.\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategy: Identify the primary sales pivot used in the retrieved KB example (e.g., challenging the current status quo, questioning hidden costs, or offering a specific concession). Apply this exact logical framework to your response. Do not introduce arguments, features, or pricing not found in that specific example.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's phone number or email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 60 words. Be extremely concise.\n- Tone: Professional, direct, and conversational. WhatsApp is more casual than email.\n- Structure: Use 1-2 short paragraphs maximum. Match the \"density\" of the lead's message.\n- Salutation: Get the prospect's name from chat history. If the name is unknown, omit the salutation and start with the answer.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items (if any). No other symbols.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+          }
+        },
+        "id": "a05cd147-70e5-4992-b8eb-648a04a27292",
+        "name": "Response Agent",
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "position": [
+          3408,
+          -96
+        ],
+        "typeVersion": 1.6
+      },
+      {
+        "parameters": {},
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          3344,
+          432
+        ],
+        "id": "f9a86692-f717-4be1-950d-8d3762b53b50",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+          "tableName": {
+            "__rl": true,
+            "value": "response_handling_guide",
+            "mode": "list",
+            "cachedResultName": "response_handling_guide"
+          },
+          "topK": 5,
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          3344,
+          272
+        ],
+        "id": "892f7cd7-f124-4d24-82a6-5bc072fbc644",
+        "name": "Response Handling Knowledge Base",
+        "credentials": {
+          "supabaseApi": {
+            "id": "aJzMx5t2Q4kcZ8EL",
+            "name": "Supabase Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/contacts/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "attribute",
+                "value": "=company"
+              }
+            ]
+          },
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "accept",
+                "value": "*/*"
+              },
+              {
+                "name": "authorization",
+                "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2064,
+          -96
+        ],
+        "id": "4f957f65-9f94-435d-9f4f-42c7770256a0",
+        "name": "Get company name"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3808,
+          -96
+        ],
+        "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
+        "name": "Send to Slack for Approval",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8F3Mb23D8ZFkrAh6",
+            "name": "Slack's WhatsApp Agent Alex"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "14648e8e-b352-4ea4-8f5a-b9a6335dbc6b",
+                "name": "lead_message",
+                "value": "={{ $json.Body }}",
+                "type": "string"
+              },
+              {
+                "id": "458a8b87-069c-423f-b662-e31d5e01d4eb",
+                "name": "chat_history",
+                "value": "=[2026-02-05 08:10] SDR: \"Hi Miss Saigon team, Alan from Oddle here. Noticed you're on SevenRooms—are you getting full value from it?\n\nWe’re offering AU brands 'Founder Access' at A$65/mo, locked in forever. We use your data to drive revenue, not just switch software.\n\nOpen to a brief 10-min chat this week?\"",
+                "type": "string"
+              },
+              {
+                "id": "a1f86e3c-8e7a-40ae-9e1a-0a7e74578d88",
+                "name": "message_type",
+                "value": "text",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3056,
+          112
+        ],
+        "id": "2fddec5b-0f66-4921-bfd2-9997fe40308e",
+        "name": "Edit Fields"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+            "mode": "list"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 308065534,
+            "mode": "list",
+            "cachedResultName": "au_whatsapp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+          }
+        },
+        "type": "n8n-nodes-base.evaluationTrigger",
+        "typeVersion": 4.6,
+        "position": [
+          2816,
+          112
+        ],
+        "id": "87a70714-f4a1-48a3-ad9e-a386f42dc8df",
+        "name": "When fetching a dataset row",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "32819e6c-b831-4634-9f34-1b9e4b0ae992",
+                "name": "lead_message",
+                "value": "={{ $json.leadMessage }}",
+                "type": "string"
+              },
+              {
+                "id": "367e8059-b953-48de-b357-2d862d36b76f",
+                "name": "chat_history",
+                "value": "={{ $json.conversationThreadFormatted }}",
+                "type": "string"
+              },
+              {
+                "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
+                "name": "message_type",
+                "value": "={{ $('Redirect Message Types').item.json.body.payload.body.type }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          3056,
+          -96
+        ],
+        "id": "234337e5-30bc-48de-b58f-65a1dafebef7",
+        "name": "Map fields"
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+            "mode": "list",
+            "cachedResultName": "Evaluation for Email SDR Agent",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 308065534,
+            "mode": "list",
+            "cachedResultName": "au_whatsapp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+          },
+          "outputs": {
+            "values": [
+              {
+                "outputName": "Actual Response",
+                "outputValue": "={{ $('Response Agent').item.json.output.text }}"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.evaluation",
+        "typeVersion": 4.7,
+        "position": [
+          4016,
+          -480
+        ],
+        "id": "77765a6a-9141-4eae-8267-bd4bc7bb90ba",
+        "name": "Set Output",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "checkIfEvaluating"
+        },
+        "type": "n8n-nodes-base.evaluation",
+        "typeVersion": 4.7,
+        "position": [
+          3808,
+          -352
+        ],
+        "id": "4ecb9efe-3c19-47e8-b34b-161d8f8959d6",
+        "name": "Evaluation"
+      },
+      {
+        "parameters": {
+          "operation": "setMetrics",
+          "metric": "customMetrics",
+          "metrics": {
+            "assignments": [
+              {
+                "name": "Accuracy",
+                "value": "={{ $json.Correctness }}",
+                "type": "number",
+                "id": "89160e24-b3f9-4bb7-80b4-48575b983260"
+              }
+            ]
+          }
+        },
+        "type": "n8n-nodes-base.evaluation",
+        "typeVersion": 4.7,
+        "position": [
+          4576,
+          -480
+        ],
+        "id": "88130973-6b97-4bd8-bf2d-cb46ae351510",
+        "name": "Score"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          4368,
+          -304
+        ],
+        "id": "972a7f5f-bfd9-4691-a64f-1cb0d13a33ad",
+        "name": "Google Gemini Chat Model2",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+            "mode": "list",
+            "cachedResultName": "Evaluation for Email SDR Agent",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 308065534,
+            "mode": "list",
+            "cachedResultName": "au_whatsapp",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=308065534"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Body": "={{ $('When fetching a dataset row').item.json.Body }}",
+              "Accuracy": "={{ $json.Accuracy }}"
+            },
+            "matchingColumns": [
+              "Body"
+            ],
+            "schema": [
+              {
+                "id": "Body",
+                "displayName": "Body",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "Expected Response",
+                "displayName": "Expected Response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Actual Response",
+                "displayName": "Actual Response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "Accuracy",
+                "displayName": "Accuracy",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          4784,
+          -480
+        ],
+        "id": "ec9c2151-2f08-4a48-bf75-30623a8d459c",
+        "name": "Update row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "setMetrics",
+          "expectedAnswer": "={{ $('When fetching a dataset row').item.json['Expected Response'] }}",
+          "actualAnswer": "={{ $('Response Agent').item.json.output.text }}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.evaluation",
+        "typeVersion": 4.8,
+        "position": [
+          4224,
+          -480
+        ],
+        "id": "fb7cd0bb-4a85-450b-a72d-9968291f506e",
+        "name": "Evaluation1"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          144,
+          272
+        ],
+        "id": "edcc89dc-96af-4139-b7ec-343bf98079f3",
+        "name": "No Operation, do nothing"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "2c761342-1b37-4add-b95d-3d09c764111d",
+                "leftValue": "={{ $json.body.payload.sender.contact.identifierValue }}",
+                "rightValue": "+61",
+                "operator": {
+                  "type": "string",
+                  "operation": "startsWith"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -176,
+          0
+        ],
+        "id": "628fc839-8d81-4667-97c4-3b0d0e24de53",
+        "name": "Check for reply from AU"
+      }
+    ],
+    "connections": {
+      "Get User's Message": {
+        "main": [
+          [
+            {
+              "node": "Get company name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Redirect Message Types": {
+        "main": [
+          [
+            {
+              "node": "Check if Bot Message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get image URL",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Get Voice URL",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [],
+          [
+            {
+              "node": "Get video URL",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Check if Bot Message",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Notify in Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Receive Reply": {
+        "main": [
+          [
+            {
+              "node": "Check for reply from AU",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Topic Output Parser": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Check if Bot Message",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini LLM": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Check if Bot Message",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check if Bot Message": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Chat History": {
+        "main": [
+          [
+            {
+              "node": "Map fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get image URL": {
+        "main": [
+          [
+            {
+              "node": "Analyze image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Voice URL": {
+        "main": [
+          [
+            {
+              "node": "Transcribe voice message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analyze image": {
+        "main": [
+          [
+            {
+              "node": "Format image description",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Transcribe voice message": {
+        "main": [
+          [
+            {
+              "node": "Format voice transcription",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format image description": {
+        "main": [
+          [
+            {
+              "node": "Get User's Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get video URL": {
+        "main": [
+          [
+            {
+              "node": "Analyze video",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Analyze video": {
+        "main": [
+          [
+            {
+              "node": "Format video description",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format video description": {
+        "main": [
+          [
+            {
+              "node": "Get User's Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format voice transcription": {
+        "main": [
+          [
+            {
+              "node": "Get User's Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Format response": {
+        "main": [
+          [
+            {
+              "node": "Get User's Message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Format response",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip auto reply",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get conversation ID": {
+        "main": [
+          [
+            {
+              "node": "Get Chat History",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Chat History": {
+        "main": [
+          [
+            {
+              "node": "Parse Chat History",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Response Agent": {
+        "main": [
+          [
+            {
+              "node": "Evaluation",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send to Slack for Approval",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Response Handling Knowledge Base",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Response Handling Knowledge Base": {
+        "ai_tool": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get company name": {
+        "main": [
+          [
+            {
+              "node": "Get conversation ID",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "When fetching a dataset row": {
+        "main": [
+          [
+            {
+              "node": "Edit Fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Map fields": {
+        "main": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Edit Fields": {
+        "main": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Output": {
+        "main": [
+          [
+            {
+              "node": "Evaluation1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evaluation": {
+        "main": [
+          [
+            {
+              "node": "Set Output",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Score": {
+        "main": [
+          [
+            {
+              "node": "Update row in sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model2": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Evaluation1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Evaluation1": {
+        "main": [
+          [
+            {
+              "node": "Score",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check for reply from AU": {
+        "main": [
+          [
+            {
+              "node": "Redirect Message Types",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version b2f56577",
+    "description": "",
+    "autosaved": false
+  },
   "tags": []
 }
