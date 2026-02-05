@@ -1,0 +1,348 @@
+{
+  "updatedAt": "2026-02-05T02:43:48.312Z",
+  "createdAt": "2026-02-04T03:36:59.460Z",
+  "id": "2SWvtvGbkteCtlr0",
+  "name": "Error Logger",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -1280
+      ],
+      "id": "0c97a5c6-48c3-4dac-85e7-18ef2f647fe4",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg",
+          "mode": "list",
+          "cachedResultName": "n8n Workflow Error Logs",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "main",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Error Message": "={{ $json.execution.error.message }}",
+            "Workflow": "={{ $json.workflow.name }}",
+            "URL": "={{ $json.execution.url }}",
+            "Node": "={{ $json.execution.lastNodeExecuted }}",
+            "Timestamp": "={{ $now }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Workflow",
+              "displayName": "Workflow",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Node",
+              "displayName": "Node",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Error Message",
+              "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        32,
+        -1456
+      ],
+      "id": "c013ff9c-b122-44f9-bb4d-52735fc747ab",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#noti-n8n-errors",
+          "mode": "name"
+        },
+        "text": "=There's an error\n- Workflow: {{ $json.workflow.name }}\n- Error Node: {{ $json.execution.lastNodeExecuted }}\n- URL: {{ $json.execution.url }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        32,
+        -1136
+      ],
+      "id": "c47b67a4-a51a-4c73-90cf-f5e821708fbb",
+      "name": "Send a message",
+      "webhookId": "8a360659-a3bf-4b92-ac79-c27d395e05cc",
+      "credentials": {
+        "slackApi": {
+          "id": "pwHIEHgMJGOrRW0s",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 3,
+    "timezone": "Asia/Singapore"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
+  "activeVersionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-04T03:36:59.460Z",
+      "createdAt": "2026-02-04T03:36:59.460Z",
+      "role": "workflow:owner",
+      "workflowId": "2SWvtvGbkteCtlr0",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-05T02:36:10.872Z",
+    "createdAt": "2026-02-05T02:34:37.745Z",
+    "versionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
+    "workflowId": "2SWvtvGbkteCtlr0",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -400,
+          -1280
+        ],
+        "id": "0c97a5c6-48c3-4dac-85e7-18ef2f647fe4",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg",
+            "mode": "list",
+            "cachedResultName": "n8n Workflow Error Logs",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "main",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pm8gS7MRz-9lYPLO-2g5kIguL3N-H5hZ7NWNF7PgZRg/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Error Message": "={{ $json.execution.error.message }}",
+              "Workflow": "={{ $json.workflow.name }}",
+              "URL": "={{ $json.execution.url }}",
+              "Node": "={{ $json.execution.lastNodeExecuted }}",
+              "Timestamp": "={{ $now }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Timestamp",
+                "displayName": "Timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Workflow",
+                "displayName": "Workflow",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL",
+                "displayName": "URL",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Node",
+                "displayName": "Node",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Error Message",
+                "displayName": "Error Message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          32,
+          -1456
+        ],
+        "id": "c013ff9c-b122-44f9-bb4d-52735fc747ab",
+        "name": "Append row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "#noti-n8n-errors",
+            "mode": "name"
+          },
+          "text": "=There's an error\n- Workflow: {{ $json.workflow.name }}\n- Error Node: {{ $json.execution.lastNodeExecuted }}\n- URL: {{ $json.execution.url }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          32,
+          -1136
+        ],
+        "id": "c47b67a4-a51a-4c73-90cf-f5e821708fbb",
+        "name": "Send a message",
+        "webhookId": "8a360659-a3bf-4b92-ac79-c27d395e05cc",
+        "credentials": {
+          "slackApi": {
+            "id": "pwHIEHgMJGOrRW0s",
+            "name": "Slack account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version 49f626a7",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
