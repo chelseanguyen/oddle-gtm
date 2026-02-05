@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-02T08:23:17.040Z",
+  "updatedAt": "2026-02-05T02:48:27.658Z",
   "createdAt": "2026-01-21T09:15:28.211Z",
   "id": "QAsTHdspRA6bfxQr",
   "name": "[Whapi] Trap Agent - Veronica 2538",
@@ -3522,7 +3522,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": null,
   "meta": {
