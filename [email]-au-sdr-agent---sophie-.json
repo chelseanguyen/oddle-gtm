@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-03T07:43:24.113Z",
+  "updatedAt": "2026-02-05T02:43:12.294Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] AU SDR Agent - Sophie",
@@ -59,8 +59,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -128,
-        -224
+        -640,
+        -208
       ],
       "name": "Google Gemini Flash",
       "id": "2835fccd-8d1a-4b00-b027-7478d0fe46da",
@@ -73,7 +73,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  \n  // Remove HTML tags\n  let text = html.replace(/<[^>]*>/g, ' ');\n  \n  // Decode common HTML entities\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  \n  // Clean up extra whitespace\n  text = text.replace(/\\s+/g, ' ').trim();\n  \n  return text;\n}\n\n// Helper function to format timestamp\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// Get the conversation data from the input\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\n// 1. EXTRACT LEAD-SPECIFIC DATA\n// Find the latest reply from the prospect\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\n// Also find any message that contains the leadEmail (could be a sent or received email)\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply) {\n  // Clean lead message and strip out historical \"On... wrote:\" quotes to help AI focus\n  if (latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim()\n                         .substring(0, 1000);\n  }\n}\n\n// Extract Company Name from leadEmail domain if possible\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  // Simple logic to capitalize the first letter of the domain\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\n// 2. PROCESS ALL MESSAGES FOR THE THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    message: stripHtml(item.message).substring(0, 500),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\n// Sort messages chronologically (oldest first)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));\n\n// 3. FORMAT CONVERSATION THREAD\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === chronologicalMessages.length - 1;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\n// 4. CREATE STRUCTURED OBJECT\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[chronologicalMessages.length - 1]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
+        "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  let text = html.replace(/<[^>]*>/g, ' ');\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  text = text.replace(/\\s+/g, ' ').trim();\n  return text;\n}\n\n// Helper function to format timestamp\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// Get the conversation data from the input\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\n// 1. EXTRACT LEAD-SPECIFIC DATA\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply && latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim();\n                         // Removed .substring(0, 1000) to keep full text\n}\n\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\n// 2. PROCESS ALL MESSAGES FOR THE THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    // MODIFIED: Removed .substring(0, 500) to show the full message\n    message: stripHtml(item.message),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\n// Sort messages Newest First\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));\n\n// 3. FORMAT CONVERSATION THREAD\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === 0;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\n// 4. CREATE STRUCTURED OBJECT\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[0]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -142,8 +142,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        688,
-        -432
+        -32,
+        -416
       ],
       "id": "5aa9e056-a669-480e-9325-edb50a3e98f6",
       "name": "Send to Slack for Approval",
@@ -163,8 +163,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -304,
-        -736
+        -1024,
+        -720
       ],
       "typeVersion": 1,
       "id": "90f770b5-7c9d-4db6-8216-cb5bb4923590",
@@ -179,8 +179,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1472,
-        -816
+        -2256,
+        -800
       ],
       "typeVersion": 1,
       "id": "f37b9d75-cabf-4542-a5d1-18509810338c",
@@ -189,17 +189,17 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=- Email from: {{ $('Parse Conversation History').item.json.leadEmail }}\n- Company: {{ $('Parse Conversation History').item.json.companyName }}\n- Subject: {{ $('Parse Conversation History').item.json.subject }}\n- Lead's's latest reply: {{ $('Parse Conversation History').item.json.leadMessage }}\n- Topic: {{ $json.output.topic }}\n- Conversation History: {{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
+        "text": "=- Email from: {{ $json.email_from }}\n- Company: {{ $json.company }}\n- Subject: {{ $json.subject }}\n- Lead's's latest reply: {{ $json.lead_message }}\n- Conversation History: {{ $json.conversation_history }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base: Use this tool to retrieve 3-5 examples. Priority: Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Identity: Find the SDR’s first name in the Conversation History.\n- Salutation: Use the lead's name from their signature. If unavailable, use \"Hi [Company Name] team.\"\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction: Find the Response Handling Knowledge Base example that most closely matches this intent. You must adopt the specific \"Anchor Logic\" of that example (e.g., if the example asks a question about ROI, you must ask a question about ROI; if the example uses a specific \"I'll step back\" concession, you must use that concession).\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base or Website.\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategy: Identify the primary sales pivot used in the retrieved Response Handling Knowledge Base example (e.g., challenging the current status quo, questioning hidden costs, or offering a specific concession). Apply this exact logical framework to your response. Do not introduce arguments, features, or pricing not found in that specific example.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"I am 100% not interested\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Use a short \"filler\" transitions (e.g., \"I totally understand,\" \"That makese send,\" or \"Usually, I find that...\"). Start the rebuttal with the same directness as the Response Handling Knowledge Base examples.\n- If a lead’s response is short and direct, your response should be equally lean. Match the \"density\" of the Response Handling Knowledge Base examples.\n- Brevity: Use a simple hyphen (-) for list items. No other symbols.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format.\n\n**Email Signature:**\nFollow the format below, using the SDR’s first name found in the *Conversation History*:\n\nCheers,\n[SDR’s first name]"
+          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this tool to retrieve 3-5 examples. Priority: Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me/au): Use for specific product/feature queries.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Identity: Find the SDR’s first name in the Conversation History.\n- Salutation: Use the lead's name from their signature. If unavailable, use \"Hi [Company Name] team.\"\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction (Strict): Identify the Response Handling Knowledge Base  example that most closely matches the lead's intent. You must treat the KB example as a *script template*. Adopt the same questions, the same concessions, and the same specific pivots. You must adopt the specific \"Anchor Logic\" of that example.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base or Website.\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategic Cloning: Replicate the exact sales pivot used in the KB.\n    - If the KB asks about \"review windows,\" you ask about review windows. \n    - If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Australia References)**\n- If the lead asks about current Australian users or local presence, mention exactly three names from the following list: The Penny Drop Cafe, Thai Ute Restaurant, Lumen People, Catalina Kitchen Cafe, Bar & Restaurant, Arcadia Liquors, Mister Minh.\n- Use ONLY if the prospect explicitly asks about Australian users, local presence, or who else is using the system.\n- Context: Briefly mention that these are some of the local partners we work with in the AU market.\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's email address.\n- If it's the wrong brand/contact: Thank them, say we will update records, and Escalate to Human with remark \"Wrong contact/brand.\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Do not use generic AI opening fillers (e.g., 'I totally understand'). Mirror the directness of the Response Handling Knowledge Base examples.\n- If a lead’s response is short and direct, your response should be equally lean. Match the \"density\" of the Response Handling Knowledge Base examples.\n- Brevity: Use a simple hyphen (-) for list items. No other symbols.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format.\n\n**Email Signature:**\nFollow the format below, using the SDR’s first name found in the *Conversation History*:\n\nCheers,\n[SDR’s first name]"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        16,
-        -432
+        -496,
+        -416
       ],
       "name": "Email Agent",
       "id": "d6271e73-662a-4975-a649-cdf9e5e90827",
@@ -218,8 +218,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 1.6,
       "position": [
-        -1168,
-        -416
+        -2128,
+        224
       ],
       "name": "Categorize Lead Message Topic",
       "id": "6235c31b-6ef4-4416-8922-95dddaf0f359"
@@ -232,8 +232,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -1232,
-        -208
+        -2192,
+        432
       ],
       "name": "Google Gemini Chat",
       "id": "5a3d304b-d490-4af5-ab78-ff01872c628f",
@@ -251,8 +251,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        -944,
-        -208
+        -1904,
+        432
       ],
       "name": "Topic Output Parser",
       "id": "eb148603-6507-456a-824c-f574e121268e"
@@ -262,8 +262,8 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [
-        -608,
-        -336
+        -1536,
+        352
       ],
       "id": "f0c123da-99aa-4064-8ef5-864c02073d8c",
       "name": "No Operation, do nothing"
@@ -295,44 +295,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -816,
-        -416
+        -1776,
+        224
       ],
       "id": "bb9fe3dc-de49-4c68-a9b0-85386e221154",
       "name": "Check for non auto-reply"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "8c2d1cc5-20aa-4ab4-b0f2-ba9ad1cd85b6",
-              "leftValue": "={{ $json.output.action.toLowerCase() }}",
-              "rightValue": "reply",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        688,
-        -176
-      ],
-      "id": "55fbd77a-acb4-4de1-b0f2-0e9634ca5cb7",
-      "name": "Check for action: \"reply\" or \"escalate to human\""
     },
     {
       "parameters": {
@@ -350,46 +317,11 @@
       "typeVersion": 1
     },
     {
-      "parameters": {
-        "method": "POST",
-        "url": "https://slack.com/api/chat.postMessage",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpBearerAuth",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"Action required\",\n    \"blocks\": [\n        {\n            \"type\": \"header\",\n            \"text\": {\n                \"type\": \"plain_text\",\n                \"text\": \":exclamation: Action Required\",\n                \"emoji\": true\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"fields\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.companyName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.leadEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.fromEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.campaignName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Alternative contact provided:*\\n{{ $('Email Agent').item.json.output.contact }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Remarks:*\\n{{ $('Email Agent').item.json.output.remarks }}\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                \"text\": \"*Prospect's Reply:*\\n```{{ $('Reply Received').item.json.text && $('Reply Received').item.json.text.length > 300 ? $('Reply Received').item.json.text.replace(/\\\\r\\\\n/g, '\\\\\\\\n').replace(/\\\\n/g, '\\\\\\\\n').replace(/\\\\r/g, '\\\\\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\\\\\"/g, '\\\\\\\\\\\"').substring(0, 300) + '...\\\\\\\\n\\\\\\\\n[Message truncated - view full reply in Lemlist]' : ($('Reply Received').item.json.text || '').replace(/\\\\r\\\\n/g, '\\\\\\\\n').replace(/\\\\n/g, '\\\\\\\\n').replace(/\\\\r/g, '\\\\\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\\\\\"/g, '\\\\\\\\\\\"') }}```\"\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"context\",\n            \"elements\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.contactId }}|View full conversation in Lemlist>\"\n                }\n            ]\n        }\n    ]\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        912,
-        -160
-      ],
-      "id": "d37ae642-9da3-4f62-8b8c-20c7897c2050",
-      "name": "Escalate to human",
-      "credentials": {
-        "httpBearerAuth": {
-          "id": "A9y0ZdmG00hI8udd",
-          "name": "Slack's Email SDR Agent"
-        }
-      }
-    },
-    {
       "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        240,
+        -480,
         560
       ],
       "id": "70ef3f10-fcdd-48ae-941f-5c28daeb7563",
@@ -418,7 +350,7 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        240,
+        -480,
         400
       ],
       "id": "d02c9c7d-9966-445f-ae65-da22eb24730d",
@@ -435,8 +367,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        -160,
-        128
+        -672,
+        144
       ],
       "id": "f968f8b0-5307-4e37-ba14-4be03757b6b2",
       "name": "Embeddings Google Gemini2",
@@ -465,8 +397,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        -160,
-        -48
+        -672,
+        -32
       ],
       "id": "5c481557-d203-442f-9454-100527efef6e",
       "name": "Response Handling Knowledge Base",
@@ -485,8 +417,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        192,
-        -224
+        -320,
+        -208
       ],
       "id": "817e6e60-98a8-4db6-b8f4-ecd209ce5ad8",
       "name": "Structured Output Parser1"
@@ -499,8 +431,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        192,
-        -64
+        -320,
+        -48
       ],
       "id": "4393068e-14c5-4e1d-bbc7-f7c5fa8b3d97",
       "name": "Google Gemini Chat Model1",
@@ -513,16 +445,17 @@
     },
     {
       "parameters": {
-        "content": "## Categorize prospect's message to topic\n\n",
+        "content": "## [Not in use] Categorize prospect's message to topic\n\n",
         "height": 516,
-        "width": 912
+        "width": 912,
+        "color": 2
       },
       "id": "f6e70eeb-e73b-45b9-a140-a4db1bcfa3dc",
       "name": "Sticky Note16",
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -1296,
-        -576
+        -2256,
+        64
       ],
       "typeVersion": 1
     },
@@ -535,12 +468,420 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -304,
-        -576
+        -1024,
+        -560
       ],
       "typeVersion": 1,
       "id": "35ac9885-0eef-47b1-8af6-21a030028cfd",
       "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14648e8e-b352-4ea4-8f5a-b9a6335dbc6b",
+              "name": "email_from",
+              "value": "john.doe@example.com",
+              "type": "string"
+            },
+            {
+              "id": "458a8b87-069c-423f-b662-e31d5e01d4eb",
+              "name": "company",
+              "value": "Little Saigon",
+              "type": "string"
+            },
+            {
+              "id": "a1f86e3c-8e7a-40ae-9e1a-0a7e74578d88",
+              "name": "subject",
+              "value": "Oddle Reservation for Little Saigon",
+              "type": "string"
+            },
+            {
+              "id": "96fc28f4-50b5-406a-b0c3-c4e3ce2ebae9",
+              "name": "lead_message",
+              "value": "={{ $json.Body }}",
+              "type": "string"
+            },
+            {
+              "id": "3b9f7c8a-194c-4e5e-9d87-2ef84f4536f5",
+              "name": "conversation_history",
+              "value": "[LATEST] [2026-02-04 01:03] Wei Lin Tan < weilin-t@theoddlecompany.com > wrote: Hi The Lawn team, This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms. Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price? Oddle Reserve is a simpler alternative. In Australia we are A$249/month per brand , not per outlet. We are also offering Founder Access for a limited number of AU brands: A$65/month, locked in forever We work closely with early partners to use your data to surface insights and maximise revenue , not just “switch software” Open to a quick 12-minute chat this week to see if it makes sense for The Lawn? Cheers, Wei Lin General Manager at Oddle\\n\\n[2026-02-04 01:01] SDR (Wei Lin Tan): Hi The Lawn team, This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms. Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price? Oddle Reserve is a simpler alternative. In Australia we are A$249/month per brand , not per outlet. We are also offering Founder Access for a limited number of AU brands: A$65/month, locked in forever We work closely with early partners to use your data to surface insights and maximise revenue , not just “switch software” Open to a quick 12-minute chat this week to see if it makes sense for The Lawn? Cheers, Wei Lin General Manager at Oddle",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -928,
+        -224
+      ],
+      "id": "3386105c-9117-454d-8ae4-d78babb42de9",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list",
+          "cachedResultName": "Evaluation for Email SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "AU",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=0"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.6,
+      "position": [
+        -1168,
+        -224
+      ],
+      "id": "77fc74be-1866-4216-9bb8-c44a71c01b7f",
+      "name": "When fetching a dataset row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42648864-a669-4190-ac38-217a44e8a4c5",
+              "name": "email_from",
+              "value": "={{ $('Parse Conversation History').item.json.leadEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "d3c1e1b5-6bee-4c7a-9741-e943014b064f",
+              "name": "company",
+              "value": "={{ $('Parse Conversation History').item.json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "419ee37f-3fb5-4ac5-84a9-1d28ee68d113",
+              "name": "subject",
+              "value": "={{ $('Parse Conversation History').item.json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "51996ffa-b5d3-46e5-8e0b-c6f9374fb40b",
+              "name": "lead_message",
+              "value": "={{ $('Parse Conversation History').item.json.leadMessage }}",
+              "type": "string"
+            },
+            {
+              "id": "0ba486e0-44fc-40c5-a50e-f718265a40e2",
+              "name": "conversation_history",
+              "value": "={{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -928,
+        -416
+      ],
+      "id": "a7d8eadd-8f2f-438a-b698-a5f7cc5379b5",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list",
+          "cachedResultName": "Evaluation for Email SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "AU",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=0"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "Actual Response",
+              "outputValue": "={{ $json.output.content }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        176,
+        -800
+      ],
+      "id": "e46790f6-7ff9-46f4-8d02-620cf874dcbc",
+      "name": "Set Output",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "checkIfEvaluating"
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        -32,
+        -672
+      ],
+      "id": "78637b25-2de2-4628-aeef-6f77f6e07c85",
+      "name": "Evaluation"
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "metric": "customMetrics",
+        "metrics": {
+          "assignments": [
+            {
+              "name": "Accuracy",
+              "value": "={{ $json.Correctness }}",
+              "type": "number",
+              "id": "89160e24-b3f9-4bb7-80b4-48575b983260"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        -800
+      ],
+      "id": "c21968ac-badb-4bdf-b3f9-2c901f9194f6",
+      "name": "Score"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Expected Answer: {{ $('When fetching a dataset row').item.json[\"Expected Response\"] }}\n\nActual Answer: {{ $json.output.content }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=You are an expert factual evaluator assessing the accuracy of answers compared to established ground truths.\n\nEvaluate the factual correctness of a given output compared to the provided ground truth on a scale from 1 to 5. Use detailed reasoning to thoroughly analyze all claims before determining the final score.\n\n# Scoring Criteria\n\n- 5: Highly similar - The output and ground truth are nearly identical, with only minor, insignificant differences.\n- 4: Somewhat similar - The output is largely similar to the ground truth but has few noticeable differences.\n- 3: Moderately similar - There are some evident differences, but the core essence is captured in the output.\n- 2: Slightly similar - The output only captures a few elements of the ground truth and contains several differences.\n- 1: Not similar - The output is significantly different from the ground truth, with few or no matching elements.\n\n# Evaluation Steps\n\n1. Identify and list the key elements present in both the output and the ground truth.\n2. Compare these key elements to evaluate their similarities and differences, considering both content and structure.\n3. Analyze the semantic meaning conveyed by both the output and the ground truth, noting any significant deviations.\n4. Consider factual accuracy of specific details, including names, dates, numbers, and relationships.\n5. Assess whether the output maintains the factual integrity of the ground truth, even if phrased differently.\n6. Determine the overall level of similarity and accuracy according to the defined criteria.\n\n# Output Format\n\nProvide:\n- A detailed analysis of the comparison (extended reasoning)\n- A one-sentence summary highlighting key differences (not similarities)\n- The final similarity score as an integer (1, 2, 3, 4, or 5)\n\nAlways follow the JSON format below and return nothing else:\n{\n  \"extended_reasoning\": \"<detailed step-by-step analysis of factual accuracy and similarity>\",\n  \"reasoning_summary\": \"<one sentence summary focusing on key differences>\",\n  \"score\": <number: integer from 1 to 5>\n}\n\n# Examples\n\n**Example 1:**\n\nInput:\n- Output: \"The cat sat on the mat.\"\n- Ground Truth: \"The feline is sitting on the rug.\"\n\nExpected Output:\n{\n  \"extended_reasoning\": \"I need to compare 'The cat sat on the mat' with 'The feline is sitting on the rug.' First, let me identify the key elements: both describe an animal ('cat' vs 'feline') in a position ('sat' vs 'sitting') on a surface ('mat' vs 'rug'). The subject is semantically identical - 'cat' and 'feline' refer to the same animal. The action is also semantically equivalent - 'sat' and 'sitting' both describe the same position, though one is past tense and one is present continuous. The location differs in specific wording ('mat' vs 'rug') but both refer to floor coverings that serve the same function. The basic structure and meaning of both sentences are preserved, though they use different vocabulary and slightly different tense. The core information being conveyed is the same, but there are noticeable wording differences.\",\n  \"reasoning_summary\": \"The sentences differ in vocabulary choice ('cat' vs 'feline', 'mat' vs 'rug') and verb tense ('sat' vs 'is sitting').\",\n  \"score\": 3\n}\n\n**Example 2:**\n\nInput:\n- Output: \"The quick brown fox jumps over the lazy dog.\"\n- Ground Truth: \"A fast brown animal leaps over a sleeping canine.\"\n\nExpected Output:\n{\n  \"extended_reasoning\": \"I need to compare 'The quick brown fox jumps over the lazy dog' with 'A fast brown animal leaps over a sleeping canine.' Starting with the subjects: 'quick brown fox' vs 'fast brown animal'. Both describe the same entity (a fox is a type of animal) with the same attributes (quick/fast and brown). The action is described as 'jumps' vs 'leaps', which are synonymous verbs describing the same motion. The object in both sentences is a dog, described as 'lazy' in one and 'sleeping' in the other, which are related concepts (a sleeping dog could be perceived as lazy). The structure follows the same pattern: subject + action + over + object. The sentences convey the same scene with slightly different word choices that maintain the core meaning. The level of specificity differs slightly ('fox' vs 'animal', 'dog' vs 'canine'), but the underlying information and imagery remain very similar.\",\n  \"reasoning_summary\": \"The sentences use different but synonymous terminology ('quick' vs 'fast', 'jumps' vs 'leaps', 'lazy' vs 'sleeping') and varying levels of specificity ('fox' vs 'animal', 'dog' vs 'canine').\",\n  \"score\": 4\n}\n\n# Notes\n\n- Focus primarily on factual accuracy and semantic similarity, not writing style or phrasing differences.\n- Identify specific differences rather than making general assessments.\n- Pay special attention to dates, numbers, names, locations, and causal relationships when present.\n- Consider the significance of each difference in the context of the overall information.\n- Be consistent in your scoring approach across different evaluations."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        416,
+        -1440
+      ],
+      "id": "7643d82e-bbac-4a72-ae53-9c2f53161e04",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"extendedReasoning\": {\n      \"type\": \"string\",\n      \"description\": \"Full, detailed chain-of-thought reasoning.\"\n    },\n    \"reasoningSummary\": {\n      \"type\": \"string\",\n      \"description\": \"A concise summary of the reasoning.\"\n    },\n    \"score\": {\n      \"type\": \"number\",\n      \"description\": \"Numeric score reflecting confidence or quality (e.g. 0–100).\"\n    }\n  },\n  \"required\": [\"extendedReasoning\", \"reasoningSummary\", \"score\"]\n}\n",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        576,
+        -1248
+      ],
+      "id": "b03431db-ebe5-46a6-9bc4-76f76210b921",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -1248
+      ],
+      "id": "8d720e75-e986-42c6-838b-1b04da9de4d5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        656,
+        -1104
+      ],
+      "id": "567a3a4c-3ef1-4626-8c75-8d408e0b0e46",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "expectedAnswer": "={{ $('When fetching a dataset row').item.json['Expected Response'] }}",
+        "actualAnswer": "={{ $json.output.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        384,
+        -800
+      ],
+      "id": "6c32328b-d7d6-4014-84be-37ec2823f69a",
+      "name": "Evaluation2"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        528,
+        -624
+      ],
+      "id": "3a16fc59-1319-43b1-8ed8-4cb93f482a8c",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0",
+          "mode": "list",
+          "cachedResultName": "Evaluation for Email SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "AU",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1h6TCU1z3t8LX8nkktZMfzUynYzZ3i0LkjQ45r9axai0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Body": "={{ $('When fetching a dataset row').item.json.Body }}",
+            "Accuracy": "={{ $json.Accuracy }}"
+          },
+          "matchingColumns": [
+            "Body"
+          ],
+          "schema": [
+            {
+              "id": "Body",
+              "displayName": "Body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Expected Response",
+              "displayName": "Expected Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Actual Response",
+              "displayName": "Actual Response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Accuracy",
+              "displayName": "Accuracy",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        944,
+        -800
+      ],
+      "id": "748ba7fb-5cb5-432e-9485-75702799754e",
+      "name": "Update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
     }
   ],
   "connections": {
@@ -581,7 +922,7 @@
       "main": [
         [
           {
-            "node": "Categorize Lead Message Topic",
+            "node": "Map fields",
             "type": "main",
             "index": 0
           }
@@ -607,6 +948,11 @@
     "Email Agent": {
       "main": [
         [
+          {
+            "node": "Evaluation",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Send to Slack for Approval",
             "type": "main",
@@ -650,28 +996,10 @@
     },
     "Check for non auto-reply": {
       "main": [
-        [
-          {
-            "node": "Email Agent",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check for action: \"reply\" or \"escalate to human\"": {
-      "main": [
         [],
         [
           {
-            "node": "Escalate to human",
+            "node": "No Operation, do nothing",
             "type": "main",
             "index": 0
           }
@@ -737,6 +1065,132 @@
           }
         ]
       ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Output": {
+      "main": [
+        [
+          {
+            "node": "Evaluation2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Set Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Evaluation2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluation2": {
+      "main": [
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -744,11 +1198,13 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": {
     "node:Reply Received": {
-      "webhookId": "hoo_CveQ6rHE2Gb2G73qH"
+      "webhookId": "hoo_m69ezcPZEtaTCHQtJ"
     }
   },
   "meta": {
@@ -758,59 +1214,75 @@
     "Reply Received": [
       {
         "json": {
-          "_id": "act_zyq9bTDazSB56JTnq",
+          "_id": "act_qSn4Gobt7j7qnTgAg",
           "type": "emailsReplied",
-          "emailId": "eml_LHHLTtZfH5BH7jgPX",
-          "messageId": "<CAFjBc665eJsJTLXcepyTod19xNO-1-+suQuFOC+VDZOKg7mqYQ@mail.gmail.com>",
-          "createdBy": "usr_gYdTGt9D9RHqcwssi",
-          "createdAt": "2026-01-30T09:02:21.000Z",
-          "fromEmail": "chelsea@oddle.me",
+          "emailId": "eml_MRrfNepgrMF6QsiiJ",
+          "messageId": "<CAKyyp6evE9F9RLyfWww0OBm13ONGy+5hfqfu-BdjNz3KbvLiwQ@mail.gmail.com>",
+          "createdBy": "usr_vJdBwaW7CbDSvHbkm",
+          "createdAt": "2026-02-04T01:03:23.000Z",
+          "fromEmail": "zeyanlim@oddle.me",
           "isFirst": true,
           "stopped": true,
           "subject": "Re: Test - Oddle Reserve",
-          "messagePreview": "Hi Chloei,",
+          "messagePreview": "What's the catch? Who else is using you guys in Australia? Am I going to be",
           "bot": false,
           "teamId": "tea_gYwPePZxuhFb6QraW",
-          "leadId": "lea_4xXng486h2WrmF4Ex",
+          "leadId": "lea_oPsFnXPEp7Wht5YAx",
           "campaignId": "cam_peDaoGPEGHR28WExF",
           "sequenceId": "seq_ynGxRvredfzuGunCx",
           "sequenceStep": 0,
           "emailTemplateId": "etp_ksZ5EMTXncLiysr3t",
-          "sendUserId": "usr_gYdTGt9D9RHqcwssi",
+          "sendUserId": "usr_vJdBwaW7CbDSvHbkm",
           "totalSequenceStep": 0,
           "name": "Chelsea's Test Campaign",
-          "sendUserName": "Chloei Marithe Garcia",
-          "sendUserEmail": "chloei.garcia_m@oddle.me",
-          "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-          "sendUserMailboxProviderId": "chloei.garcia_m@oddle.me",
-          "leadFirstName": "Chelsea",
-          "leadLastName": "Nguyen",
-          "leadEmail": "chelsea@oddle.me",
-          "leadCompanyName": "Chelsea's Cafe",
-          "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-          "relatedSentAt": "2026-01-30T03:05:46.749Z",
+          "sendUserName": "Wei Lin Tan",
+          "sendUserEmail": "weilin-t@theoddlecompany.com",
+          "sendUserMailboxId": "usm_HuzXb2XAHfLJ9mSBS",
+          "sendUserMailboxProviderId": "weilin-t@theoddlecompany.com",
+          "leadFirstName": "Jonathan",
+          "leadLastName": "Lim",
+          "leadEmail": "zeyanlim@oddle.me",
+          "leadCompanyName": "The Lawn",
+          "contactId": "ctc_GMa6fmQFJKoeunQQa",
+          "relatedSentAt": "2026-02-04T01:01:00.284Z",
           "metaData": {
             "teamId": "tea_gYwPePZxuhFb6QraW",
             "campaignId": "cam_peDaoGPEGHR28WExF",
-            "leadId": "lea_4xXng486h2WrmF4Ex",
+            "leadId": "lea_oPsFnXPEp7Wht5YAx",
             "type": "emailsReplied",
-            "createdBy": "usr_gYdTGt9D9RHqcwssi",
+            "createdBy": "usr_vJdBwaW7CbDSvHbkm",
             "s3ready": false,
-            "taskId": "tsk_ukYKWPGqmkbzpiyhu"
+            "taskId": "tsk_cFvNTQcdKX88M5KE5"
           },
           "campaignName": "Chelsea's Test Campaign",
-          "html": "<div dir=\"ltr\"><div>Hi Chloei,</div><div><br></div>We&#39;re not looking for any new systems. What we have works well for our current needs.</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 30 Jan 2026 at 11:05, Chloei Garcia &lt;<a href=\"mailto:chloei.garcia_m@oddle.me\">chloei.garcia_m@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_-5133914065597133003isPasted\" style=\"margin:0px;box-sizing:border-box\">Hi Chelsea&#39;s Cafe team, </p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">This is Chloei Marithe from Oddle. Noticed Chelsea&#39;s Cafe is using SevenRooms.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight:700;box-sizing:border-box\">A$249/month per brand</strong>, not per outlet.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">We are also offering <strong style=\"font-weight:700;box-sizing:border-box\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top:0px;margin-bottom:1rem;box-sizing:border-box\"><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box;font-weight:bold\"><strong style=\"font-weight:700;box-sizing:border-box\">A$65/month, locked in forever</strong></li><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box\">We work closely with early partners to use <strong style=\"font-weight:700;box-sizing:border-box\">your data to surface insights and maximise revenue</strong>, not just “switch software”</li></ul><p style=\"margin:0px;box-sizing:border-box\">Open to a quick 12-minute chat this week to see if it makes sense for Chelsea&#39;s Cafe?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Cheers,</p><p style=\"margin:0px;box-sizing:border-box\">Chloei Marithe</p><p style=\"margin:0px;box-sizing:border-box\"> at Oddle </p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_ukYKWPGqmkbzpiyhu\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_ukYKWPGqmkbzpiyhu\" height=\"1\" width=\"1\"></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div>\n",
-          "text": "Hi Chloei,\n\nWe're not looking for any new systems. What we have works well for our\ncurrent needs.\n\nOn Fri, 30 Jan 2026 at 11:05, Chloei Garcia <chloei.garcia_m@oddle.me>\nwrote:\n\n> Hi Chelsea's Cafe team,\n>\n>\n> This is Chloei Marithe from Oddle. Noticed Chelsea's Cafe is using\n> SevenRooms.\n>\n>\n> Quick question: are you getting full value from it, or mostly using the\n> core reservation workflows while paying an enterprise price?\n>\n>\n> Oddle Reserve is a simpler alternative. In Australia we are *A$249/month\n> per brand*, not per outlet.\n>\n>\n> We are also offering *Founder Access* for a limited number of AU brands:\n>\n>    - *A$65/month, locked in forever*\n>    - We work closely with early partners to use *your data to surface\n>    insights and maximise revenue*, not just “switch software”\n>\n> Open to a quick 12-minute chat this week to see if it makes sense for\n> Chelsea's Cafe?\n>\n>\n>\n> Cheers,\n>\n> Chloei Marithe\n>\n> at Oddle\n> [image: logo]\n>\n>\n\n-- \nRegards,\nChelsea\n",
-          "email": "chelsea@oddle.me",
-          "companyName": "Chelsea's Cafe",
-          "firstName": "Chelsea",
-          "lastName": "Nguyen",
+          "html": "<div dir=\"auto\">What&#39;s the catch? Who else is using you guys in Australia? Am I going to be a guinea pig?</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Wed, Feb 4, 2026, 09:01 Wei Lin Tan &lt;<a href=\"mailto:weilin-t@theoddlecompany.com\">weilin-t@theoddlecompany.com</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_2808408730289040219isPasted\" style=\"margin:0px;box-sizing:border-box\">Hi The Lawn team, </p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight:700;box-sizing:border-box\">A$249/month per brand</strong>, not per outlet.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">We are also offering <strong style=\"font-weight:700;box-sizing:border-box\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top:0px;margin-bottom:1rem;box-sizing:border-box\"><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box;font-weight:bold\"><strong style=\"font-weight:700;box-sizing:border-box\">A$65/month, locked in forever</strong></li><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box\">We work closely with early partners to use <strong style=\"font-weight:700;box-sizing:border-box\">your data to surface insights and maximise revenue</strong>, not just “switch software”</li></ul><p style=\"margin:0px;box-sizing:border-box\">Open to a quick 12-minute chat this week to see if it makes sense for The Lawn?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Cheers,</p><p style=\"margin:0px;box-sizing:border-box\">Wei Lin</p><p style=\"margin:0px;box-sizing:border-box\">General Manager at Oddle </p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_cFvNTQcdKX88M5KE5\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_cFvNTQcdKX88M5KE5\" height=\"1\" width=\"1\"></div><br></blockquote></div>\n",
+          "text": "What's the catch? Who else is using you guys in Australia? Am I going to be\na guinea pig?\n\nOn Wed, Feb 4, 2026, 09:01 Wei Lin Tan <weilin-t@theoddlecompany.com> wrote:\n\n> Hi The Lawn team,\n>\n>\n> This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.\n>\n>\n> Quick question: are you getting full value from it, or mostly using the\n> core reservation workflows while paying an enterprise price?\n>\n>\n> Oddle Reserve is a simpler alternative. In Australia we are *A$249/month\n> per brand*, not per outlet.\n>\n>\n> We are also offering *Founder Access* for a limited number of AU brands:\n>\n>    - *A$65/month, locked in forever*\n>    - We work closely with early partners to use *your data to surface\n>    insights and maximise revenue*, not just “switch software”\n>\n> Open to a quick 12-minute chat this week to see if it makes sense for The\n> Lawn?\n>\n>\n>\n> Cheers,\n>\n> Wei Lin\n>\n> General Manager at Oddle\n> [image: logo]\n>\n>\n",
+          "email": "zeyanlim@oddle.me",
+          "firstName": "Jonathan",
+          "lastName": "Lim",
+          "linkedinUrl": "https://www.linkedin.com/in/limzeyan",
+          "companyName": "The Lawn",
           "emailTemplateName": "Blank"
+        }
+      }
+    ],
+    "When fetching a dataset row": [
+      {
+        "json": {
+          "row_number": 2,
+          "Body": "NowBookIt already sends reminders",
+          "Expected Response": "Hi Chelsea,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?",
+          "Actual Response": "Hi John,\n\nI hear you on NowBookIt handling the reminders, they handle the basics like reminders well.\n\nThe way we look at it is that reminders are great for operational efficiency, but they aren't designed to grow your database or drive revenue. We focus on the lifecycle layer, things like:\n\n- Cancellation Recovery: Automatically winning back guests who drop off.\n- Targeted Broadcasts: Re-engaging past diners who haven't visited in months.\n\nEssentially, reminders manage the booking you already have, we focus on generating the bookings you don't have yet.\n\nWorth a 12-minute chat to show you the difference?\n\nCheers,\nWei Lin",
+          "Accuracy": 4,
+          "_rowsLeft": 16
+        },
+        "pairedItem": {
+          "item": 0
         }
       }
     ]
   },
-  "versionId": "cbeeb7fe-454f-454b-a6dc-7705dbfa0efc",
+  "versionId": "fc0cf304-43e5-4de1-b334-ec006d8fbaa1",
   "activeVersionId": "42e58bed-fb45-4e9e-86d4-eef7338ca038",
   "triggerCount": 1,
   "shared": [
