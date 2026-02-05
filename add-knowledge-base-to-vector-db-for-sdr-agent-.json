@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-03T06:23:42.797Z",
+  "updatedAt": "2026-02-05T02:48:13.119Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -789,7 +789,7 @@
         "pollTimes": {
           "item": [
             {
-              "hour": 19
+              "hour": 18
             }
           ]
         },
@@ -830,7 +830,7 @@
         "pollTimes": {
           "item": [
             {
-              "hour": 19
+              "hour": 18
             }
           ]
         },
@@ -1329,20 +1329,24 @@
   },
   "settings": {
     "executionOrder": "v1",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "timezone": "Asia/Singapore",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-02-03T03:56:05Z"
+      "lastTimeChecked": "2026-02-05T02:48:13Z"
     },
     "node:When doc is edited": {
-      "lastTimeChecked": "2026-02-03T03:56:05Z"
+      "lastTimeChecked": "2026-02-05T02:48:13Z"
     },
     "node:When doc is edited1": {
-      "lastTimeChecked": "2026-02-03T03:56:06Z"
+      "lastTimeChecked": "2026-02-05T02:48:14Z"
     },
     "node:When doc is added": {
-      "lastTimeChecked": "2026-02-03T03:56:06Z"
+      "lastTimeChecked": "2026-02-05T02:48:14Z"
     },
     "node:Row added": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1352,15 +1356,15 @@
     "node:Row updated": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastRevision": 56,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=56&exportFormat=xlsx"
+      "lastRevision": 76,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=76&exportFormat=xlsx"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "29b68cb8-ae37-4bbc-9dae-29c9511d9b1a",
+  "versionId": "ebc5141a-87de-406b-bb2b-b777e7450c79",
   "activeVersionId": "b665e193-46d7-47b9-bb8e-afc4795c4274",
   "triggerCount": 6,
   "shared": [
