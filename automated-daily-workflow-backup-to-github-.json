@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-01-21T03:22:25.392Z",
+  "updatedAt": "2026-02-05T02:48:58.972Z",
   "createdAt": "2026-01-16T06:02:03.867Z",
   "id": "uVOflcZAL18WW8Ls",
   "name": "Automated daily workflow backup to GitHub",
@@ -406,7 +406,9 @@
     "availableInMCP": false,
     "timeSavedMode": "fixed",
     "callerPolicy": "workflowsFromSameOwner",
-    "timeSavedPerExecution": 5
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": {
     "node:Schedule Trigger": {
