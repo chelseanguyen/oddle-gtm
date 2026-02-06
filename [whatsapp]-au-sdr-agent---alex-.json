@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T10:37:02.504Z",
+  "updatedAt": "2026-02-06T03:41:35.659Z",
   "createdAt": "2026-01-27T09:02:31.185Z",
   "id": "eXEVf6BDPaBy3uWd",
   "name": "[WhatsApp] AU SDR Agent - Alex",
@@ -855,7 +855,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3808,
+        4016,
         -96
       ],
       "id": "cc4a451b-db23-4bb8-923a-41f21c72cbcf",
@@ -995,8 +995,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        4016,
-        -480
+        4032,
+        -656
       ],
       "id": "77765a6a-9141-4eae-8267-bd4bc7bb90ba",
       "name": "Set Output",
@@ -1014,8 +1014,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        3808,
-        -352
+        3824,
+        -528
       ],
       "id": "4ecb9efe-3c19-47e8-b34b-161d8f8959d6",
       "name": "Evaluation"
@@ -1038,8 +1038,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        4576,
-        -480
+        4592,
+        -656
       ],
       "id": "88130973-6b97-4bd8-bf2d-cb46ae351510",
       "name": "Score"
@@ -1051,8 +1051,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        4368,
-        -304
+        4384,
+        -480
       ],
       "id": "972a7f5f-bfd9-4691-a64f-1cb0d13a33ad",
       "name": "Google Gemini Chat Model2",
@@ -1149,8 +1149,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        4784,
-        -480
+        4800,
+        -656
       ],
       "id": "ec9c2151-2f08-4a48-bf75-30623a8d459c",
       "name": "Update row in sheet",
@@ -1171,8 +1171,8 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        4224,
-        -480
+        4240,
+        -656
       ],
       "id": "fb7cd0bb-4a85-450b-a72d-9968291f506e",
       "name": "Evaluation1"
@@ -1220,6 +1220,56 @@
       ],
       "id": "628fc839-8d81-4667-97c4-3b0d0e24de53",
       "name": "Check for reply from AU"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://gateway.latitude.so/api/v2/logs",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"path\": \"response-evaluator\",\n  \"projectId\": 30399,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"{{ $('Map fields').item.json.lead_message }}\"\n    },\n    {\n      \"role\": \"sdr\",\n      \"content\": \"{{ $json.output.text }}\"\n    }\n  ],\n  \"customIdentifier\": \"{{ $('Webhook').item.json.id }}\",\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4016,
+        -304
+      ],
+      "id": "51689a67-d44c-4ca2-8232-afece2dd1255",
+      "name": "Send to Latitude",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "cCn52k3tnxYrYO3l",
+          "name": "Latitude API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Response Agent').item.json.output.text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        4224,
+        -304
+      ],
+      "id": "b5170b31-0916-4cfd-b878-6618b691fafa",
+      "name": "Respond to Webhook"
     }
   ],
   "connections": {
@@ -1512,7 +1562,7 @@
       "main": [
         [
           {
-            "node": "Evaluation",
+            "node": "Send to Latitude",
             "type": "main",
             "index": 0
           },
@@ -1581,13 +1631,7 @@
     },
     "Edit Fields": {
       "main": [
-        [
-          {
-            "node": "Response Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Set Output": {
@@ -1662,6 +1706,17 @@
           }
         ]
       ]
+    },
+    "Send to Latitude": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1707,7 +1762,7 @@
                 "contact": {
                   "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
+                  "identifierValue": "+6190570654",
                   "annotations": {
                     "name": "Chelsea Nguyen"
                   }
@@ -1749,9 +1804,6 @@
           },
           "webhookUrl": "https://workflow.oddle.center/webhook-test/bird-message-received",
           "executionMode": "test"
-        },
-        "pairedItem": {
-          "item": 0
         }
       }
     ],
@@ -2382,7 +2434,7 @@
       }
     ]
   },
-  "versionId": "b2f56577-03d5-4f77-8dfa-59234b6fdecd",
+  "versionId": "5412cd10-9693-46bd-b2d5-05245e8fe896",
   "activeVersionId": "b2f56577-03d5-4f77-8dfa-59234b6fdecd",
   "triggerCount": 1,
   "shared": [
