@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T02:48:13.119Z",
+  "updatedAt": "2026-02-06T02:47:31.405Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -789,7 +789,7 @@
         "pollTimes": {
           "item": [
             {
-              "hour": 18
+              "hour": 15
             }
           ]
         },
@@ -804,7 +804,7 @@
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Sheet1",
+          "cachedResultName": "email",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
         },
         "event": "rowAdded",
@@ -830,7 +830,7 @@
         "pollTimes": {
           "item": [
             {
-              "hour": 18
+              "mode": "everyMinute"
             }
           ]
         },
@@ -845,7 +845,7 @@
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "Sheet1",
+          "cachedResultName": "email",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
         },
         "event": "rowUpdate",
@@ -1337,16 +1337,16 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-02-05T04:54:45Z"
+      "lastTimeChecked": "2026-02-06T02:10:39Z"
     },
     "node:When doc is edited": {
-      "lastTimeChecked": "2026-02-05T04:54:45Z"
+      "lastTimeChecked": "2026-02-06T02:10:41Z"
     },
     "node:When doc is edited1": {
-      "lastTimeChecked": "2026-02-05T04:54:46Z"
+      "lastTimeChecked": "2026-02-06T02:10:41Z"
     },
     "node:When doc is added": {
-      "lastTimeChecked": "2026-02-05T04:54:46Z"
+      "lastTimeChecked": "2026-02-06T02:10:41Z"
     },
     "node:Row added": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1356,15 +1356,15 @@
     "node:Row updated": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastRevision": 76,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=76&exportFormat=xlsx"
+      "lastRevision": 81,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=81&exportFormat=xlsx"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "ebc5141a-87de-406b-bb2b-b777e7450c79",
+  "versionId": "c197407b-d97f-4fe1-8bab-5ac0dfa34c08",
   "activeVersionId": "b665e193-46d7-47b9-bb8e-afc4795c4274",
   "triggerCount": 6,
   "shared": [
