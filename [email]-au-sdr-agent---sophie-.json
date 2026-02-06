@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T10:29:05.675Z",
+  "updatedAt": "2026-02-06T03:05:59.815Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] AU SDR Agent - Sophie",
@@ -10,7 +10,7 @@
       "parameters": {
         "event": "emailsReplied",
         "options": {
-          "campaignId": "cam_peDaoGPEGHR28WExF"
+          "campaignId": "cam_eLNXLcsT8Ai9gvXB2"
         }
       },
       "type": "n8n-nodes-base.lemlistTrigger",
@@ -657,30 +657,6 @@
     {
       "parameters": {
         "operation": "setMetrics",
-        "metric": "customMetrics",
-        "metrics": {
-          "assignments": [
-            {
-              "name": "Accuracy",
-              "value": "={{ $json.Correctness }}",
-              "type": "number",
-              "id": "89160e24-b3f9-4bb7-80b4-48575b983260"
-            }
-          ]
-        }
-      },
-      "type": "n8n-nodes-base.evaluation",
-      "typeVersion": 4.7,
-      "position": [
-        736,
-        -800
-      ],
-      "id": "c21968ac-badb-4bdf-b3f9-2c901f9194f6",
-      "name": "Score"
-    },
-    {
-      "parameters": {
-        "operation": "setMetrics",
         "expectedAnswer": "={{ $('When fetching a dataset row').item.json['Expected Response'] }}",
         "actualAnswer": "={{ $json.output.content }}",
         "options": {}
@@ -810,6 +786,29 @@
           "name": "Google Sheets account 1"
         }
       }
+    },
+    {
+      "parameters": {
+        "event": "emailsReplied",
+        "options": {
+          "campaignId": "cam_yQ6L3gZgh3cRpwK6R"
+        }
+      },
+      "type": "n8n-nodes-base.lemlistTrigger",
+      "typeVersion": 1,
+      "position": [
+        -2192,
+        -208
+      ],
+      "name": "Reply Received1",
+      "webhookId": "lemlist-reply-webhook",
+      "id": "b8353ca4-f285-4eb4-b66f-f8b061be4462",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        }
+      }
     }
   ],
   "connections": {
@@ -876,11 +875,6 @@
     "Email Agent": {
       "main": [
         [
-          {
-            "node": "Evaluation",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Send to Slack for Approval",
             "type": "main",
@@ -996,13 +990,7 @@
     },
     "Edit Fields": {
       "main": [
-        [
-          {
-            "node": "Email Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "When fetching a dataset row": {
@@ -1049,17 +1037,6 @@
         ]
       ]
     },
-    "Score": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Google Gemini Chat Model2": {
       "ai_languageModel": [
         [
@@ -1073,9 +1050,14 @@
     },
     "Evaluation2": {
       "main": [
+        []
+      ]
+    },
+    "Reply Received1": {
+      "main": [
         [
           {
-            "node": "Score",
+            "node": "Workflow Configuration",
             "type": "main",
             "index": 0
           }
@@ -1094,7 +1076,7 @@
   },
   "staticData": {
     "node:Reply Received": {
-      "webhookId": "hoo_2HzqvBg9GnBu9ouoH"
+      "webhookId": "hoo_pa8Rq44Q8YwNLeph8"
     }
   },
   "meta": {
@@ -1113,8 +1095,8 @@
           "fromEmail": "zeyanlim@oddle.me",
           "isFirst": true,
           "stopped": true,
-          "subject": "Re: Test - Oddle Reserve",
-          "messagePreview": "What's the catch? Who else is using you guys in Australia? Am I going to be",
+          "subject": "Is SevenRooms enterprise price an overkill for Winnifreds?",
+          "messagePreview": "Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat. ",
           "bot": false,
           "teamId": "tea_gYwPePZxuhFb6QraW",
           "leadId": "lea_oPsFnXPEp7Wht5YAx",
@@ -1145,8 +1127,8 @@
             "taskId": "tsk_cFvNTQcdKX88M5KE5"
           },
           "campaignName": "Chelsea's Test Campaign",
-          "html": "<div dir=\"auto\">What&#39;s the catch? Who else is using you guys in Australia? Am I going to be a guinea pig?</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Wed, Feb 4, 2026, 09:01 Wei Lin Tan &lt;<a href=\"mailto:weilin-t@theoddlecompany.com\">weilin-t@theoddlecompany.com</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_2808408730289040219isPasted\" style=\"margin:0px;box-sizing:border-box\">Hi The Lawn team, </p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight:700;box-sizing:border-box\">A$249/month per brand</strong>, not per outlet.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">We are also offering <strong style=\"font-weight:700;box-sizing:border-box\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top:0px;margin-bottom:1rem;box-sizing:border-box\"><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box;font-weight:bold\"><strong style=\"font-weight:700;box-sizing:border-box\">A$65/month, locked in forever</strong></li><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box\">We work closely with early partners to use <strong style=\"font-weight:700;box-sizing:border-box\">your data to surface insights and maximise revenue</strong>, not just “switch software”</li></ul><p style=\"margin:0px;box-sizing:border-box\">Open to a quick 12-minute chat this week to see if it makes sense for The Lawn?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Cheers,</p><p style=\"margin:0px;box-sizing:border-box\">Wei Lin</p><p style=\"margin:0px;box-sizing:border-box\">General Manager at Oddle </p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_cFvNTQcdKX88M5KE5\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_cFvNTQcdKX88M5KE5\" height=\"1\" width=\"1\"></div><br></blockquote></div>\n",
-          "text": "What's the catch? Who else is using you guys in Australia? Am I going to be\na guinea pig?\n\nOn Wed, Feb 4, 2026, 09:01 Wei Lin Tan <weilin-t@theoddlecompany.com> wrote:\n\n> Hi The Lawn team,\n>\n>\n> This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.\n>\n>\n> Quick question: are you getting full value from it, or mostly using the\n> core reservation workflows while paying an enterprise price?\n>\n>\n> Oddle Reserve is a simpler alternative. In Australia we are *A$249/month\n> per brand*, not per outlet.\n>\n>\n> We are also offering *Founder Access* for a limited number of AU brands:\n>\n>    - *A$65/month, locked in forever*\n>    - We work closely with early partners to use *your data to surface\n>    insights and maximise revenue*, not just “switch software”\n>\n> Open to a quick 12-minute chat this week to see if it makes sense for The\n> Lawn?\n>\n>\n>\n> Cheers,\n>\n> Wei Lin\n>\n> General Manager at Oddle\n> [image: logo]\n>\n>\n",
+          "html": "<div dir=\"auto\">Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat.</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Wed, Feb 4, 2026, 09:01 Wei Lin Tan &lt;<a href=\"mailto:weilin-t@theoddlecompany.com\">weilin-t@theoddlecompany.com</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_2808408730289040219isPasted\" style=\"margin:0px;box-sizing:border-box\">Hi The Lawn team, </p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight:700;box-sizing:border-box\">A$249/month per brand</strong>, not per outlet.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">We are also offering <strong style=\"font-weight:700;box-sizing:border-box\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top:0px;margin-bottom:1rem;box-sizing:border-box\"><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box;font-weight:bold\"><strong style=\"font-weight:700;box-sizing:border-box\">A$65/month, locked in forever</strong></li><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box\">We work closely with early partners to use <strong style=\"font-weight:700;box-sizing:border-box\">your data to surface insights and maximise revenue</strong>, not just “switch software”</li></ul><p style=\"margin:0px;box-sizing:border-box\">Open to a quick 12-minute chat this week to see if it makes sense for The Lawn?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Cheers,</p><p style=\"margin:0px;box-sizing:border-box\">Wei Lin</p><p style=\"margin:0px;box-sizing:border-box\">General Manager at Oddle </p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_cFvNTQcdKX88M5KE5\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_cFvNTQcdKX88M5KE5\" height=\"1\" width=\"1\"></div><br></blockquote></div>\n",
+          "text": "Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat\n\nOn Wed, Feb 4, 2026, 09:01 Wei Lin Tan <weilin-t@theoddlecompany.com> wrote:\n\n> Hi The Lawn team,\n>\n>\n> This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.\n>\n>\n> Quick question: are you getting full value from it, or mostly using the\n> core reservation workflows while paying an enterprise price?\n>\n>\n> Oddle Reserve is a simpler alternative. In Australia we are *A$249/month\n> per brand*, not per outlet.\n>\n>\n> We are also offering *Founder Access* for a limited number of AU brands:\n>\n>    - *A$65/month, locked in forever*\n>    - We work closely with early partners to use *your data to surface\n>    insights and maximise revenue*, not just “switch software”\n>\n> Open to a quick 12-minute chat this week to see if it makes sense for The\n> Lawn?\n>\n>\n>\n> Cheers,\n>\n> Wei Lin\n>\n> General Manager at Oddle\n> [image: logo]\n>\n>\n",
           "email": "zeyanlim@oddle.me",
           "firstName": "Jonathan",
           "lastName": "Lim",
@@ -1170,9 +1152,75 @@
           "item": 0
         }
       }
+    ],
+    "Map fields": [
+      {
+        "json": {
+          "email_from": "zeyanlim@oddle.me",
+          "company": "Oddle",
+          "subject": "Re: Test - Oddle Reserve",
+          "lead_message": "Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat.",
+          "conversation_history": "[LATEST] [2026-02-04 01:03] Prospect (zeyanlim): Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat. On Wed, Feb 4, 2026, 09:01 Wei Lin Tan < weilin-t@theoddlecompany.com > wrote: Hi The Lawn team, This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms. Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price? Oddle Reserve is a simpler alternative. In Australia we are A$249/month per brand , not per outlet. We are also offering Founder Access for a limited number of AU brands: A$65/month, locked in forever We work closely with early partners to use your data to surface insights and maximise revenue , not just “switch software” Open to a quick 12-minute chat this week to see if it makes sense for The Lawn? Cheers, Wei Lin General Manager at Oddle\n\n[2026-02-04 01:01] SDR (Wei Lin Tan): Hi The Lawn team, This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms. Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price? Oddle Reserve is a simpler alternative. In Australia we are A$249/month per brand , not per outlet. We are also offering Founder Access for a limited number of AU brands: A$65/month, locked in forever We work closely with early partners to use your data to surface insights and maximise revenue , not just “switch software” Open to a quick 12-minute chat this week to see if it makes sense for The Lawn? Cheers, Wei Lin General Manager at Oddle\n\n[2025-02-03 11:31] Prospect (zeyanlim): Very good On Mon, 3 Feb 2025, 16:46 Alwyn Cheong, < alwyn.cheong@oddle.me > wrote: Bonjour Zeyan, Just saw one of The Lawn’s post on my LinkedIn thread and after digging a bit more into what you guys do, I came up with a few ideas 😇 Since I find what you’re doing very innovative, I also did a brainstorming session with my team and we came up with a few things that could really help you boost your growth. Below is the picture of some ideas we had I also took some more notes about how to execute those ideas so if you’re free sometimes next week I’d love to have a chat with you! Have a lovely day!\n\n[2025-02-03 11:30] SDR (Alwyn Cheong): \n\n[2025-02-03 09:02] SDR (Alwyn Cheong): Hi Zeyan, I’ve been following The Lawn and admire how you’ve grown your brand while maintaining strong customer connections. Many restaurants like City Hotpot and Keng Eng Kee have optimized operations and reduced reservation management costs with Oddle Reserve. Beyond cost savings, what truly drives sustainable sales growth is how we help you capture valuable customer data from every reservation, delivery, and dine-in visit. With Oddle, it’s as easy as ABC: - Acquire Customer Data to build a powerful database - Build Your Brand with personalized engagement - Convert for Growth through targeted campaigns and automated rewards Would you be open to a quick chat to explore how we can help you achieve the same?\n\n[2025-02-03 08:46] SDR (Alwyn Cheong): Bonjour Zeyan, Just saw one of The Lawn’s post on my LinkedIn thread and after digging a bit more into what you guys do, I came up with a few ideas 😇 Since I find what you’re doing very innovative, I also did a brainstorming session with my team and we came up with a few things that could really help you boost your growth. Below is the picture of some ideas we had I also took some more notes about how to execute those ideas so if you’re free sometimes next week I’d love to have a chat with you! Have a lovely day!"
+        }
+      }
+    ],
+    "Reply Received1": [
+      {
+        "json": {
+          "_id": "act_qSn4Gobt7j7qnTgAg",
+          "type": "emailsReplied",
+          "emailId": "eml_MRrfNepgrMF6QsiiJ",
+          "messageId": "<CAKyyp6evE9F9RLyfWww0OBm13ONGy+5hfqfu-BdjNz3KbvLiwQ@mail.gmail.com>",
+          "createdBy": "usr_vJdBwaW7CbDSvHbkm",
+          "createdAt": "2026-02-04T01:03:23.000Z",
+          "fromEmail": "zeyanlim@oddle.me",
+          "isFirst": true,
+          "stopped": true,
+          "subject": "Is SevenRooms enterprise price an overkill for Winnifreds?",
+          "messagePreview": "Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat. ",
+          "bot": false,
+          "teamId": "tea_gYwPePZxuhFb6QraW",
+          "leadId": "lea_oPsFnXPEp7Wht5YAx",
+          "campaignId": "cam_peDaoGPEGHR28WExF",
+          "sequenceId": "seq_ynGxRvredfzuGunCx",
+          "sequenceStep": 0,
+          "emailTemplateId": "etp_ksZ5EMTXncLiysr3t",
+          "sendUserId": "usr_vJdBwaW7CbDSvHbkm",
+          "totalSequenceStep": 0,
+          "name": "Chelsea's Test Campaign",
+          "sendUserName": "Wei Lin Tan",
+          "sendUserEmail": "weilin-t@theoddlecompany.com",
+          "sendUserMailboxId": "usm_HuzXb2XAHfLJ9mSBS",
+          "sendUserMailboxProviderId": "weilin-t@theoddlecompany.com",
+          "leadFirstName": "Jonathan",
+          "leadLastName": "Lim",
+          "leadEmail": "zeyanlim@oddle.me",
+          "leadCompanyName": "The Lawn",
+          "contactId": "ctc_GMa6fmQFJKoeunQQa",
+          "relatedSentAt": "2026-02-04T01:01:00.284Z",
+          "metaData": {
+            "teamId": "tea_gYwPePZxuhFb6QraW",
+            "campaignId": "cam_peDaoGPEGHR28WExF",
+            "leadId": "lea_oPsFnXPEp7Wht5YAx",
+            "type": "emailsReplied",
+            "createdBy": "usr_vJdBwaW7CbDSvHbkm",
+            "s3ready": false,
+            "taskId": "tsk_cFvNTQcdKX88M5KE5"
+          },
+          "campaignName": "Chelsea's Test Campaign",
+          "html": "<div dir=\"auto\">Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat.</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Wed, Feb 4, 2026, 09:01 Wei Lin Tan &lt;<a href=\"mailto:weilin-t@theoddlecompany.com\">weilin-t@theoddlecompany.com</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0 0 0 .8ex;border-left:1px #ccc solid;padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_2808408730289040219isPasted\" style=\"margin:0px;box-sizing:border-box\">Hi The Lawn team, </p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight:700;box-sizing:border-box\">A$249/month per brand</strong>, not per outlet.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">We are also offering <strong style=\"font-weight:700;box-sizing:border-box\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top:0px;margin-bottom:1rem;box-sizing:border-box\"><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box;font-weight:bold\"><strong style=\"font-weight:700;box-sizing:border-box\">A$65/month, locked in forever</strong></li><li style=\"margin-top:0px;margin-right:0px;margin-bottom:0px;box-sizing:border-box\">We work closely with early partners to use <strong style=\"font-weight:700;box-sizing:border-box\">your data to surface insights and maximise revenue</strong>, not just “switch software”</li></ul><p style=\"margin:0px;box-sizing:border-box\">Open to a quick 12-minute chat this week to see if it makes sense for The Lawn?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Cheers,</p><p style=\"margin:0px;box-sizing:border-box\">Wei Lin</p><p style=\"margin:0px;box-sizing:border-box\">General Manager at Oddle </p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_cFvNTQcdKX88M5KE5\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_cFvNTQcdKX88M5KE5\" height=\"1\" width=\"1\"></div><br></blockquote></div>\n",
+          "text": "Hi Alan, Thanks for your email. We're very happy with Sevenrooms and the integration and functionality across all our platforms - no need for a chat\n\nOn Wed, Feb 4, 2026, 09:01 Wei Lin Tan <weilin-t@theoddlecompany.com> wrote:\n\n> Hi The Lawn team,\n>\n>\n> This is Wei Lin from Oddle. Noticed The Lawn is using SevenRooms.\n>\n>\n> Quick question: are you getting full value from it, or mostly using the\n> core reservation workflows while paying an enterprise price?\n>\n>\n> Oddle Reserve is a simpler alternative. In Australia we are *A$249/month\n> per brand*, not per outlet.\n>\n>\n> We are also offering *Founder Access* for a limited number of AU brands:\n>\n>    - *A$65/month, locked in forever*\n>    - We work closely with early partners to use *your data to surface\n>    insights and maximise revenue*, not just “switch software”\n>\n> Open to a quick 12-minute chat this week to see if it makes sense for The\n> Lawn?\n>\n>\n>\n> Cheers,\n>\n> Wei Lin\n>\n> General Manager at Oddle\n> [image: logo]\n>\n>\n",
+          "email": "zeyanlim@oddle.me",
+          "firstName": "Jonathan",
+          "lastName": "Lim",
+          "linkedinUrl": "https://www.linkedin.com/in/limzeyan",
+          "companyName": "The Lawn",
+          "emailTemplateName": "Blank"
+        }
+      }
     ]
   },
-  "versionId": "ecfdb8d7-c86d-42b5-843d-861e9a882c99",
+  "versionId": "98cfec99-4baa-4ca3-8f05-7e74f3695be4",
   "activeVersionId": "42e58bed-fb45-4e9e-86d4-eef7338ca038",
   "triggerCount": 1,
   "shared": [
