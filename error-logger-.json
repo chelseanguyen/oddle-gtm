@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T02:43:48.312Z",
+  "updatedAt": "2026-02-09T02:31:26.663Z",
   "createdAt": "2026-02-04T03:36:59.460Z",
   "id": "2SWvtvGbkteCtlr0",
   "name": "Error Logger",
@@ -41,10 +41,21 @@
             "Workflow": "={{ $json.workflow.name }}",
             "URL": "={{ $json.execution.url }}",
             "Node": "={{ $json.execution.lastNodeExecuted }}",
-            "Timestamp": "={{ $now }}"
+            "Timestamp": "=",
+            "Timestamp (Raw)": "={{ $now }}"
           },
           "matchingColumns": [],
           "schema": [
+            {
+              "id": "Timestamp (Raw)",
+              "displayName": "Timestamp (Raw)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
             {
               "id": "Timestamp",
               "displayName": "Timestamp",
@@ -170,8 +181,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
-  "activeVersionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
+  "versionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
+  "activeVersionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
   "triggerCount": 0,
   "shared": [
     {
@@ -183,9 +194,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-05T02:36:10.872Z",
-    "createdAt": "2026-02-05T02:34:37.745Z",
-    "versionId": "49f626a7-0b4f-4ec8-9579-1195a2c28a85",
+    "updatedAt": "2026-02-09T02:31:47.749Z",
+    "createdAt": "2026-02-09T02:31:26.670Z",
+    "versionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
     "workflowId": "2SWvtvGbkteCtlr0",
     "nodes": [
       {
@@ -223,10 +234,21 @@
               "Workflow": "={{ $json.workflow.name }}",
               "URL": "={{ $json.execution.url }}",
               "Node": "={{ $json.execution.lastNodeExecuted }}",
-              "Timestamp": "={{ $now }}"
+              "Timestamp": "=",
+              "Timestamp (Raw)": "={{ $now }}"
             },
             "matchingColumns": [],
             "schema": [
+              {
+                "id": "Timestamp (Raw)",
+                "displayName": "Timestamp (Raw)",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
               {
                 "id": "Timestamp",
                 "displayName": "Timestamp",
@@ -340,7 +362,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 49f626a7",
+    "name": "Version 5edab697",
     "description": "",
     "autosaved": false
   },
