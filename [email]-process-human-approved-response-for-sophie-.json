@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T02:44:11.237Z",
+  "updatedAt": "2026-02-06T07:29:38.798Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -174,7 +174,7 @@
     },
     {
       "parameters": {
-        "modelName": "text-embedding-004"
+        "modelName": "models/gemini-embedding-001"
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
@@ -1059,7 +1059,7 @@
       }
     ]
   },
-  "versionId": "808b6f4f-55d6-4470-bf7e-8b83a020672c",
+  "versionId": "78f38e72-dde0-4b62-bde3-f5c144444d25",
   "activeVersionId": "0563e157-cfe8-4a69-88c5-4fd964131eb5",
   "triggerCount": 1,
   "shared": [
