@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-05T02:48:58.972Z",
+  "updatedAt": "2026-02-09T01:30:14.509Z",
   "createdAt": "2026-01-16T06:02:03.867Z",
   "id": "uVOflcZAL18WW8Ls",
   "name": "Automated daily workflow backup to GitHub",
@@ -11,7 +11,7 @@
         "rule": {
           "interval": [
             {
-              "triggerAtHour": 19
+              "triggerAtHour": 18
             }
           ]
         }
@@ -422,8 +422,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "db272c06-cce3-47eb-947b-14590c2d2031",
-  "activeVersionId": "83b93ede-8f31-40c2-8baf-c2e21f379270",
+  "versionId": "136a2e5d-1b25-4fb6-a7a0-424603987349",
+  "activeVersionId": "136a2e5d-1b25-4fb6-a7a0-424603987349",
   "triggerCount": 1,
   "shared": [
     {
@@ -435,9 +435,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-01-16T07:56:35.668Z",
-    "createdAt": "2026-01-16T07:56:18.709Z",
-    "versionId": "83b93ede-8f31-40c2-8baf-c2e21f379270",
+    "updatedAt": "2026-02-09T01:30:17.944Z",
+    "createdAt": "2026-02-09T01:30:14.516Z",
+    "versionId": "136a2e5d-1b25-4fb6-a7a0-424603987349",
     "workflowId": "uVOflcZAL18WW8Ls",
     "nodes": [
       {
@@ -445,8 +445,7 @@
           "rule": {
             "interval": [
               {
-                "field": "hours",
-                "hoursInterval": 12
+                "triggerAtHour": 18
               }
             ]
           }
@@ -837,7 +836,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "v1",
+    "name": "Version 136a2e5d",
     "description": "",
     "autosaved": false
   },
