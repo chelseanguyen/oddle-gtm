@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-02-06T03:05:59.815Z",
+  "updatedAt": "2026-02-09T02:27:04.931Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] AU SDR Agent - Sophie",
-  "active": true,
+  "active": false,
   "isArchived": false,
   "nodes": [
     {
@@ -317,53 +317,9 @@
       "typeVersion": 1
     },
     {
-      "parameters": {},
-      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        -480,
-        560
-      ],
-      "id": "70ef3f10-fcdd-48ae-941f-5c28daeb7563",
-      "name": "Embeddings Google Gemini1",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
       "parameters": {
-        "mode": "retrieve-as-tool",
-        "toolDescription": "Use this tool to find our positioning and general prospecting approach to help generate an appropriate response to the prospect.",
-        "tableName": {
-          "__rl": true,
-          "value": "prospecting_guide",
-          "mode": "list",
-          "cachedResultName": "prospecting_guide"
-        },
-        "topK": 5,
-        "includeDocumentMetadata": false,
-        "options": {}
+        "modelName": "models/gemini-embedding-001"
       },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1.3,
-      "position": [
-        -480,
-        400
-      ],
-      "id": "d02c9c7d-9966-445f-ae65-da22eb24730d",
-      "name": "Prostecting Guide Knowledge Base",
-      "credentials": {
-        "supabaseApi": {
-          "id": "aJzMx5t2Q4kcZ8EL",
-          "name": "Supabase Account"
-        }
-      }
-    },
-    {
-      "parameters": {},
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
@@ -809,6 +765,46 @@
           "name": "Lemlist account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "metric": "customMetrics",
+        "metrics": {
+          "assignments": [
+            {
+              "name": "Accuracy",
+              "value": "={{ $json.Correctness }}",
+              "type": "number",
+              "id": "d6191e51-4dad-48c9-a570-971ca2fc9df7"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        736,
+        -800
+      ],
+      "id": "af2a08f9-ff67-4822-a755-cc57ede82437",
+      "name": "Score"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "au-nowbookit",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2464,
+        -416
+      ],
+      "id": "0bc1c54c-4e74-4bb1-a7c2-0201761d8629",
+      "name": "Webhook",
+      "webhookId": "c0cf2fe0-4997-4a63-a272-014e91fe643a"
     }
   ],
   "connections": {
@@ -928,22 +924,6 @@
         ]
       ]
     },
-    "Embeddings Google Gemini1": {
-      "ai_embedding": [
-        [
-          {
-            "node": "Prostecting Guide Knowledge Base",
-            "type": "ai_embedding",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Prostecting Guide Knowledge Base": {
-      "ai_tool": [
-        []
-      ]
-    },
     "Embeddings Google Gemini2": {
       "ai_embedding": [
         [
@@ -1050,7 +1030,13 @@
     },
     "Evaluation2": {
       "main": [
-        []
+        [
+          {
+            "node": "Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Reply Received1": {
@@ -1058,6 +1044,17 @@
         [
           {
             "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score": {
+      "main": [
+        [
+          {
+            "node": "Update row in sheet",
             "type": "main",
             "index": 0
           }
@@ -1075,9 +1072,7 @@
     "errorWorkflow": "2SWvtvGbkteCtlr0"
   },
   "staticData": {
-    "node:Reply Received": {
-      "webhookId": "hoo_pa8Rq44Q8YwNLeph8"
-    }
+    "node:Reply Received": {}
   },
   "meta": {
     "templateCredsSetupCompleted": true
@@ -1220,8 +1215,8 @@
       }
     ]
   },
-  "versionId": "98cfec99-4baa-4ca3-8f05-7e74f3695be4",
-  "activeVersionId": "42e58bed-fb45-4e9e-86d4-eef7338ca038",
+  "versionId": "9306a74c-d080-4ce3-a84d-c51b4e2d1901",
+  "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
     {
@@ -1232,720 +1227,6 @@
       "projectId": "tAHBdayTR1Nb6OKK"
     }
   ],
-  "activeVersion": {
-    "updatedAt": "2026-01-30T03:03:17.562Z",
-    "createdAt": "2026-01-30T03:03:03.774Z",
-    "versionId": "42e58bed-fb45-4e9e-86d4-eef7338ca038",
-    "workflowId": "Q3ayZFswJ7nIu0we",
-    "nodes": [
-      {
-        "parameters": {
-          "event": "emailsReplied",
-          "options": {
-            "campaignId": "cam_peDaoGPEGHR28WExF"
-          }
-        },
-        "type": "n8n-nodes-base.lemlistTrigger",
-        "typeVersion": 1,
-        "position": [
-          -2192,
-          -416
-        ],
-        "name": "Reply Received",
-        "webhookId": "lemlist-reply-webhook",
-        "id": "721e1fd9-103d-4c58-ad68-92c218c25582",
-        "credentials": {
-          "lemlistApi": {
-            "id": "6dgMHleAsx5bfyF9",
-            "name": "Lemlist account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "url": "=https://api.lemlist.com/api/inbox/{{ $('Reply Received').item.json.contactId }}",
-          "authentication": "predefinedCredentialType",
-          "nodeCredentialType": "lemlistApi",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.1,
-        "position": [
-          -1760,
-          -416
-        ],
-        "name": "Get Conversation History",
-        "id": "800d3708-60a6-46a9-ac82-1b03a0e26955",
-        "credentials": {
-          "lemlistApi": {
-            "id": "6dgMHleAsx5bfyF9",
-            "name": "Lemlist account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-2.0-flash",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          -320,
-          -224
-        ],
-        "name": "Google Gemini Flash",
-        "id": "2835fccd-8d1a-4b00-b027-7478d0fe46da",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  \n  // Remove HTML tags\n  let text = html.replace(/<[^>]*>/g, ' ');\n  \n  // Decode common HTML entities\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  \n  // Clean up extra whitespace\n  text = text.replace(/\\s+/g, ' ').trim();\n  \n  return text;\n}\n\n// Helper function to format timestamp\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// Get the conversation data from the input\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\n// 1. EXTRACT LEAD-SPECIFIC DATA\n// Find the latest reply from the prospect\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\n// Also find any message that contains the leadEmail (could be a sent or received email)\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply) {\n  // Clean lead message and strip out historical \"On... wrote:\" quotes to help AI focus\n  if (latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim()\n                         .substring(0, 1000);\n  }\n}\n\n// Extract Company Name from leadEmail domain if possible\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  // Simple logic to capitalize the first letter of the domain\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\n// 2. PROCESS ALL MESSAGES FOR THE THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    message: stripHtml(item.message).substring(0, 500),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\n// Sort messages chronologically (oldest first)\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));\n\n// 3. FORMAT CONVERSATION THREAD\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === chronologicalMessages.length - 1;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\n// 4. CREATE STRUCTURED OBJECT\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[chronologicalMessages.length - 1]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -1536,
-          -416
-        ],
-        "name": "Parse Conversation History",
-        "id": "6e63d921-c080-4600-82f0-d7affd788c3b"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "slack_channel",
-                "name": "slackChannelId",
-                "value": "C0A3N12LT5Z",
-                "type": "string"
-              },
-              {
-                "id": "webhook_path",
-                "name": "webhookPath",
-                "value": "slack-reply-approval",
-                "type": "string"
-              },
-              {
-                "id": "lemlist_base_url",
-                "name": "lemlistBaseUrl",
-                "value": "https://app.lemlist.com",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.3,
-        "position": [
-          -1984,
-          -416
-        ],
-        "name": "Workflow Configuration",
-        "id": "5cf1faec-c2f6-4381-b2f6-4c4b57aa4dd2"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://slack.com/api/chat.postMessage",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpBearerAuth",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"New prospect reply needs approval\",\n    \"blocks\": [\n        {\n            \"type\": \"header\",\n            \"text\": {\n                \"type\": \"plain_text\",\n                \"text\": \":bell: New Prospect Reply\",\n                \"emoji\": true\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"fields\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.companyName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.leadEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.fromEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.campaignName }}\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                 \"text\": \"*Prospect's Reply:*\\n```{{ $('Reply Received').item.json.text && $('Reply Received').item.json.text.length > 300 ? $('Reply Received').item.json.text.replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"').substring(0, 300) + '...\\\\n\\\\n[Message truncated - view full reply in Lemlist]' : ($('Reply Received').item.json.text || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                \"text\": \"*Agent Generated Response:*\\n```{{ ($json.output.content || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n            }\n        },\n        {\n            \"type\": \"context\",\n            \"elements\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.contactId }}|View full conversation in Lemlist>\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"actions\",\n            \"block_id\": \"approval_actions\",\n            \"elements\": [\n                {\n                    \"type\": \"button\",\n                    \"text\": {\n                        \"type\": \"plain_text\",\n                        \"text\": \":white_check_mark: Approve & Send\",\n                        \"emoji\": true\n                    },\n                    \"style\": \"primary\",\n                    \"action_id\": \"approve\",\n                    \"value\": \"{{ $('Reply Received').item.json.messageId }}\"\n                },\n                {\n                    \"type\": \"button\",\n                    \"text\": {\n                        \"type\": \"plain_text\",\n                        \"text\": \"✏ Reject & Edit\",\n                        \"emoji\": true\n                    },\n                    \"style\": \"danger\",\n                    \"action_id\": \"reject\",\n                    \"url\": \"https://app.lemlist.com/teams/{{ $('Reply Received').item.json.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.contactId }}\"\n                }\n            ]\n        }\n    ]\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.3,
-        "position": [
-          656,
-          -448
-        ],
-        "id": "5aa9e056-a669-480e-9325-edb50a3e98f6",
-        "name": "Send to Slack for Approval",
-        "credentials": {
-          "httpBearerAuth": {
-            "id": "A9y0ZdmG00hI8udd",
-            "name": "Slack's Email SDR Agent"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "### Additional Agent to assist Sophie post appt fixed\n- Create Lead Profile, send to Attio & Slack\n- Hand off to AE: Send email to prospect & introduce AE with LP\n- Update Attio (CRM agent)",
-          "height": 128,
-          "width": 496,
-          "color": 3
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -224,
-          -576
-        ],
-        "typeVersion": 1,
-        "id": "90f770b5-7c9d-4db6-8216-cb5bb4923590",
-        "name": "Sticky Note"
-      },
-      {
-        "parameters": {},
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          -16,
-          96
-        ],
-        "id": "672c90e6-1154-4932-9e38-78de9d165f54",
-        "name": "Embeddings Google Gemini",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "retrieve-as-tool",
-          "toolDescription": "Use this tool to find similar past prospect emails and our approved responses (found in metadata.response_sent) to help draft new replies",
-          "tableName": {
-            "__rl": true,
-            "value": "outbound_responses",
-            "mode": "list",
-            "cachedResultName": "outbound_responses"
-          },
-          "topK": 5,
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "topic",
-                  "value": "={{ $json.output.topic }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1.3,
-        "position": [
-          -16,
-          -64
-        ],
-        "id": "c9d82a8b-a0c5-4cba-9018-028c2313ca95",
-        "name": "Past Email Knowledge Base",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "### Additional tasks/materials for Sophie\n- Once appt fixed, send a meeting agenda\n- Appt booking link to add to agent's prompt (ADDED)",
-          "height": 96,
-          "width": 496,
-          "color": 4
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -224,
-          -688
-        ],
-        "typeVersion": 1,
-        "id": "6167b1c6-50e4-4057-9f1f-5b15296bf5b7",
-        "name": "Sticky Note4"
-      },
-      {
-        "parameters": {
-          "content": "### To add: Manager Agent\n1) Look at conversation history\n2) Identify what needs to be done from the latest conversation\n- Generate a response -> Email agent\n- Create a Lead Profile -> LP agent\n- Update Attio -> CRM agent (not sure about this)",
-          "height": 192,
-          "width": 384,
-          "color": 3
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -1424,
-          -656
-        ],
-        "typeVersion": 1,
-        "id": "f37b9d75-cabf-4542-a5d1-18509810338c",
-        "name": "Sticky Note3"
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "=- Email from: {{ $('Parse Conversation History').item.json.leadEmail }}\n- Company: {{ $('Parse Conversation History').item.json.companyName }}\n- Subject: {{ $('Parse Conversation History').item.json.subject }}\n- Lead's's latest reply: {{ $('Parse Conversation History').item.json.leadMessage }}\n- Topic: {{ $json.output.topic }}\n- Conversation History: {{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
-          "hasOutputParser": true,
-          "options": {
-            "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR) AI. Your goal is to manage incoming replies from outbound email prospects, address their queries/objections categorized by topic using approved knowledge, and ultimately secure a discovery call with our team. Depending on the response type, you also might need to escalate to human.\n\n**Knowledge Access:**\n- Refer to Protecting Guide Knowledge Base for general prospecting approach.\n- Refer to our website at https://www.oddle.me/au for product details.\n\n**Step 1: Information Retrieval & Analysis**\n- Use the Past Email Knowledge Base tool to retrieve 3-5 historical interactions related to the *Topic*. Analyze the content (prospect message) of the relevant topic in metadata.topic and metadata.response_sent (our approved reply) to mirror tone and logic.\n- Analyze the *Conversation History* to ensure you do not repeat yourself and that you are addressing the specific context of the thread.\n\n**Step 2: Scenario Categorization & Response Instructions**\n1) Scenario: Interested / Questions / General Reply\n- Action: Draft a response. Answer questions clearly using Protecting Guide Knowledge Base.\n- If the lead’s  intent is high, showing interest to find out more or is ready to speak to us, send them this scheduling link to set an appointment with our team: https://forms.oddle.me/oddle-discovery-call\n\n2) Scenario: Wrong Contact / Wrong Brand\n- Action: Reply generally thanking them for letting us know, saying that we will update our records and wish them a good day.\n- Then escalate to human to notify Oddle team with the remarks “Wrong contact” or “Wrong brand”\n\n3) Scenario: Refer to Another Person (Internal)\n- Action: Ask for the colleague's name and email address. Do not send the discovery link yet.\n\n4) Scenario: Request us to send to a Different Email Address\n- If they provide us with a contact (email or phone number), then escalate to human to notify Oddle team with the remark “Lead requested to contact another person”, and send to human the contact details (email or phone number).\n- If they don’t provide us with a contact, then ask for the colleague's name and email address or phone number, then then escalate to human to notify Oddle team with the remark “Lead requested to contact another person”, and send to human the contact details (email or phone number).\n\n5) Scenario: Request us to send more information about product offerings or demo\n- If they ask for product details, search on our official website https://www.oddle.me/au and send them the relevant page\n- If they ask for product demo, ask them which part specifically do they want to see the demo for\n\n6) Scenario: Not Interested / Objection\n- Action: Address the objection (e.g., Competitor, Budget, Timing) using the value propositions in Protecting Guide Knowledge Base and how objections were handled in the past in Past Email Knowledge Base. If they are firm on \"No,\" acknowledge gracefully and end the thread.\n\n\n**Step 3: Generate a response & Output Requirement**\n- Generate a response that will be sent to the prospect after human approval.\n\n**Response Guidelines**\n- Personalization: Reference the *Company* name and specific points from their *Latest Reply*.\n- Tone: Professional, friendly, and consultative. Never pushy.\n- Brevity: Use bullet points for features. Keep the total email under 100 words.\n- Continuous Learning: If the retrieved examples show a \"Human-Corrected\" version of a previous AI mistake, mirror the Human's tone and logic exactly.\n- Be aware that the lead’s message might contain a quote or reply from the previous message.\n- Don't use — symbol in your response, replace it with commas or natural sentence breaks.\n- In your response, bold important points where the prospect should pay attention to.\n\n**Email signature:**\nFollow the format below, where SDR’s first name can be found from previous emails in the thread from the *Conversation History*\n\nCheers,\nSDR’s first name"
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.agent",
-        "typeVersion": 1.6,
-        "position": [
-          -176,
-          -432
-        ],
-        "name": "Email Agent",
-        "id": "d6271e73-662a-4975-a649-cdf9e5e90827",
-        "alwaysOutputData": true
-      },
-      {
-        "parameters": {
-          "promptType": "define",
-          "text": "=Lead's message: {{ $json.leadMessage }}",
-          "hasOutputParser": true,
-          "options": {
-            "systemMessage": "You are an AI assistant that categorizes prospect messages into topics.\n\nAnalyze the lead's message and categorize it into ONE of the following topics:\n\n**Valid Topics:**\n- pricing: Questions about cost, pricing plans, discounts, payment terms\n- product_feature: Questions about specific features, functionality, capabilities\n- competitor_comparison: Comparisons with competitors, asking why choose us\n- objection: Concerns, doubts, hesitations, or pushback\n- interested: Expressing interest, wanting to learn more, positive signals\n- not_interested: Clearly not interested, politely declining, no need\n- timing: Questions about implementation timeline, when to start, availability\n- technical: Technical questions, integrations, API, security, compliance\n- scheduling: Requesting a demo, meeting, call, or follow-up\n- general_inquiry: General questions that don't fit other categories\n- auto_reply: Auto-replies, bot replies, out of office messages\n\n**Instructions:**\n1. Read the prospect's message carefully\n2. Identify the main intent or topic\n3. Return ONLY the topic keyword (e.g., \"pricing\", \"product_feature\")\n4. Use lowercase and underscores for multi-word topics\n5. Choose the MOST relevant single topic\n\n**Output Format:**\nReturn a JSON object with the topic:\n{\n  \"topic\": \"<topic_keyword>\"\n}\n\n**Examples:**\nMessage: \"How much does this cost?\"\nOutput: {\"topic\": \"pricing\"}\n\nMessage: \"Does it integrate with POS?\"\nOutput: {\"topic\": \"technical\"}\n\nMessage: \"Not interested right now, thanks.\"\nOutput: {\"topic\": \"not_interested\"}\n\nMessage: \"Can you tell me more about the reporting features?\"\nOutput: {\"topic\": \"product_feature\"}"
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.agent",
-        "typeVersion": 1.6,
-        "position": [
-          -1088,
-          -416
-        ],
-        "name": "Categorize Lead Message Topic",
-        "id": "6235c31b-6ef4-4416-8922-95dddaf0f359"
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-3-flash-preview",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          -1152,
-          -208
-        ],
-        "name": "Google Gemini Chat",
-        "id": "5a3d304b-d490-4af5-ab78-ff01872c628f",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsonSchemaExample": "{\n  \"topic\": \"pricing\"\n}"
-        },
-        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-        "typeVersion": 1.3,
-        "position": [
-          -864,
-          -208
-        ],
-        "name": "Topic Output Parser",
-        "id": "eb148603-6507-456a-824c-f574e121268e"
-      },
-      {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          -528,
-          -336
-        ],
-        "id": "f0c123da-99aa-4064-8ef5-864c02073d8c",
-        "name": "No Operation, do nothing"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "61e6eda3-6840-4455-b39e-58efab30b5b1",
-                "leftValue": "={{ $json.output.topic }}",
-                "rightValue": "auto_reply",
-                "operator": {
-                  "type": "string",
-                  "operation": "notEquals"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          -736,
-          -416
-        ],
-        "id": "bb9fe3dc-de49-4c68-a9b0-85386e221154",
-        "name": "Check for non auto-reply"
-      },
-      {
-        "parameters": {
-          "conditions": {
-            "options": {
-              "caseSensitive": true,
-              "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
-            },
-            "conditions": [
-              {
-                "id": "8c2d1cc5-20aa-4ab4-b0f2-ba9ad1cd85b6",
-                "leftValue": "={{ $json.output.action.toLowerCase() }}",
-                "rightValue": "reply",
-                "operator": {
-                  "type": "string",
-                  "operation": "contains"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          288,
-          -432
-        ],
-        "id": "55fbd77a-acb4-4de1-b0f2-0e9634ca5cb7",
-        "name": "Check for action: \"reply\" or \"escalate to human\""
-      },
-      {
-        "parameters": {
-          "content": "## Workflow 1: Handling prospect's reply\n\n",
-          "height": 100,
-          "width": 640
-        },
-        "id": "a89cca53-ace2-435f-b80d-7f36f1fd4565",
-        "name": "Sticky Note15",
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -2208,
-          -752
-        ],
-        "typeVersion": 1
-      },
-      {
-        "parameters": {
-          "jsonSchemaExample": "{\n\t\"content\": \"<html><body><p>Hi Chelsea,</p><p>Thanks for being upfront about that. I completely understand, if your current setup is working well for Chelsea's Bakery, there's no reason to change things just for the sake of it.</p><p>Just so I can better understand for the future, is there any specific feature or integration your current system is missing that would make a difference for your operations?</p></body></html>\",\n\t\"action\": \"reply\",\n    \"contact\": \"john.doe@example.com\",\n    \"remarks\": \"wrong contact\"\n}"
-        },
-        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-        "typeVersion": 1.3,
-        "position": [
-          144,
-          -256
-        ],
-        "id": "12b66a89-8c8a-4e8d-861d-73178f755167",
-        "name": "Structured Output Parser"
-      },
-      {
-        "parameters": {
-          "method": "POST",
-          "url": "https://slack.com/api/chat.postMessage",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpBearerAuth",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Content-Type",
-                "value": "application/json"
-              }
-            ]
-          },
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"Action required\",\n    \"blocks\": [\n        {\n            \"type\": \"header\",\n            \"text\": {\n                \"type\": \"plain_text\",\n                \"text\": \":exclamation: Action Required\",\n                \"emoji\": true\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"fields\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.companyName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.leadEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.fromEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.campaignName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Alternative contact provided:*\\n{{ $('Email Agent').item.json.output.contact }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Remarks:*\\n{{ $('Email Agent').item.json.output.remarks }}\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                \"text\": \"*Prospect's Reply:*\\n```{{ $('Reply Received').item.json.text && $('Reply Received').item.json.text.length > 300 ? $('Reply Received').item.json.text.replace(/\\\\r\\\\n/g, '\\\\\\\\n').replace(/\\\\n/g, '\\\\\\\\n').replace(/\\\\r/g, '\\\\\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\\\\\"/g, '\\\\\\\\\\\"').substring(0, 300) + '...\\\\\\\\n\\\\\\\\n[Message truncated - view full reply in Lemlist]' : ($('Reply Received').item.json.text || '').replace(/\\\\r\\\\n/g, '\\\\\\\\n').replace(/\\\\n/g, '\\\\\\\\n').replace(/\\\\r/g, '\\\\\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\\\\\"/g, '\\\\\\\\\\\"') }}```\"\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"context\",\n            \"elements\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.contactId }}|View full conversation in Lemlist>\"\n                }\n            ]\n        }\n    ]\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.3,
-        "position": [
-          656,
-          -208
-        ],
-        "id": "d37ae642-9da3-4f62-8b8c-20c7897c2050",
-        "name": "Escalate to human",
-        "credentials": {
-          "httpBearerAuth": {
-            "id": "A9y0ZdmG00hI8udd",
-            "name": "Slack's Email SDR Agent"
-          }
-        }
-      },
-      {
-        "parameters": {},
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          -304,
-          96
-        ],
-        "id": "70ef3f10-fcdd-48ae-941f-5c28daeb7563",
-        "name": "Embeddings Google Gemini1",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "retrieve-as-tool",
-          "toolDescription": "Use this tool to find our positioning and general prospecting approach to help generate an appropriate response to the prospect.",
-          "tableName": {
-            "__rl": true,
-            "value": "prospecting_guide",
-            "mode": "list",
-            "cachedResultName": "prospecting_guide"
-          },
-          "topK": null,
-          "includeDocumentMetadata": false,
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1.3,
-        "position": [
-          -304,
-          -64
-        ],
-        "id": "d02c9c7d-9966-445f-ae65-da22eb24730d",
-        "name": "Protecting Guide Knowledge Base",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      }
-    ],
-    "connections": {
-      "Reply Received": {
-        "main": [
-          [
-            {
-              "node": "Workflow Configuration",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Get Conversation History": {
-        "main": [
-          [
-            {
-              "node": "Parse Conversation History",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Gemini Flash": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Email Agent",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse Conversation History": {
-        "main": [
-          [
-            {
-              "node": "Categorize Lead Message Topic",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Workflow Configuration": {
-        "main": [
-          [
-            {
-              "node": "Get Conversation History",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Send to Slack for Approval": {
-        "main": [
-          []
-        ]
-      },
-      "Embeddings Google Gemini": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Past Email Knowledge Base",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Past Email Knowledge Base": {
-        "ai_tool": [
-          [
-            {
-              "node": "Email Agent",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Email Agent": {
-        "main": [
-          [
-            {
-              "node": "Check for action: \"reply\" or \"escalate to human\"",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Categorize Lead Message Topic": {
-        "main": [
-          [
-            {
-              "node": "Check for non auto-reply",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Gemini Chat": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Categorize Lead Message Topic",
-              "type": "ai_languageModel",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Topic Output Parser": {
-        "ai_outputParser": [
-          [
-            {
-              "node": "Categorize Lead Message Topic",
-              "type": "ai_outputParser",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Check for non auto-reply": {
-        "main": [
-          [
-            {
-              "node": "Email Agent",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "No Operation, do nothing",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Check for action: \"reply\" or \"escalate to human\"": {
-        "main": [
-          [
-            {
-              "node": "Send to Slack for Approval",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Escalate to human",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Structured Output Parser": {
-        "ai_outputParser": [
-          [
-            {
-              "node": "Email Agent",
-              "type": "ai_outputParser",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini1": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Protecting Guide Knowledge Base",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Protecting Guide Knowledge Base": {
-        "ai_tool": [
-          [
-            {
-              "node": "Email Agent",
-              "type": "ai_tool",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Oddle Engineer",
-    "name": "Version 42e58bed",
-    "description": "",
-    "autosaved": false
-  },
+  "activeVersion": null,
   "tags": []
 }
