@@ -1,0 +1,418 @@
+{
+  "updatedAt": "2026-02-10T09:48:10.727Z",
+  "createdAt": "2026-02-10T03:36:58.726Z",
+  "id": "hidIdCkL4yT5FhH7",
+  "name": "BDR Resume Filter",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "11Kr5uB1bPOLpbe8KOIVTTkV5_b_b249J",
+          "mode": "list",
+          "cachedResultName": "SG BDR Resume Consolidation",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/11Kr5uB1bPOLpbe8KOIVTTkV5_b_b249J"
+        },
+        "event": "fileCreated",
+        "options": {
+          "fileType": "all"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1328,
+        -128
+      ],
+      "id": "4df99f7c-08f8-4710-9fad-c8aa75bf33e9",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LfxkcZh6LfuiSUVZ",
+          "name": "HR Resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -1104,
+        -128
+      ],
+      "id": "30c59100-495f-4761-a2a4-1c8f11e9f438",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LfxkcZh6LfuiSUVZ",
+          "name": "HR Resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -896,
+        -128
+      ],
+      "id": "8091f788-6be4-4515-9bc7-d797bc458ed2",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "14a31bc4-cc9a-4064-a7fc-16c866ade715",
+              "name": "=candidate_name",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text).candidate_name }}",
+              "type": "string"
+            },
+            {
+              "id": "14f56699-d5eb-4676-8871-541e8f3c913e",
+              "name": "email",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text).email }}",
+              "type": "string"
+            },
+            {
+              "id": "f6029510-67d3-4612-83a8-af4c1bd043af",
+              "name": "total_score",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text).total_score }}",
+              "type": "string"
+            },
+            {
+              "id": "653ebd73-9b66-48da-b27b-b30c3a675a82",
+              "name": "summary",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text).summary }}",
+              "type": "string"
+            },
+            {
+              "id": "379d54b8-cb7a-41bd-a2e3-ead811862d9a",
+              "name": "experience_score",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text).experience_score }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -432,
+        -128
+      ],
+      "id": "63eb55f4-cf24-4ae6-b71b-fc08d6add41c",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "id"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an HR resume screening assistant.\n\nEvaluate the resume using the following criteria:\n1. Relevant experience\n2. Role fit\n3. Technical or functional skills\n4. Communication clarity\n5. Overall quality\n\nScoring rules:\nEach category scored from 1 to 5.\nTotal score is the sum of all categories.\n\nReturn output strictly in JSON format:\n{\n  \"candidate_name\": \"\",\n  \"email\": \"\",\n  \"experience_score\": 0,\n  \"fit_score\": 0,\n  \"skills_score\": 0,\n  \"communication_score\": 0,\n  \"overall_score\": 0,\n  \"total_score\": 0,\n  \"summary\": \"\"\n}\n\nResume text:\n{{ $json.text }}\nYou are an HR resume screening assistant.\n\nEvaluate the resume using the following criteria:\n1. Relevant experience\n2. Role fit\n3. Technical or functional skills\n4. Communication clarity\n5. Overall quality\n\nScoring rules:\nEach category scored from 1 to 5.\nTotal score is the sum of all categories.\n\nReturn output strictly in JSON format:\n{\n  \"candidate_name\": \"\",\n  \"email\": \"\",\n  \"experience_score\": 0,\n  \"fit_score\": 0,\n  \"skills_score\": 0,\n  \"communication_score\": 0,\n  \"overall_score\": 0,\n  \"total_score\": 0,\n  \"summary\": \"\"\n}\n\nResume text:\n{{ $json.text }}\n"
+            }
+          ]
+        },
+        "simplify": false,
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -720,
+        -128
+      ],
+      "id": "a778155a-eeb7-4ae8-b248-d8be493e5ec8",
+      "name": "Message a model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko",
+          "mode": "list",
+          "cachedResultName": "BDR resume filtering",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate Name": "={{ $json.candidate_name }}",
+            "Email": "={{ $json.email }}",
+            "Total Score": "={{ $json.total_score }}",
+            "Summary": "={{ $json.summary }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate Name",
+              "displayName": "Candidate Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Total Score",
+              "displayName": "Total Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -224,
+        -128
+      ],
+      "id": "8d42aa09-c286-4d29-944c-b7bf40bb678c",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lKlCw1t1KbqNL0X6",
+          "name": "HR resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4e4dd612-b522-41db-8a92-2f565bb3acba",
+              "leftValue": "={{ $json['Total Score'] }}",
+              "rightValue": 20,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "e7a6bd84-504f-4988-a8a3-cede73e0b0be",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "text": "=Candidate Name: {{ $json['Candidate Name'] }}\nEmail: {{ $json.Email }}\nScore: {{ $json['Total Score'] }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        192,
+        -224
+      ],
+      "id": "937be876-9860-4d99-bdbf-5c7b7bbaf42a",
+      "name": "Send a message",
+      "webhookId": "d2145ae5-ec1b-4bb9-a8ab-a603834dfb2b",
+      "credentials": {
+        "slackApi": {
+          "id": "pwHIEHgMJGOrRW0s",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Message a model1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "1bcc7bdb-2f14-404d-8680-04c098e36045",
+  "activeVersionId": null,
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-10T03:36:58.726Z",
+      "createdAt": "2026-02-10T03:36:58.726Z",
+      "role": "workflow:owner",
+      "workflowId": "hidIdCkL4yT5FhH7",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
