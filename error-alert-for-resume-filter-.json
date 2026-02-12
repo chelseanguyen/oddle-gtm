@@ -1,0 +1,148 @@
+{
+  "updatedAt": "2026-02-12T03:04:21.630Z",
+  "createdAt": "2026-02-12T02:59:18.871Z",
+  "id": "IZuklOUhRfmulPCb",
+  "name": "Error Alert for resume filter",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        -32
+      ],
+      "id": "7f1261c2-b76c-49fb-916b-e9734f0b04b8",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0AFCA24H16",
+          "mode": "list",
+          "cachedResultName": "n8n-resume-filter-error"
+        },
+        "text": "=There is an error in:\nWorkflow: {{ $json.workflow.name }} \nError Node: {{ $json.execution.lastNodeExecuted }} \nURL: {{ $json.execution.url }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        -160,
+        -32
+      ],
+      "id": "a3004923-6ec3-4140-9e8f-6bbc9965113c",
+      "name": "Send a message",
+      "webhookId": "398e8f61-70c6-4d52-a767-156ca5a74e4a",
+      "credentials": {
+        "slackApi": {
+          "id": "U9uliJjQ3EA0Dl4Z",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "a5060880-d7f4-4fa2-b856-b7cb55aeafc0",
+  "activeVersionId": "a5060880-d7f4-4fa2-b856-b7cb55aeafc0",
+  "triggerCount": 0,
+  "shared": [
+    {
+      "updatedAt": "2026-02-12T02:59:18.871Z",
+      "createdAt": "2026-02-12T02:59:18.871Z",
+      "role": "workflow:owner",
+      "workflowId": "IZuklOUhRfmulPCb",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-02-12T03:05:11.626Z",
+    "createdAt": "2026-02-12T03:04:21.634Z",
+    "versionId": "a5060880-d7f4-4fa2-b856-b7cb55aeafc0",
+    "workflowId": "IZuklOUhRfmulPCb",
+    "nodes": [
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.errorTrigger",
+        "typeVersion": 1,
+        "position": [
+          -384,
+          -32
+        ],
+        "id": "7f1261c2-b76c-49fb-916b-e9734f0b04b8",
+        "name": "Error Trigger"
+      },
+      {
+        "parameters": {
+          "select": "channel",
+          "channelId": {
+            "__rl": true,
+            "value": "C0AFCA24H16",
+            "mode": "list",
+            "cachedResultName": "n8n-resume-filter-error"
+          },
+          "text": "=There is an error in:\nWorkflow: {{ $json.workflow.name }} \nError Node: {{ $json.execution.lastNodeExecuted }} \nURL: {{ $json.execution.url }}",
+          "otherOptions": {}
+        },
+        "type": "n8n-nodes-base.slack",
+        "typeVersion": 2.4,
+        "position": [
+          -160,
+          -32
+        ],
+        "id": "a3004923-6ec3-4140-9e8f-6bbc9965113c",
+        "name": "Send a message",
+        "webhookId": "398e8f61-70c6-4d52-a767-156ca5a74e4a",
+        "credentials": {
+          "slackApi": {
+            "id": "U9uliJjQ3EA0Dl4Z",
+            "name": "Slack account 2"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Error Trigger": {
+        "main": [
+          [
+            {
+              "node": "Send a message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version a5060880",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
