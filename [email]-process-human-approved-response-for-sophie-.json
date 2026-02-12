@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-10T02:57:33.283Z",
+  "updatedAt": "2026-02-12T06:47:39.940Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -64,8 +64,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1904,
-        592
+        1936,
+        320
       ],
       "name": "Update Message - Error",
       "id": "5e15d02c-1bd0-4e09-b25b-503cc1a61c72",
@@ -401,8 +401,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1376,
-        192
+        1200,
+        576
       ],
       "name": "Check Send Status",
       "id": "87b3f84c-9d61-4c75-838e-8be311c3810f"
@@ -424,14 +424,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $('Send Email via Lemlist').item.json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ ($json.error.message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        1648,
-        592
+        1680,
+        320
       ],
       "name": "Post Error status to Slack",
       "id": "98f56553-2067-46d6-9bc4-1e233be2acd7",
@@ -553,7 +553,7 @@
       "typeVersion": 4.3,
       "position": [
         1680,
-        -80
+        32
       ],
       "name": "Post Success status to Slack",
       "id": "a859ec25-2b54-40cd-a4b3-f3210f3d7a22",
@@ -594,6 +594,72 @@
         -64
       ],
       "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ok }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "f8b49112-55c9-470e-9925-5d6aafdf74df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Send success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d10af122-becb-4eb2-bc29-b810356f05df",
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error sending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1376,
+        192
+      ],
+      "id": "be1d0f2d-ceb6-4a57-b8cd-b6fdc61c84df",
+      "name": "Switch"
     }
   ],
   "connections": {
@@ -706,7 +772,7 @@
       "main": [
         [
           {
-            "node": "Check Send Status",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -715,20 +781,8 @@
     },
     "Check Send Status": {
       "main": [
-        [
-          {
-            "node": "Post Success status to Slack",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Post Error status to Slack",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        [],
+        []
       ]
     },
     "Post Error status to Slack": {
@@ -794,6 +848,24 @@
     "Post Success status to Slack": {
       "main": [
         []
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Post Success status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post Error status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     }
   },
@@ -1067,10 +1139,23 @@
           }
         }
       }
+    ],
+    "Send Email via Lemlist": [
+      {
+        "json": {
+          "error": {
+            "message": "400 - \"{\\\"error\\\":\\\"Failed to send email\\\"}\"",
+            "name": "AxiosError",
+            "stack": "AxiosError: Request failed with status code 400\n    at settle (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.12.0/node_modules/axios/lib/core/settle.js:19:12)\n    at RedirectableRequest.handleResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.12.0/node_modules/axios/lib/adapters/http.js:565:9)\n    at RedirectableRequest.emit (node:events:531:35)\n    at RedirectableRequest._processResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/follow-redirects@1.15.11/node_modules/follow-redirects/index.js:409:10)\n    at ClientRequest.RedirectableRequest._onNativeResponse (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/follow-redirects@1.15.11/node_modules/follow-redirects/index.js:102:12)\n    at Object.onceWrapper (node:events:634:26)\n    at ClientRequest.emit (node:events:519:28)\n    at HTTPParser.parserOnIncomingClient [as onIncoming] (node:_http_client:772:27)\n    at HTTPParser.parserOnHeadersComplete (node:_http_common:122:17)\n    at TLSSocket.socketOnData (node:_http_client:614:22)\n    at TLSSocket.emit (node:events:519:28)\n    at addChunk (node:internal/streams/readable:561:12)\n    at readableAddChunkPushByteMode (node:internal/streams/readable:512:3)\n    at TLSSocket.Readable.push (node:internal/streams/readable:392:5)\n    at TLSWrap.onStreamRead (node:internal/stream_base_commons:189:23)\n    at TLSWrap.callbackTrampoline (node:internal/async_hooks:130:17)\n    at Axios.request (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/axios@1.12.0/node_modules/axios/lib/core/Axios.js:45:41)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at invokeAxios (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:272:10)\n    at proxyRequestToAxios (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:648:20)\n    at Object.request (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/node-execution-context/utils/request-helper-functions.ts:1789:4)",
+            "code": "ERR_BAD_REQUEST",
+            "status": 400
+          }
+        }
+      }
     ]
   },
-  "versionId": "1f795984-ebc9-4cc3-ba86-1efb06f4c92d",
-  "activeVersionId": "1f795984-ebc9-4cc3-ba86-1efb06f4c92d",
+  "versionId": "e8e4c935-14b8-469d-aadd-986f67a8853c",
+  "activeVersionId": "e8e4c935-14b8-469d-aadd-986f67a8853c",
   "triggerCount": 1,
   "shared": [
     {
@@ -1082,9 +1167,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-10T02:57:36.277Z",
-    "createdAt": "2026-02-10T02:57:33.286Z",
-    "versionId": "1f795984-ebc9-4cc3-ba86-1efb06f4c92d",
+    "updatedAt": "2026-02-12T06:47:42.585Z",
+    "createdAt": "2026-02-12T06:47:39.944Z",
+    "versionId": "e8e4c935-14b8-469d-aadd-986f67a8853c",
     "workflowId": "Z4BV7uCQ8dSjXR1w",
     "nodes": [
       {
@@ -1145,8 +1230,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          1904,
-          592
+          1936,
+          320
         ],
         "name": "Update Message - Error",
         "id": "5e15d02c-1bd0-4e09-b25b-503cc1a61c72",
@@ -1482,8 +1567,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          1376,
-          192
+          1200,
+          576
         ],
         "name": "Check Send Status",
         "id": "87b3f84c-9d61-4c75-838e-8be311c3810f"
@@ -1505,14 +1590,14 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $('Send Email via Lemlist').item.json.error || 'Unknown error occurred' }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ ($json.error.message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          1648,
-          592
+          1680,
+          320
         ],
         "name": "Post Error status to Slack",
         "id": "98f56553-2067-46d6-9bc4-1e233be2acd7",
@@ -1634,7 +1719,7 @@
         "typeVersion": 4.3,
         "position": [
           1680,
-          -80
+          32
         ],
         "name": "Post Success status to Slack",
         "id": "a859ec25-2b54-40cd-a4b3-f3210f3d7a22",
@@ -1675,6 +1760,72 @@
           -64
         ],
         "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.ok }}",
+                      "rightValue": true,
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "equals"
+                      },
+                      "id": "f8b49112-55c9-470e-9925-5d6aafdf74df"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Send success"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "d10af122-becb-4eb2-bc29-b810356f05df",
+                      "leftValue": "={{ $json.error }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "object",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Error sending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1376,
+          192
+        ],
+        "id": "be1d0f2d-ceb6-4a57-b8cd-b6fdc61c84df",
+        "name": "Switch"
       }
     ],
     "connections": {
@@ -1787,7 +1938,7 @@
         "main": [
           [
             {
-              "node": "Check Send Status",
+              "node": "Switch",
               "type": "main",
               "index": 0
             }
@@ -1796,20 +1947,8 @@
       },
       "Check Send Status": {
         "main": [
-          [
-            {
-              "node": "Post Success status to Slack",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Post Error status to Slack",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          [],
+          []
         ]
       },
       "Post Error status to Slack": {
@@ -1876,10 +2015,28 @@
         "main": [
           []
         ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Post Success status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Post Error status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 1f795984",
+    "name": "Version e8e4c935",
     "description": "",
     "autosaved": false
   },
