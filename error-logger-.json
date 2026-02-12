@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-09T02:31:26.663Z",
+  "updatedAt": "2026-02-12T03:02:39.978Z",
   "createdAt": "2026-02-04T03:36:59.460Z",
   "id": "2SWvtvGbkteCtlr0",
   "name": "Error Logger",
@@ -41,8 +41,7 @@
             "Workflow": "={{ $json.workflow.name }}",
             "URL": "={{ $json.execution.url }}",
             "Node": "={{ $json.execution.lastNodeExecuted }}",
-            "Timestamp": "=",
-            "Timestamp (Raw)": "={{ $now }}"
+            "Timestamp (Raw)": "={{ DateTime.fromMillis(Number($json.execution.error.timestamp)).toFormat('yyyy, dd-MM, HH:mm') }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -63,20 +62,12 @@
               "defaultMatch": false,
               "display": true,
               "type": "string",
-              "canBeUsedToMatch": true
+              "canBeUsedToMatch": true,
+              "removed": true
             },
             {
               "id": "Workflow",
               "displayName": "Workflow",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "URL",
-              "displayName": "URL",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -95,6 +86,15 @@
             {
               "id": "Error Message",
               "displayName": "Error Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "URL",
+              "displayName": "URL",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -180,9 +180,75 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {},
-  "versionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
-  "activeVersionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
+  "pinData": {
+    "Error Trigger": [
+      {
+        "json": {
+          "execution": {
+            "id": "4182",
+            "url": "https://workflow.oddle.center/workflow/pwY4BW0QygQifccI/executions/4182",
+            "error": {
+              "level": "warning",
+              "tags": {},
+              "timestamp": 1770807664412,
+              "context": {
+                "itemIndex": 0
+              },
+              "functionality": "regular",
+              "name": "NodeOperationError",
+              "node": {
+                "parameters": {
+                  "ragStarterCallout": "",
+                  "mode": "insert",
+                  "tableName": {
+                    "__rl": true,
+                    "value": "objections_handling_guide",
+                    "mode": "list",
+                    "cachedResultName": "objections_handling_guide"
+                  },
+                  "options": {}
+                },
+                "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+                "typeVersion": 1,
+                "position": [
+                  400,
+                  -128
+                ],
+                "name": "Store Objections Guide to DB2",
+                "id": "a432b620-bc41-4338-b41d-a966b33cc297",
+                "credentials": {
+                  "supabaseApi": {
+                    "id": "aJzMx5t2Q4kcZ8EL",
+                    "name": "Supabase Account"
+                  }
+                }
+              },
+              "messages": [],
+              "message": "Error inserting: Could not find the table 'public.objections_handling_guide' in the schema cache 404 Not Found",
+              "stack": "NodeOperationError: Error inserting: Could not find the table 'public.objections_handling_guide' in the schema cache 404 Not Found\n    at Object.populateVectorStore (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/@n8n+n8n-nodes-langchain@file+packages+@n8n+nodes-langchain_483a58943c290d26157214acd0d782a6/node_modules/@n8n/n8n-nodes-langchain/nodes/vector_store/VectorStoreSupabase/VectorStoreSupabase.node.ts:108:11)\n    at processTicksAndRejections (node:internal/process/task_queues:105:5)\n    at handleInsertOperation (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/@n8n+n8n-nodes-langchain@file+packages+@n8n+nodes-langchain_483a58943c290d26157214acd0d782a6/node_modules/@n8n/n8n-nodes-langchain/nodes/vector_store/shared/createVectorStoreNode/operations/insertOperation.ts:54:4)\n    at ExecuteContext.execute (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/@n8n+n8n-nodes-langchain@file+packages+@n8n+nodes-langchain_483a58943c290d26157214acd0d782a6/node_modules/@n8n/n8n-nodes-langchain/nodes/vector_store/shared/createVectorStoreNode/createVectorStoreNode.ts:286:24)\n    at WorkflowExecute.executeNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1045:8)\n    at WorkflowExecute.runNode (/usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1226:11)\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:1662:27\n    at /usr/local/lib/node_modules/n8n/node_modules/.pnpm/n8n-core@file+packages+core_@opentelemetry+api@1.9.0_@opentelemetry+sdk-trace-base@1.30_ec37920eb95917b28efaa783206b20f3/node_modules/n8n-core/src/execution-engine/workflow-execute.ts:2274:11"
+            },
+            "lastNodeExecuted": "Store Objections Guide to DB2",
+            "mode": "trigger",
+            "executionContext": {
+              "version": 1,
+              "establishedAt": 1770807604252,
+              "source": "trigger",
+              "triggerNode": {
+                "name": "Row updated",
+                "type": "n8n-nodes-base.googleSheetsTrigger"
+              }
+            }
+          },
+          "workflow": {
+            "id": "pwY4BW0QygQifccI",
+            "name": "Add Knowledge Base to Vector DB for SDR Agent"
+          }
+        }
+      }
+    ]
+  },
+  "versionId": "869065c1-090f-45af-a548-92a01398844d",
+  "activeVersionId": "869065c1-090f-45af-a548-92a01398844d",
   "triggerCount": 0,
   "shared": [
     {
@@ -194,9 +260,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-09T02:31:47.749Z",
-    "createdAt": "2026-02-09T02:31:26.670Z",
-    "versionId": "5edab697-1078-409b-afcd-9ea38f2a33e0",
+    "updatedAt": "2026-02-12T03:02:52.663Z",
+    "createdAt": "2026-02-12T03:02:39.980Z",
+    "versionId": "869065c1-090f-45af-a548-92a01398844d",
     "workflowId": "2SWvtvGbkteCtlr0",
     "nodes": [
       {
@@ -234,8 +300,7 @@
               "Workflow": "={{ $json.workflow.name }}",
               "URL": "={{ $json.execution.url }}",
               "Node": "={{ $json.execution.lastNodeExecuted }}",
-              "Timestamp": "=",
-              "Timestamp (Raw)": "={{ $now }}"
+              "Timestamp (Raw)": "={{ DateTime.fromMillis(Number($json.execution.error.timestamp)).toFormat('yyyy, dd-MM, HH:mm') }}"
             },
             "matchingColumns": [],
             "schema": [
@@ -256,20 +321,12 @@
                 "defaultMatch": false,
                 "display": true,
                 "type": "string",
-                "canBeUsedToMatch": true
+                "canBeUsedToMatch": true,
+                "removed": true
               },
               {
                 "id": "Workflow",
                 "displayName": "Workflow",
-                "required": false,
-                "defaultMatch": false,
-                "display": true,
-                "type": "string",
-                "canBeUsedToMatch": true
-              },
-              {
-                "id": "URL",
-                "displayName": "URL",
                 "required": false,
                 "defaultMatch": false,
                 "display": true,
@@ -288,6 +345,15 @@
               {
                 "id": "Error Message",
                 "displayName": "Error Message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "URL",
+                "displayName": "URL",
                 "required": false,
                 "defaultMatch": false,
                 "display": true,
@@ -362,7 +428,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 5edab697",
+    "name": "Version 869065c1",
     "description": "",
     "autosaved": false
   },
