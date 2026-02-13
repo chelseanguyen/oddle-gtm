@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-12T09:34:44.528Z",
+  "updatedAt": "2026-02-13T09:59:38.297Z",
   "createdAt": "2026-02-10T03:36:58.726Z",
   "id": "hidIdCkL4yT5FhH7",
   "name": "BDR Resume Filter",
@@ -54,7 +54,7 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        -1056,
+        -848,
         -320
       ],
       "id": "30c59100-495f-4761-a2a4-1c8f11e9f438",
@@ -79,8 +79,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        -128,
-        -480
+        16,
+        -496
       ],
       "id": "fcd196b0-b1a3-43a7-baba-d1d4694d6f6f",
       "name": "Download Resume for Slack",
@@ -219,7 +219,7 @@
             {
               "id": "b3530fb1-0837-4402-b08c-5a47dea88695",
               "name": "Resume Link",
-              "value": "=https://drive.google.com/file/d/{{ $('Google Drive Trigger').item.json.id }}/view",
+              "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json|```/g, '')).resume_url }}",
               "type": "string"
             }
           ]
@@ -229,7 +229,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -688,
+        -496,
         -320
       ],
       "id": "63eb55f4-cf24-4ae6-b71b-fc08d6add41c",
@@ -263,8 +263,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -368,
-        -464
+        -224,
+        -480
       ],
       "id": "e7a6bd84-504f-4988-a8a3-cede73e0b0be",
       "name": "Score Check",
@@ -281,8 +281,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.4,
       "position": [
-        64,
-        -480
+        208,
+        -496
       ],
       "id": "0beabb70-157f-4feb-b95f-c91a00a84c6c",
       "name": "Upload and msg in Slack channel",
@@ -324,8 +324,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -368,
-        -160
+        -224,
+        -176
       ],
       "id": "2afbab13-331d-4e53-b0a5-959667326c94",
       "name": "Get row(s) in sheet",
@@ -347,7 +347,7 @@
           "value": "models/gemini-2.5-flash",
           "mode": "id"
         },
-        "text": "=You are an experienced in house recruiter screening candidates for a Business Development Representative role.\n\nEvaluate objectively using only evidence from the resume. Do not assume missing data.\n\nExtract the following additional structured data:\n\nage (if explicitly stated; otherwise return null)\n\nhighest_education_level using only one of:\n\"PhD\", \"Masters\", \"Degree\", \"Tertiary\", \"A level\", \"O level\", \"N level\", \"Primary School\", or null\n\nEducation classification rules:\n\nPhD includes doctorate titles\n\nMasters includes MBA and MSc\n\nDegree includes Bachelor programs\n\nTertiary includes diploma or polytechnic\n\nUse highest completed level only\n\nNow evaluate the candidate on five traits.\n\n[Keep your existing trait definitions exactly as they are here.]\n\nCalculate:\n\ntotal_years_experience\n\nrelevant_years_experience for a BDR role only\n\n[Keep your existing inclusion and exclusion logic.]\n\nRound years to nearest 0.5.\n\nFor each trait:\n\nAssign score 1 to 5\n\nProvide one short evidence quote\n\nScoring guidance:\n1 = No clear evidence\n3 = Some evidence\n5 = Strong and repeated measurable evidence\n\nReturn STRICT JSON only.\nNo markdown.\nNo extra text.\n\nUse this exact structure:\n\n{\n\"candidate_name\": \"\",\n\"email\": \"\",\n\"age\": null,\n\"highest_education_level\": \"\",\n\"total_years_experience\": 0,\n\"relevant_years_experience\": 0,\n\"traits\": {\n\"coachability\": { \"score\": 0, \"evidence\": \"\" },\n\"curiosity\": { \"score\": 0, \"evidence\": \"\" },\n\"prior_success\": { \"score\": 0, \"evidence\": \"\" },\n\"intelligence\": { \"score\": 0, \"evidence\": \"\" },\n\"work_ethic\": { \"score\": 0, \"evidence\": \"\" }\n},\n\"total_score\": 0,\n\"strengths\": \"\",\n\"potential_concerns\": \"\",\n\"recruiter_summary\": \"\"\n}\n\nConstraints:\n\nstrengths: max 20 words, comma separated\n\npotential_concerns: max 15 words, comma separated\n\nrecruiter_summary: max 30 words",
+        "text": "=You are an experienced in house recruiter screening candidates for a Business Development Representative role.\n\nEvaluate objectively using only evidence from the resume at the URL provided: {{$json.webViewLink}}. Do not assume missing data.\n\nExtract the following additional structured data:\n\nage (if explicitly stated; otherwise return null)\n\nhighest_education_level using only one of:\n\"PhD\", \"Masters\", \"Degree\", \"Tertiary\", \"A level\", \"O level\", \"N level\", \"Primary School\", or null\n\nEducation classification rules:\n\nPhD includes doctorate titles\n\nMasters includes MBA and MSc\n\nDegree includes Bachelor programs\n\nTertiary includes diploma or polytechnic\n\nUse highest completed level only\n\nNow evaluate the candidate on five traits.\n\n[Keep your existing trait definitions exactly as they are here.]\n\nCalculate:\n\ntotal_years_experience\n\nrelevant_years_experience for a BDR role only\n\n[Keep your existing inclusion and exclusion logic.]\n\nRound years to nearest 0.5.\n\nFor each trait:\n\nAssign score 1 to 5\n\nProvide one short evidence quote\n\nScoring guidance:\n1 = No clear evidence\n3 = Some evidence\n5 = Strong and repeated measurable evidence\n\nReturn STRICT JSON only.\nNo markdown.\nNo extra text.\n\nUse this exact structure:\n\n{\n\"candidate_name\": \"\",\n\"email\": \"\",\n\"age\": null,\n\"highest_education_level\": \"\",\n\"total_years_experience\": 0,\n\"relevant_years_experience\": 0,\n\"traits\": {\n\"coachability\": { \"score\": 0, \"evidence\": \"\" },\n\"curiosity\": { \"score\": 0, \"evidence\": \"\" },\n\"prior_success\": { \"score\": 0, \"evidence\": \"\" },\n\"intelligence\": { \"score\": 0, \"evidence\": \"\" },\n\"work_ethic\": { \"score\": 0, \"evidence\": \"\" }\n},\n\"total_score\": 0,\n\"strengths\": \"\",\n\"potential_concerns\": \"\",\n\"recruiter_summary\": \"\"\n}\n\nConstraints:\n\nstrengths: max 20 words, comma separated\n\npotential_concerns: max 15 words, comma separated\n\nrecruiter_summary: max 30 words\n\nInclude a new field:\n\n\"resume_url\": \"{{$json.webViewLink}}\"\n\nReturn STRICT JSON only. No markdown. No extra text.",
         "inputType": "binary",
         "simplify": false,
         "options": {}
@@ -355,7 +355,7 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        -896,
+        -672,
         -320
       ],
       "id": "a778155a-eeb7-4ae8-b248-d8be493e5ec8",
@@ -384,8 +384,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -160,
-        -160
+        -16,
+        -176
       ],
       "id": "e68708ab-c57a-4734-9abb-fedd261d59db",
       "name": "Edit Fields"
@@ -663,8 +663,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        432,
-        -80
+        576,
+        -96
       ],
       "id": "4c099349-05e7-4442-bb8b-2f00a5ecbef9",
       "name": "Append row in sheet1",
@@ -692,8 +692,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        272,
-        -80
+        416,
+        -96
       ],
       "id": "3baca180-b909-4fec-8fd8-2f519512a375",
       "name": "First-Timer"
@@ -715,8 +715,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        272,
-        -256
+        416,
+        -272
       ],
       "id": "62213b8c-7368-4c59-ab2e-128669a4de40",
       "name": "Repeat Branch"
@@ -749,8 +749,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        32,
-        -160
+        176,
+        -176
       ],
       "id": "bde4c1a4-20cd-46b4-9fbe-7e7a09d14269",
       "name": "Check for Repeat"
@@ -1040,8 +1040,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        432,
-        -256
+        576,
+        -272
       ],
       "id": "8d42aa09-c286-4d29-944c-b7bf40bb678c",
       "name": "Append row in sheet",
@@ -1051,6 +1051,30 @@
           "name": "HR resume"
         }
       }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1024,
+        -320
+      ],
+      "id": "2ea19dce-4c04-4969-bd33-3a51651c635f",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me",
+      "typeVersion": 1,
+      "position": [
+        -816,
+        -112
+      ],
+      "id": "23d03d7c-1686-4902-882b-a14480e8563e"
     }
   ],
   "connections": {
@@ -1058,7 +1082,7 @@
       "main": [
         [
           {
-            "node": "Download file",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -1191,6 +1215,35 @@
           }
         ]
       ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Replace Me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1203,138 +1256,15 @@
   },
   "staticData": {
     "node:Google Drive Trigger": {
-      "lastTimeChecked": "2026-02-12T09:35:15Z"
+      "lastTimeChecked": "2026-02-13T09:59:47Z"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Google Drive Trigger": [
-      {
-        "json": {
-          "parents": [
-            "11Kr5uB1bPOLpbe8KOIVTTkV5_b_b249J"
-          ],
-          "lastModifyingUser": {
-            "displayName": "Mun Yee L.",
-            "kind": "drive#user",
-            "me": false,
-            "permissionId": "16350802404229148328",
-            "emailAddress": "munyee@oddle.me",
-            "photoLink": "https://lh3.googleusercontent.com/a/ACg8ocLp-gtwYHL6W6KY4VW6TzHkECUV7zvNUugaptRPobjTJC-jqQ=s64"
-          },
-          "spaces": [
-            "drive"
-          ],
-          "capabilities": {
-            "canAddChildren": false,
-            "canAddFolderFromAnotherDrive": false,
-            "canChangeCopyRequiresWriterPermission": false,
-            "canChangeItemDownloadRestriction": false,
-            "canChangeSecurityUpdateEnabled": false,
-            "canChangeViewersCanCopyContent": false,
-            "canComment": true,
-            "canCopy": true,
-            "canDelete": false,
-            "canDeleteChildren": false,
-            "canDisableInheritedPermissions": false,
-            "canDownload": true,
-            "canEdit": true,
-            "canEnableInheritedPermissions": false,
-            "canListChildren": false,
-            "canModifyContent": true,
-            "canModifyContentRestriction": true,
-            "canModifyEditorContentRestriction": true,
-            "canModifyOwnerContentRestriction": false,
-            "canModifyLabels": false,
-            "canMoveChildrenOutOfTeamDrive": false,
-            "canMoveChildrenOutOfDrive": false,
-            "canMoveChildrenWithinTeamDrive": false,
-            "canMoveChildrenWithinDrive": false,
-            "canMoveItemIntoTeamDrive": false,
-            "canMoveItemOutOfTeamDrive": false,
-            "canMoveItemOutOfDrive": false,
-            "canMoveItemWithinTeamDrive": true,
-            "canMoveItemWithinDrive": true,
-            "canMoveTeamDriveItem": false,
-            "canReadLabels": false,
-            "canReadRevisions": true,
-            "canReadTeamDrive": false,
-            "canReadDrive": false,
-            "canRemoveChildren": false,
-            "canRemoveContentRestriction": false,
-            "canRename": true,
-            "canShare": true,
-            "canTrash": true,
-            "canTrashChildren": false,
-            "canUntrash": true
-          },
-          "permissionIds": [
-            "09673724080315575311",
-            "07310881516434588237",
-            "06443506546648420668",
-            "16695310686664944909",
-            "16350802404229148328",
-            "07107798638731101792"
-          ],
-          "linkShareMetadata": {
-            "securityUpdateEligible": false,
-            "securityUpdateEnabled": true
-          },
-          "downloadRestrictions": {
-            "itemDownloadRestriction": {
-              "restrictedForReaders": false,
-              "restrictedForWriters": false
-            },
-            "effectiveDownloadRestrictionWithContext": {
-              "restrictedForReaders": false,
-              "restrictedForWriters": false
-            }
-          },
-          "kind": "drive#file",
-          "id": "1SpfDeuI8PHU-2hrIEkrUeMBWJxBNmugk",
-          "name": "Lim Wei Loong CV.pdf",
-          "mimeType": "application/pdf",
-          "starred": false,
-          "trashed": false,
-          "explicitlyTrashed": false,
-          "version": "3",
-          "webContentLink": "https://drive.google.com/uc?id=1SpfDeuI8PHU-2hrIEkrUeMBWJxBNmugk&export=download",
-          "webViewLink": "https://drive.google.com/file/d/1SpfDeuI8PHU-2hrIEkrUeMBWJxBNmugk/view?usp=drivesdk",
-          "iconLink": "https://drive-thirdparty.googleusercontent.com/16/type/application/pdf",
-          "hasThumbnail": true,
-          "thumbnailLink": "https://lh3.googleusercontent.com/drive-storage/AJQWtBOFOBPogThAqHSBJ_zlr8eDWMgxu6JStNIiVDsK4DWvj1CQCkyQ4wRppAQ3blizmjtO12CJFLRX3fkw95cx5hbp6kr82sedplAMEoFEbmLcwZw3gQ=s220",
-          "thumbnailVersion": "1",
-          "viewedByMe": false,
-          "createdTime": "2026-02-12T09:08:29.086Z",
-          "modifiedTime": "2026-02-12T07:12:40.000Z",
-          "modifiedByMe": false,
-          "teamDriveId": "0AMe6GrfQ0IhWUk9PVA",
-          "driveId": "0AMe6GrfQ0IhWUk9PVA",
-          "viewersCanCopyContent": true,
-          "copyRequiresWriterPermission": false,
-          "hasAugmentedPermissions": false,
-          "originalFilename": "Lim Wei Loong CV.pdf",
-          "fullFileExtension": "pdf",
-          "fileExtension": "pdf",
-          "md5Checksum": "05544f2c2b4694155ce3e37aa8ab7a25",
-          "sha1Checksum": "0dab2883d77878e7e3632f642cab1e4c3d7e0d46",
-          "sha256Checksum": "0b974e8a1101546b5b48d52b9c63153d308219e0169199afabb8f6bc9601ed6b",
-          "size": "398383",
-          "quotaBytesUsed": "398383",
-          "headRevisionId": "0B5EBAA_fezi7eENPSVBMU0doUi80R2wvZmJmSCtjeUZDM28wPQ",
-          "isAppAuthorized": false,
-          "inheritedPermissionsDisabled": false
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ]
-  },
-  "versionId": "5fd8aa83-1227-45bf-8770-05c1a47841d2",
-  "activeVersionId": "5fd8aa83-1227-45bf-8770-05c1a47841d2",
+  "pinData": {},
+  "versionId": "2663b41d-2075-45c8-ab33-e2e6a53ec76a",
+  "activeVersionId": "2663b41d-2075-45c8-ab33-e2e6a53ec76a",
   "triggerCount": 1,
   "shared": [
     {
@@ -1346,9 +1276,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-12T09:34:49.470Z",
-    "createdAt": "2026-02-12T09:34:44.532Z",
-    "versionId": "5fd8aa83-1227-45bf-8770-05c1a47841d2",
+    "updatedAt": "2026-02-13T09:59:48.239Z",
+    "createdAt": "2026-02-13T09:59:38.299Z",
+    "versionId": "2663b41d-2075-45c8-ab33-e2e6a53ec76a",
     "workflowId": "hidIdCkL4yT5FhH7",
     "nodes": [
       {
@@ -1399,7 +1329,7 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          -1056,
+          -848,
           -320
         ],
         "id": "30c59100-495f-4761-a2a4-1c8f11e9f438",
@@ -1424,8 +1354,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          -128,
-          -480
+          16,
+          -496
         ],
         "id": "fcd196b0-b1a3-43a7-baba-d1d4694d6f6f",
         "name": "Download Resume for Slack",
@@ -1564,7 +1494,7 @@
               {
                 "id": "b3530fb1-0837-4402-b08c-5a47dea88695",
                 "name": "Resume Link",
-                "value": "=https://drive.google.com/file/d/{{ $('Google Drive Trigger').item.json.id }}/view",
+                "value": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json|```/g, '')).resume_url }}",
                 "type": "string"
               }
             ]
@@ -1574,7 +1504,7 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          -688,
+          -496,
           -320
         ],
         "id": "63eb55f4-cf24-4ae6-b71b-fc08d6add41c",
@@ -1608,8 +1538,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          -368,
-          -464
+          -224,
+          -480
         ],
         "id": "e7a6bd84-504f-4988-a8a3-cede73e0b0be",
         "name": "Score Check",
@@ -1626,8 +1556,8 @@
         "type": "n8n-nodes-base.slack",
         "typeVersion": 2.4,
         "position": [
-          64,
-          -480
+          208,
+          -496
         ],
         "id": "0beabb70-157f-4feb-b95f-c91a00a84c6c",
         "name": "Upload and msg in Slack channel",
@@ -1669,8 +1599,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          -368,
-          -160
+          -224,
+          -176
         ],
         "id": "2afbab13-331d-4e53-b0a5-959667326c94",
         "name": "Get row(s) in sheet",
@@ -1692,7 +1622,7 @@
             "value": "models/gemini-2.5-flash",
             "mode": "id"
           },
-          "text": "=You are an experienced in house recruiter screening candidates for a Business Development Representative role.\n\nEvaluate objectively using only evidence from the resume. Do not assume missing data.\n\nExtract the following additional structured data:\n\nage (if explicitly stated; otherwise return null)\n\nhighest_education_level using only one of:\n\"PhD\", \"Masters\", \"Degree\", \"Tertiary\", \"A level\", \"O level\", \"N level\", \"Primary School\", or null\n\nEducation classification rules:\n\nPhD includes doctorate titles\n\nMasters includes MBA and MSc\n\nDegree includes Bachelor programs\n\nTertiary includes diploma or polytechnic\n\nUse highest completed level only\n\nNow evaluate the candidate on five traits.\n\n[Keep your existing trait definitions exactly as they are here.]\n\nCalculate:\n\ntotal_years_experience\n\nrelevant_years_experience for a BDR role only\n\n[Keep your existing inclusion and exclusion logic.]\n\nRound years to nearest 0.5.\n\nFor each trait:\n\nAssign score 1 to 5\n\nProvide one short evidence quote\n\nScoring guidance:\n1 = No clear evidence\n3 = Some evidence\n5 = Strong and repeated measurable evidence\n\nReturn STRICT JSON only.\nNo markdown.\nNo extra text.\n\nUse this exact structure:\n\n{\n\"candidate_name\": \"\",\n\"email\": \"\",\n\"age\": null,\n\"highest_education_level\": \"\",\n\"total_years_experience\": 0,\n\"relevant_years_experience\": 0,\n\"traits\": {\n\"coachability\": { \"score\": 0, \"evidence\": \"\" },\n\"curiosity\": { \"score\": 0, \"evidence\": \"\" },\n\"prior_success\": { \"score\": 0, \"evidence\": \"\" },\n\"intelligence\": { \"score\": 0, \"evidence\": \"\" },\n\"work_ethic\": { \"score\": 0, \"evidence\": \"\" }\n},\n\"total_score\": 0,\n\"strengths\": \"\",\n\"potential_concerns\": \"\",\n\"recruiter_summary\": \"\"\n}\n\nConstraints:\n\nstrengths: max 20 words, comma separated\n\npotential_concerns: max 15 words, comma separated\n\nrecruiter_summary: max 30 words",
+          "text": "=You are an experienced in house recruiter screening candidates for a Business Development Representative role.\n\nEvaluate objectively using only evidence from the resume at the URL provided: {{$json.webViewLink}}. Do not assume missing data.\n\nExtract the following additional structured data:\n\nage (if explicitly stated; otherwise return null)\n\nhighest_education_level using only one of:\n\"PhD\", \"Masters\", \"Degree\", \"Tertiary\", \"A level\", \"O level\", \"N level\", \"Primary School\", or null\n\nEducation classification rules:\n\nPhD includes doctorate titles\n\nMasters includes MBA and MSc\n\nDegree includes Bachelor programs\n\nTertiary includes diploma or polytechnic\n\nUse highest completed level only\n\nNow evaluate the candidate on five traits.\n\n[Keep your existing trait definitions exactly as they are here.]\n\nCalculate:\n\ntotal_years_experience\n\nrelevant_years_experience for a BDR role only\n\n[Keep your existing inclusion and exclusion logic.]\n\nRound years to nearest 0.5.\n\nFor each trait:\n\nAssign score 1 to 5\n\nProvide one short evidence quote\n\nScoring guidance:\n1 = No clear evidence\n3 = Some evidence\n5 = Strong and repeated measurable evidence\n\nReturn STRICT JSON only.\nNo markdown.\nNo extra text.\n\nUse this exact structure:\n\n{\n\"candidate_name\": \"\",\n\"email\": \"\",\n\"age\": null,\n\"highest_education_level\": \"\",\n\"total_years_experience\": 0,\n\"relevant_years_experience\": 0,\n\"traits\": {\n\"coachability\": { \"score\": 0, \"evidence\": \"\" },\n\"curiosity\": { \"score\": 0, \"evidence\": \"\" },\n\"prior_success\": { \"score\": 0, \"evidence\": \"\" },\n\"intelligence\": { \"score\": 0, \"evidence\": \"\" },\n\"work_ethic\": { \"score\": 0, \"evidence\": \"\" }\n},\n\"total_score\": 0,\n\"strengths\": \"\",\n\"potential_concerns\": \"\",\n\"recruiter_summary\": \"\"\n}\n\nConstraints:\n\nstrengths: max 20 words, comma separated\n\npotential_concerns: max 15 words, comma separated\n\nrecruiter_summary: max 30 words\n\nInclude a new field:\n\n\"resume_url\": \"{{$json.webViewLink}}\"\n\nReturn STRICT JSON only. No markdown. No extra text.",
           "inputType": "binary",
           "simplify": false,
           "options": {}
@@ -1700,7 +1630,7 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          -896,
+          -672,
           -320
         ],
         "id": "a778155a-eeb7-4ae8-b248-d8be493e5ec8",
@@ -1729,8 +1659,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          -160,
-          -160
+          -16,
+          -176
         ],
         "id": "e68708ab-c57a-4734-9abb-fedd261d59db",
         "name": "Edit Fields"
@@ -2008,8 +1938,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          432,
-          -80
+          576,
+          -96
         ],
         "id": "4c099349-05e7-4442-bb8b-2f00a5ecbef9",
         "name": "Append row in sheet1",
@@ -2037,8 +1967,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          272,
-          -80
+          416,
+          -96
         ],
         "id": "3baca180-b909-4fec-8fd8-2f519512a375",
         "name": "First-Timer"
@@ -2060,8 +1990,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          272,
-          -256
+          416,
+          -272
         ],
         "id": "62213b8c-7368-4c59-ab2e-128669a4de40",
         "name": "Repeat Branch"
@@ -2094,8 +2024,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          32,
-          -160
+          176,
+          -176
         ],
         "id": "bde4c1a4-20cd-46b4-9fbe-7e7a09d14269",
         "name": "Check for Repeat"
@@ -2385,8 +2315,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          432,
-          -256
+          576,
+          -272
         ],
         "id": "8d42aa09-c286-4d29-944c-b7bf40bb678c",
         "name": "Append row in sheet",
@@ -2396,6 +2326,30 @@
             "name": "HR resume"
           }
         }
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.splitInBatches",
+        "typeVersion": 3,
+        "position": [
+          -1024,
+          -320
+        ],
+        "id": "2ea19dce-4c04-4969-bd33-3a51651c635f",
+        "name": "Loop Over Items"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "name": "Replace Me",
+        "typeVersion": 1,
+        "position": [
+          -816,
+          -112
+        ],
+        "id": "23d03d7c-1686-4902-882b-a14480e8563e"
       }
     ],
     "connections": {
@@ -2403,7 +2357,7 @@
         "main": [
           [
             {
-              "node": "Download file",
+              "node": "Loop Over Items",
               "type": "main",
               "index": 0
             }
@@ -2536,10 +2490,39 @@
             }
           ]
         ]
+      },
+      "Loop Over Items": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Replace Me",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Replace Me": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 5fd8aa83",
+    "name": "Version 2663b41d",
     "description": "",
     "autosaved": false
   },
