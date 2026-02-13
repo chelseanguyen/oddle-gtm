@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-06T06:27:38.339Z",
+  "updatedAt": "2026-02-13T08:52:24.561Z",
   "createdAt": "2026-01-27T09:02:31.185Z",
   "id": "eXEVf6BDPaBy3uWd",
   "name": "[WhatsApp] AU SDR Agent - Alex",
@@ -80,6 +80,31 @@
               },
               "renameOutput": true,
               "outputKey": "Text Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
+                    "rightValue": "link_preview",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Link provided"
             },
             {
               "conditions": {
@@ -176,31 +201,6 @@
               },
               "renameOutput": true,
               "outputKey": "Video Message"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "89131ef6-0956-449c-b0ea-31fffced6303",
-                    "leftValue": "={{ $('Receive Reply').item.json.body.payload.body.type }}",
-                    "rightValue": "link_preview",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Link provided"
             }
           ]
         },
@@ -750,7 +750,9 @@
       "typeVersion": 1.6
     },
     {
-      "parameters": {},
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
@@ -849,7 +851,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ JSON.stringify(($('Get User\\'s Message').item.json.message_text || '').length > 300 ? $('Get User\\'s Message').item.json.message_text.substring(0, 300) + '...' : ($('Get User\\'s Message').item.json.message_text || '')).slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0A8PJQ9KU3\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Redirect Message Types').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Get User\\'s Message').item.json.message_text || '';\n    let truncated = rawText.length > 300 \n      ? rawText.substring(0, 300) + '...\\n\\n[Message truncated - view full reply in Bird]' \n      : rawText;\n    return JSON.stringify(truncated).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Parse Chat History').item.json.userParticipantId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1015,7 +1017,7 @@
       "typeVersion": 4.7,
       "position": [
         3824,
-        -528
+        -640
       ],
       "id": "4ecb9efe-3c19-47e8-b34b-161d8f8959d6",
       "name": "Evaluation"
@@ -1244,8 +1246,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        4016,
-        -304
+        3824,
+        -400
       ],
       "id": "51689a67-d44c-4ca2-8232-afece2dd1255",
       "name": "Send to Latitude",
@@ -1265,11 +1267,26 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        4224,
-        -304
+        4032,
+        -400
       ],
       "id": "b5170b31-0916-4cfd-b878-6618b691fafa",
       "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "content": "## Evaluations - not set up yet",
+        "height": 560,
+        "width": 1440
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3712,
+        -768
+      ],
+      "typeVersion": 1,
+      "id": "0ae070d2-c4b9-4439-a306-8c2998022dbe",
+      "name": "Sticky Note"
     }
   ],
   "connections": {
@@ -1295,6 +1312,13 @@
         ],
         [
           {
+            "node": "Check if Bot Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Get image URL",
             "type": "main",
             "index": 0
@@ -1311,13 +1335,6 @@
         [
           {
             "node": "Get video URL",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Check if Bot Message",
             "type": "main",
             "index": 0
           }
@@ -1561,11 +1578,6 @@
     "Response Agent": {
       "main": [
         [
-          {
-            "node": "Send to Latitude",
-            "type": "main",
-            "index": 0
-          },
           {
             "node": "Send to Slack for Approval",
             "type": "main",
@@ -2434,7 +2446,7 @@
       }
     ]
   },
-  "versionId": "1de62bb6-8a17-4c13-aecf-b425c1f36a81",
+  "versionId": "f5151646-e0e1-44ac-a575-8e6b66444a39",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
