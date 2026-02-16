@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-13T04:32:37.076Z",
+  "updatedAt": "2026-02-16T03:18:35.655Z",
   "createdAt": "2026-01-14T09:14:31.594Z",
   "id": "Z4BV7uCQ8dSjXR1w",
   "name": "[Email] Process human-approved response for Sophie",
@@ -339,7 +339,7 @@
             },
             {
               "name": "cc",
-              "value": "={{ $json.cc }}"
+              "value": "={{ $json.cc.map(item => item.address).join(', ') }}"
             }
           ]
         },
@@ -881,20 +881,6 @@
   "staticData": null,
   "meta": null,
   "pinData": {
-    "Parse Conversation History": [
-      {
-        "json": {
-          "subject": "Re: Test - Oddle Reserve",
-          "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-          "sendUserEmail": "chloei.garcia_m@oddle.me",
-          "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-          "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-          "leadId": null,
-          "cc": null,
-          "leadMessage": "Hi Chloe,Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don't see a strong point in switch over from my current reservation system yet.Regards,ChelseaOn Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen <chelsea@oddle.me> wrote:Hi Chloe,Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don't see a strong point in switch over from my current reservation system yet.Regard"
-        }
-      }
-    ],
     "Slack Webhook Trigger": [
       {
         "json": {
@@ -902,241 +888,24 @@
             "host": "workflow.oddle.center",
             "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
             "accept": "application/json,*/*",
-            "x-slack-signature": "v0=914b35bbe9ebf6ac46db5e3dac5b12c7cefd3f5b518ca36e7549b5678d47143e",
-            "x-slack-request-timestamp": "1767686592",
-            "content-length": "5306",
+            "x-slack-signature": "v0=cabf76de809ab4b1c7013afb4e2dc15afdc8b9658958fc231cd8505161dbdc92",
+            "x-slack-request-timestamp": "1771208504",
+            "content-length": "5220",
             "content-type": "application/x-www-form-urlencoded",
-            "x-cloud-trace-context": "b7533262e299343c4ae353324e8c8ffe/12402408408513512778",
+            "x-cloud-trace-context": "b18199c1c0a48d5d41aad23b4ca2e571/18327970764835456342;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-b7533262e299343c4ae353324e8c8ffe-ac1e34bc9cc4054a-00",
-            "x-forwarded-for": "54.83.90.66",
-            "forwarded": "for=\"54.83.90.66\";proto=https",
+            "traceparent": "00-b18199c1c0a48d5d41aad23b4ca2e571-fe5a084e0bc30556-01",
+            "x-forwarded-for": "44.222.92.96",
+            "forwarded": "for=\"44.222.92.96\";proto=https",
             "accept-encoding": "gzip,deflate"
           },
           "params": {},
           "query": {},
           "body": {
-            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U0FASTJ1H\",\"username\":\"chelsea__on_leave_\",\"name\":\"chelsea__on_leave_\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0A55SZF3EU\",\"token\":\"mA4Pk1zJFUdp77ZGdyQ7LFki\",\"container\":{\"type\":\"message\",\"message_ts\":\"1767683031.563899\",\"channel_id\":\"C0A3N12LT5Z\",\"is_ephemeral\":false},\"trigger_id\":\"10251470108369.3033437246.805e4c7bf710bc19c2c75d7470b56e0b\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C0A3N12LT5Z\",\"name\":\"noti-ai-sdr-test\"},\"message\":{\"user\":\"U0A484RHCNR\",\"type\":\"message\",\"ts\":\"1767683031.563899\",\"bot_id\":\"B0A4BHC4802\",\"app_id\":\"A0A55SZF3EU\",\"text\":\"New prospect reply needs approval\",\"team\":\"T030ZCV78\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"bgdKP\",\"text\":{\"type\":\"plain_text\",\"text\":\":bell: New Prospect Reply\",\"emoji\":true}},{\"type\":\"divider\",\"block_id\":\"sLBkT\"},{\"type\":\"section\",\"block_id\":\"D89\\/l\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Company:*\\nChelsea's Bakery\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Lead Email:*\\n<mailto:chelsea@oddle.me|chelsea@oddle.me>\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Reply-from Email:*\\n<mailto:chelsea@oddle.me|chelsea@oddle.me>\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Outreach Campaign:*\\nChelsea's Test Campaign\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"M4IQR\"},{\"type\":\"section\",\"block_id\":\"HaFpZ\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's Reply:*\\n```Hi Chloe,\\n\\nThank you for your detailed explanation and for offering to clarify the\\npricing after the free 1-year trial. I still don't see a strong point in\\nswitch over from my current reservation system yet.\\n\\nRegards,\\nChelsea\\n\\nOn Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;chelsea@oddle.me...\\n\\n[Message truncated - view full reply in Lemlist]```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"S3EZH\"},{\"type\":\"section\",\"block_id\":\"67e9D\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent Generated Response:*\\n```Hi Chelsea,\\n\\nThanks for being honest! I completely understand\\u2014if your current setup is working well for Chelsea's Bakery, there\\u2019s no immediate reason to change things up.\\n\\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?```\",\"verbatim\":false}},{\"type\":\"context\",\"block_id\":\"GCXmv\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\":e-mail: <https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_GGiXv4DJjRS6GHRKw|View full conversation in Lemlist>\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"6tuAZ\"},{\"type\":\"actions\",\"block_id\":\"approval_actions\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"style\":\"primary\",\"value\":\"<CAFjBc67=qSvL1Yna0HHoyVMdy_-wrXv-1jdW7N_CO8YAep95DA@mail.gmail.com>\"},{\"type\":\"button\",\"action_id\":\"reject\",\"text\":{\"type\":\"plain_text\",\"text\":\":pencil2: Reject &amp; Edit\",\"emoji\":true},\"style\":\"danger\",\"url\":\"https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_GGiXv4DJjRS6GHRKw\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T030ZCV78\\/10232163428803\\/1pbT4GPZJKjSJclomYNVqCtU\",\"actions\":[{\"action_id\":\"approve\",\"block_id\":\"approval_actions\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"value\":\"<CAFjBc67=qSvL1Yna0HHoyVMdy_-wrXv-1jdW7N_CO8YAep95DA@mail.gmail.com>\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1767686592.631024\"}]}"
+            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U06UPB4K0AW\",\"username\":\"chloei.garcia\",\"name\":\"chloei.garcia\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0A55SZF3EU\",\"token\":\"mA4Pk1zJFUdp77ZGdyQ7LFki\",\"container\":{\"type\":\"message\",\"message_ts\":\"1771128220.011909\",\"channel_id\":\"C0AB3U5B1D4\",\"is_ephemeral\":false},\"trigger_id\":\"10512695193301.3033437246.3cf143a0ba352d0785e0542768aa54a9\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C0AB3U5B1D4\",\"name\":\"noti-sdr-email-agent\"},\"message\":{\"user\":\"U0A484RHCNR\",\"type\":\"message\",\"ts\":\"1771128220.011909\",\"bot_id\":\"B0A4BHC4802\",\"app_id\":\"A0A55SZF3EU\",\"text\":\"New prospect reply needs approval\",\"team\":\"T030ZCV78\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"E2JQK\",\"text\":{\"type\":\"plain_text\",\"text\":\":bell: New Prospect Reply\",\"emoji\":true}},{\"type\":\"divider\",\"block_id\":\"5QEZP\"},{\"type\":\"section\",\"block_id\":\"FPQls\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Company:*\\nBistro George\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Lead Email:*\\n<mailto:info@jacksonsongeorge.com.au|info@jacksonsongeorge.com.au>\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Reply-from Email:*\\n<mailto:austin@gallagherhotels.com.au|austin@gallagherhotels.com.au>\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Outreach Campaign:*\\n[AU] SevenRooms &amp; Delivery MP (Feb 2026)\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"R5KSR\"},{\"type\":\"section\",\"block_id\":\"e6Rt8\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's Reply:*\\n```Kindly go away\\nTy\\n\\nOn 15 Feb 2026, at 2:47\\u202fpm, Alan Goh &lt;alan-goh@oddle.me&gt; wrote:\\n\\n\\n\\nHi Bistro George team,\\n\\nFollowing up on my last note. Most owners we speak with feel they are being \\\"double-taxed\\\", paying a luxury price for SevenRooms and then losing 30% to Uber\\/Doordash on the delivery side.\\n\\n...\\n\\n[Message truncated - view full reply in Lemlist]```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"Oc3Rc\"},{\"type\":\"section\",\"block_id\":\"Rk2U6\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent Generated Response:*\\n```Hi Austin,\\n\\nThanks for letting me know.\\n\\nI have updated our records accordingly. If you are ever open to taking a look at what Oddle has to offer in driving revenue growth, feel free to reach out anytime.\\n\\nCheers,\\nAlan```\",\"verbatim\":false}},{\"type\":\"context\",\"block_id\":\"6++xQ\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\":e-mail: <https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_CSA9qBAjqCBG6po9n|View full conversation in Lemlist>\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"KaDxm\"},{\"type\":\"actions\",\"block_id\":\"approval_actions\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"style\":\"primary\",\"value\":\"<BEFFA2CB-3CD7-4910-B8D8-091E21902EB4@gallagherhotels.com.au>\"},{\"type\":\"button\",\"action_id\":\"reject\",\"text\":{\"type\":\"plain_text\",\"text\":\":pencil2: Reject &amp; Edit\",\"emoji\":true},\"style\":\"danger\",\"url\":\"https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_CSA9qBAjqCBG6po9n\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T030ZCV78\\/10516124283250\\/HTk00UXUQMyndBSPwz4kfjNo\",\"actions\":[{\"action_id\":\"approve\",\"block_id\":\"approval_actions\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"value\":\"<BEFFA2CB-3CD7-4910-B8D8-091E21902EB4@gallagherhotels.com.au>\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1771208504.681495\"}]}"
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook-test/slack-reply-approval",
-          "executionMode": "test"
-        }
-      }
-    ],
-    "Parse Slack Payload": [
-      {
-        "json": {
-          "action_id": "approve",
-          "slack_channel_id": "C0A3N12LT5Z",
-          "slack_channel_name": "noti-ai-sdr-test",
-          "slack_user_name": "chelsea__on_leave_",
-          "company_name": "Chelsea's Bakery",
-          "lead_identifier": "chelsea@oddle.me",
-          "reply_from_email": "chelsea@oddle.me",
-          "campaign_name": "Chelsea's Test Campaign",
-          "lead_message": "Hi Chloe,\n\nThank you for your detailed explanation and for offering to clarify the\npricing after the free 1-year trial. I still don't see a strong point in\nswitch over from my current reservation system yet.\n\nRegards,\nChelsea\n\nOn Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;chelsea@oddle.me...\n\n[Message truncated - view full reply in Lemlist]",
-          "ai_generated_response": "Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?",
-          "lemlist_contact_id": "ctc_GGiXv4DJjRS6GHRKw",
-          "lemlist_team_id": "tea_gYwPePZxuhFb6QraW",
-          "lemlist_message_id": "<CAFjBc67=qSvL1Yna0HHoyVMdy_-wrXv-1jdW7N_CO8YAep95DA@mail.gmail.com>",
-          "user_id": "U0FASTJ1H",
-          "response_url": "https://hooks.slack.com/actions/T030ZCV78/10232163428803/1pbT4GPZJKjSJclomYNVqCtU",
-          "original_message_ts": "1767683031.563899",
-          "team_id": "T030ZCV78"
-        }
-      }
-    ],
-    "Retrieve Conversation History": [
-      {
-        "json": {
-          "data": [
-            {
-              "_id": "act_TotChtqJNqXKuEgQ9",
-              "type": "emailsSent",
-              "messageId": "<CADemiWrgnOUE68GYWoKN7pS2HsVZv99FvQ+bDAaAYEZO8pKQ3A@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-12T02:45:24.551Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_EQaszXpmKFsoPwZQL\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_EQaszXpmKFsoPwZQL\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/12/2026, 2:53:50 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_EKw9re4kfvhsXxbf8\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_EKw9re4kfvhsXxbf8\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/9/2026, 10:39:55 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_f9cRwWJwzRxsu8mry\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_f9cRwWJwzRxsu8mry\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/9/2026, 4:40:46 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_RZENR8J7qPMQ9EyMj\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_RZENR8J7qPMQ9EyMj\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/7/2026, 7:07:38 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_phnwsYDBGZMqW8D8W",
-              "type": "emailsSent",
-              "messageId": "<CADemiWqmM0fZo6jBXJN7Yqx9=jdsyOk-mBbUvdr05iBH=uCBag@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-12T01:53:50.350Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_EKw9re4kfvhsXxbf8\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_EKw9re4kfvhsXxbf8\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/9/2026, 10:39:55 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_f9cRwWJwzRxsu8mry\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_f9cRwWJwzRxsu8mry\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/9/2026, 4:40:46 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_RZENR8J7qPMQ9EyMj\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_RZENR8J7qPMQ9EyMj\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/7/2026, 7:07:38 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_KMCCTbc3biiB8CAN9",
-              "type": "emailsSent",
-              "messageId": "<CADemiWp1q4hf85ZjUzcW8Xwb=KwOhR-AUc+on81ZZt+Eqge4bQ@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-09T09:39:55.330Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_f9cRwWJwzRxsu8mry\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_f9cRwWJwzRxsu8mry\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/9/2026, 4:40:46 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_RZENR8J7qPMQ9EyMj\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_RZENR8J7qPMQ9EyMj\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/7/2026, 7:07:38 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_gEhQyZPW5NgpqDJqc",
-              "type": "emailsSent",
-              "messageId": "<CADemiWqEfQA3c3ceHYJibhB41XtfPJFifMgHuC_06RU0OA6kDg@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-09T03:40:46.352Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_RZENR8J7qPMQ9EyMj\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_RZENR8J7qPMQ9EyMj\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/7/2026, 7:07:38 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_tpo6eTipj9Myk8FZf",
-              "type": "emailsSent",
-              "messageId": "<CADemiWo3--b1Br3wRNvW=MEUMT5v3NMhuY2+Y-6GFopKCK9cJg@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-09T03:07:52.935Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p style=\"margin: 0px -8px; box-sizing: border-box;\">Hi Chelsea,&nbsp;<br style=\"box-sizing: border-box;\"><br style=\"box-sizing: border-box;\">Following up on my previous email, happy to hear what you think.<br style=\"box-sizing: border-box;\"><br style=\"box-sizing: border-box;\"><br style=\"box-sizing: border-box;\">Regards,<br style=\"box-sizing: border-box;\">Chelsea</p>\n<span summary=\"/api/reply/data-ll-tsk_ESgWb9Nay4bRM65ko\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_ESgWb9Nay4bRM65ko\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/7/2026, 7:07:38 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_dyyjC5uFTBcTDCGcz",
-              "type": "emailsSent",
-              "messageId": "<CADemiWpagQ5mN82PbGRa=ss_Jc3S=uEyTOM_vBdFTzKZLgYB2w@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-07T06:07:38.194Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\"><p>Hi Chelsea,</p><p>Thanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.</p><p>Just so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?</p>\n<span summary=\"/api/reply/data-ll-tsk_dihXzxs8TMbb5pYga\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_dihXzxs8TMbb5pYga\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/6/2026, 10:19:29 AM, Chloei Garcia &#60;chloei.garcia_m@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_bLNz3S6Kye55ZfgmM",
-              "type": "emailsSent",
-              "messageId": "<CADemiWpKbLW9i_tev8TKEaDZBB_Oric+q=y0gLWS20vO7DOj7w@mail.gmail.com>",
-              "cc": [],
-              "createdAt": "2026-01-06T09:19:29.258Z",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<html><div style=\"min-width: 360px\"></div>\n        <div dir=\"ltr\">Hi Chelsea,\n\nThanks for being honest! I completely understand—if your current setup is working well for Chelsea's Bakery, there’s no immediate reason to change things up.\n\nJust so I can better understand your needs for the future, is there a specific feature or goal (like reducing monthly fees or better guest marketing tools) that would eventually make a switch worth considering for you?\n<span summary=\"/api/reply/data-ll-tsk_CXzoEFXQ3o3oA8FLC\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_gYdTGt9D9RHqcwssi/tsk_CXzoEFXQ3o3oA8FLC\" height=\"1\" width=\"1\"></div><br>\n        <div class=\"lemlist_quote_container gmail_quote_container\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\">\n          <div dir=\"ltr\" class=\"lemlist_attr gmail_attr\">On 1/2/2026, 7:57:48 AM, Chelsea Nguyen &#60;chelsea@oddle.me&#62; wrote:<br></div>\n          <blockquote class=\"lemlist_quote gmail_quote\">\n            <div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><br>\n          </blockquote>\n        </div>\n      </html>",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_GsXCAWhFoYjnFBq5n",
-              "type": "emailsReplied",
-              "messageId": "<CAFjBc67=qSvL1Yna0HHoyVMdy_-wrXv-1jdW7N_CO8YAep95DA@mail.gmail.com>",
-              "createdAt": "2026-01-02T06:57:48.000Z",
-              "fromEmail": "chelsea@oddle.me",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br>Regards,<br>Chelsea</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Fri, 2 Jan 2026 at 14:51, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\" target=\"_blank\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div>\n",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_MACGcDSW7s2rzNbRZ",
-              "type": "emailsReplied",
-              "messageId": "<CAFjBc66EBimA4ZnB1qSpmPHJcfGKLPdWXQ4u3xU09h3W8Fd+xg@mail.gmail.com>",
-              "createdAt": "2026-01-02T06:51:02.000Z",
-              "fromEmail": "chelsea@oddle.me",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<div dir=\"ltr\">Hi Chloe,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Thu, 18 Dec 2025 at 15:47, Chelsea Nguyen &lt;<a href=\"mailto:chelsea@oddle.me\">chelsea@oddle.me</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n</blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\">Regards,<div>Chelsea</div></div></div>\n",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            },
-            {
-              "_id": "act_bfTddve6YkibL8uHc",
-              "type": "emailsReplied",
-              "messageId": "<CAFjBc67=yberpTogPtiNLpi-h9SS6owGi9EsfBqpb-Beh8s+5g@mail.gmail.com>",
-              "createdAt": "2025-12-18T07:47:17.000Z",
-              "fromEmail": "chelsea@oddle.me",
-              "teamId": "tea_gYwPePZxuhFb6QraW",
-              "leadId": "lea_LtZ9ht7jK4FtJHqYR",
-              "campaignId": "cam_peDaoGPEGHR28WExF",
-              "sendUserId": "usr_gYdTGt9D9RHqcwssi",
-              "sendUserName": "Chloei Marithe Garcia",
-              "sendUserEmail": "chloei.garcia_m@oddle.me",
-              "sendUserMailboxId": "usm_hjsnvtva7qbPiaedC",
-              "leadEmail": "chelsea@oddle.me",
-              "contactId": "ctc_GGiXv4DJjRS6GHRKw",
-              "message": "<div dir=\"ltr\"><div>Hi Alan,<br><br>Thank you for your detailed explanation and for offering to clarify the pricing after the free 1-year trial. I still don&#39;t see a strong point in switch over from my current reservation system yet.<br><br><div dir=\"ltr\">Regards,<div>Chelsea</div></div><div></div></div></div>\n",
-              "subject": "Re: Test - Oddle Reserve",
-              "attachments": []
-            }
-          ],
-          "pagination": {
-            "totalItems": 14,
-            "currentPage": 1,
-            "nextPage": 2,
-            "previousPage": null,
-            "perPage": 10,
-            "totalPages": 2
-          }
+          "webhookUrl": "https://workflow.oddle.center/webhook/slack-reply-approval",
+          "executionMode": "production"
         }
       }
     ],
@@ -1152,10 +921,144 @@
           }
         }
       }
+    ],
+    "Parse Slack Payload": [
+      {
+        "json": {
+          "action_id": "approve",
+          "slack_channel_id": "C0AB3U5B1D4",
+          "slack_channel_name": "noti-sdr-email-agent",
+          "slack_user_name": "chloei.garcia",
+          "company_name": "Bistro George",
+          "lead_identifier": "info@jacksonsongeorge.com.au",
+          "reply_from_email": "austin@gallagherhotels.com.au",
+          "campaign_name": "[AU] SevenRooms &amp; Delivery MP (Feb 2026)",
+          "lead_message": "Kindly go away\nTy\n\nOn 15 Feb 2026, at 2:47 pm, Alan Goh &lt;alan-goh@oddle.me&gt; wrote:\n\n\n\nHi Bistro George team,\n\nFollowing up on my last note. Most owners we speak with feel they are being \"double-taxed\", paying a luxury price for SevenRooms and then losing 30% to Uber/Doordash on the delivery side.\n\n...\n\n[Message truncated - view full reply in Lemlist]",
+          "ai_generated_response": "Hi Austin,\n\nThanks for letting me know.\n\nI have updated our records accordingly. If you are ever open to taking a look at what Oddle has to offer in driving revenue growth, feel free to reach out anytime.\n\nCheers,\nAlan",
+          "lemlist_contact_id": "ctc_CSA9qBAjqCBG6po9n",
+          "lemlist_team_id": "tea_gYwPePZxuhFb6QraW",
+          "lemlist_message_id": "<BEFFA2CB-3CD7-4910-B8D8-091E21902EB4@gallagherhotels.com.au>",
+          "user_id": "U06UPB4K0AW",
+          "response_url": "https://hooks.slack.com/actions/T030ZCV78/10516124283250/HTk00UXUQMyndBSPwz4kfjNo",
+          "original_message_ts": "1771128220.011909",
+          "team_id": "T030ZCV78"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Retrieve Conversation History": [
+      {
+        "json": {
+          "data": [
+            {
+              "_id": "act_zXrfcoZyQroYFpMxZ",
+              "type": "emailsReplied",
+              "messageId": "<BEFFA2CB-3CD7-4910-B8D8-091E21902EB4@gallagherhotels.com.au>",
+              "createdAt": "2026-02-15T03:52:25.000Z",
+              "fromEmail": "austin@gallagherhotels.com.au",
+              "cc": [
+                {
+                  "address": "info@jacksonsongeorge.com.au",
+                  "name": "Info JoG"
+                }
+              ],
+              "teamId": "tea_gYwPePZxuhFb6QraW",
+              "leadId": "lea_49y34p7tQTFqDZf4W",
+              "campaignId": "cam_opTZb3C8X9n3htfRM",
+              "sequenceId": "seq_cTKSefz5DCvyCEXLY",
+              "sequenceStep": 1,
+              "sendUserId": "usr_a4ZtLexTdBJtdeSrz",
+              "sendUserName": "Alan Goh",
+              "sendUserEmail": "alan-goh@oddle.me",
+              "sendUserMailboxId": "usm_cqWtW96a78zoiccbe",
+              "leadEmail": "info@jacksonsongeorge.com.au",
+              "contactId": "ctc_CSA9qBAjqCBG6po9n",
+              "message": "<html class=\"apple-mail-supports-explicit-dark-mode\">\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n</head>\n<body dir=\"auto\">\n<div dir=\"ltr\"></div>\n<div dir=\"ltr\">Kindly go away</div>\n<div dir=\"ltr\">Ty</div>\n<div dir=\"ltr\"><br>\n<blockquote type=\"cite\">On 15 Feb 2026, at 2:47 pm, Alan Goh &lt;alan-goh@oddle.me&gt; wrote:<br>\n<br>\n</blockquote>\n</div>\n<blockquote type=\"cite\">\n<div dir=\"ltr\">﻿\n<div style=\"min-width:360px\"></div>\n<div dir=\"ltr\">\n<div dir=\"ltr\">\n<div>\n<p id=\"isPasted\" style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">\nHi Bistro George team,</p>\n<p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">Following up on my last note. Most owners we speak with feel they are being &quot;double-taxed&quot;, paying a luxury price for SevenRooms and then losing 30% to Uber/Doordash on the delivery\n side.</p>\n<p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">We focus on the fundamentals: high-conversion bookings and a direct web-store that lets you keep your delivery margins.</p>\n<p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">Is reducing that total digital overhead a priority for you this quarter?</p>\n<p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\"><br style=\"box-sizing:border-box\">\n</p>\n<p id=\"isPasted\" style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">\nBest Regards,<br style=\"box-sizing:border-box\">\nAlan Goh<br style=\"box-sizing:border-box\">\nCo-founder at Oddle</p>\n</div>\n<div class=\"gmail_extra\">\n<div class=\"gmail_signature\" data-smartmail=\"gmail_signature\">\n<div dir=\"ltr\">\n<div>\n<div dir=\"ltr\"></div>\n</div>\n</div>\n</div>\n</div>\n</div>\n<span summary=\"/api/reply/data-ll-tsk_TXmqMxc2wnuoF6m79\"></span><img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_TXmqMxc2wnuoF6m79\" height=\"1\" width=\"1\" data-unique-identifier=\"\"></div>\n<br>\n</div>\n</blockquote>\n<br>\n<strong>Warm Regards,</strong> <br>\n<br>\n<h3>Austin Gallagher<br>\n<br>\n</h3>\n<br>\n<p class=\"small\">t&nbsp;0458 100 491&nbsp;e&nbsp; Austin@gallagherhotels.com.au </p>\n<p class=\"small\">&nbsp;<br>\n<br>\nGroup Operations Manager <br>\nGallagher Hotels <br>\n<br>\n<a href=\"https://www.gallagherhotels.com.au/\"><img alt=\"\" height=\"273\" src=\"https://signatures.ghm.net.au/ghm2023-9.jpg\" style=\"border-width: 0;\" width=\"683\"></a>\n</p>\n</body>\n</html>\n",
+              "subject": "Re: Is Bistro George overpaying for SevenRooms?",
+              "attachments": []
+            },
+            {
+              "_id": "act_NJ8f2MRurDgQTTeKc",
+              "type": "emailsSent",
+              "messageId": "<CAFaDERixTLiMSYuN_kVNCsAtCpP=VobLiQf_T_rRxKEqp9W0TA@mail.gmail.com>",
+              "createdAt": "2026-02-15T03:46:56.586Z",
+              "teamId": "tea_gYwPePZxuhFb6QraW",
+              "leadId": "lea_49y34p7tQTFqDZf4W",
+              "campaignId": "cam_opTZb3C8X9n3htfRM",
+              "sequenceId": "seq_cTKSefz5DCvyCEXLY",
+              "sequenceStep": 1,
+              "sendUserId": "usr_a4ZtLexTdBJtdeSrz",
+              "sendUserName": "Alan Goh",
+              "sendUserEmail": "alan-goh@oddle.me",
+              "sendUserMailboxId": "usm_cqWtW96a78zoiccbe",
+              "leadEmail": "info@jacksonsongeorge.com.au",
+              "contactId": "ctc_CSA9qBAjqCBG6po9n",
+              "message": "<html><div style=\"min-width: 360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"isPasted\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\">Hi Bistro George team,</p><p style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\">Following up on my last note. Most owners we speak with feel they are being \"double-taxed\", paying a luxury price for SevenRooms and then losing 30% to Uber/Doordash on the delivery side.</p><p style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\">We focus on the fundamentals: high-conversion bookings and a direct web-store that lets you keep your delivery margins.</p><p style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\">Is reducing that total digital overhead a priority for you this quarter?</p><p style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\"><br style=\"box-sizing: border-box;\"></p><p id=\"isPasted\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" dir=\"ltr\">Best Regards,<br style=\"box-sizing: border-box;\">Alan Goh<br style=\"box-sizing: border-box;\">Co-founder at Oddle</p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_TXmqMxc2wnuoF6m79\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_TXmqMxc2wnuoF6m79\" height=\"1\" width=\"1\"></div><br></html>",
+              "subject": "Is Bistro George overpaying for SevenRooms?",
+              "attachments": []
+            },
+            {
+              "_id": "act_bjTjQwyQoM9xrSBvR",
+              "type": "emailsSent",
+              "messageId": "<CAFaDERhCSMBVFJoFE6g3hiNFYRf604di6OnWT54QSZ7S93=7aw@mail.gmail.com>",
+              "createdAt": "2026-02-12T02:27:25.709Z",
+              "teamId": "tea_gYwPePZxuhFb6QraW",
+              "leadId": "lea_49y34p7tQTFqDZf4W",
+              "campaignId": "cam_opTZb3C8X9n3htfRM",
+              "sequenceId": "seq_cTKSefz5DCvyCEXLY",
+              "sequenceStep": 0,
+              "sendUserId": "usr_a4ZtLexTdBJtdeSrz",
+              "sendUserName": "Alan Goh",
+              "sendUserEmail": "alan-goh@oddle.me",
+              "sendUserMailboxId": "usm_cqWtW96a78zoiccbe",
+              "leadEmail": "info@jacksonsongeorge.com.au",
+              "contactId": "ctc_CSA9qBAjqCBG6po9n",
+              "message": "<html><div style=\"min-width: 360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\" id=\"isPasted\">Hi Bistro George team,</p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Noticed Bistro George is using SevenRooms.</p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Quick question: are you getting full value from it, or mostly using the core reservation workflows while paying an enterprise price?</p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Oddle Reserve is a simpler alternative. In Australia we are <strong style=\"font-weight: 700; box-sizing: border-box;\">A$249/month per brand</strong>, not per outlet.</p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">We are also offering <strong style=\"font-weight: 700; box-sizing: border-box;\">Founder Access</strong> for a limited number of AU brands:</p><ul style=\"margin-top: 0px; margin-bottom: 0px; padding-inline-start: 48px; box-sizing: border-box;\"><li dir=\"ltr\" style=\"list-style-type: disc; font-size: 11pt; font-family: Arial, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: bold; font-style: normal; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre; box-sizing: border-box;\"><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px 0pt; box-sizing: border-box;\"><strong style=\"font-weight: 700; box-sizing: border-box;\">A$65/month, locked in forever</strong></p></li><li dir=\"ltr\" style=\"list-style-type: disc; font-size: 11pt; font-family: Arial, sans-serif; color: rgb(0, 0, 0); background-color: transparent; font-weight: 400; font-style: normal; font-variant: normal; text-decoration: none; vertical-align: baseline; white-space: pre; box-sizing: border-box;\"><p dir=\"ltr\" style=\"line-height: 1.38; margin: 0pt 0px 12pt; box-sizing: border-box;\">We work closely with early partners to use your data to surface insights and maximise revenue, not just “switch software”</p></li></ul><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Open to a quick 12-minute chat this week to see if it makes sense for Bistro George?</p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\"><br style=\"box-sizing: border-box;\"></p><p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Best Regards,<br style=\"box-sizing: border-box;\">Alan Goh<br style=\"box-sizing: border-box;\">Co-founder at Oddle</p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\" data-smartmail=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_XzwSBE5q9hGvyeakp\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_XzwSBE5q9hGvyeakp\" height=\"1\" width=\"1\"></div><br></html>",
+              "subject": "Question about SevenRooms overhead",
+              "attachments": []
+            }
+          ],
+          "pagination": {
+            "totalItems": 3,
+            "currentPage": 1,
+            "nextPage": null,
+            "previousPage": null,
+            "perPage": 10,
+            "totalPages": 1
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ],
+    "Parse Conversation History": [
+      {
+        "json": {
+          "subject": "Re: Is Bistro George overpaying for SevenRooms?",
+          "sendUserId": "usr_a4ZtLexTdBJtdeSrz",
+          "sendUserEmail": "alan-goh@oddle.me",
+          "sendUserMailboxId": "usm_cqWtW96a78zoiccbe",
+          "contactId": "ctc_CSA9qBAjqCBG6po9n",
+          "leadId": "lea_49y34p7tQTFqDZf4W",
+          "cc": [
+            {
+              "address": "info@jacksonsongeorge.com.au",
+              "name": "Info JoG"
+            }
+          ],
+          "leadMessage": "Kindly go away Ty On 15 Feb 2026, at 2:47 pm, Alan Goh <alan-goh@oddle.me> wrote: Hi Bistro George team, Following up on my last note. Most owners we speak with feel they are being \"double-taxed\", paying a luxury price for SevenRooms and then losing 30% to Uber/Doordash on the delivery side. We focus on the fundamentals: high-conversion bookings and a direct web-store that lets you keep your delivery margins. Is reducing that total digital overhead a priority for you this quarter? Best Regards, "
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
     ]
   },
-  "versionId": "7f2fa8f8-4e1c-4395-b681-fc3400ed8b09",
-  "activeVersionId": "7f2fa8f8-4e1c-4395-b681-fc3400ed8b09",
+  "versionId": "43f64498-d2b7-4c58-a417-7fae669310b4",
+  "activeVersionId": "43f64498-d2b7-4c58-a417-7fae669310b4",
   "triggerCount": 1,
   "shared": [
     {
@@ -1167,9 +1070,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-13T04:32:39.083Z",
-    "createdAt": "2026-02-13T04:32:37.077Z",
-    "versionId": "7f2fa8f8-4e1c-4395-b681-fc3400ed8b09",
+    "updatedAt": "2026-02-16T03:18:39.258Z",
+    "createdAt": "2026-02-16T03:16:45.023Z",
+    "versionId": "43f64498-d2b7-4c58-a417-7fae669310b4",
     "workflowId": "Z4BV7uCQ8dSjXR1w",
     "nodes": [
       {
@@ -1505,7 +1408,7 @@
               },
               {
                 "name": "cc",
-                "value": "={{ $json.cc }}"
+                "value": "={{ $json.cc.map(item => item.address).join(', ') }}"
               }
             ]
           },
@@ -2036,7 +1939,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 7f2fa8f8",
+    "name": "Version 43f64498",
     "description": "",
     "autosaved": false
   },
