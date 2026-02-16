@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-16T03:24:00.923Z",
+  "updatedAt": "2026-02-16T06:57:01.895Z",
   "createdAt": "2026-02-10T03:36:58.726Z",
   "id": "hidIdCkL4yT5FhH7",
   "name": "BDR Resume Filter",
@@ -29,8 +29,8 @@
       "type": "n8n-nodes-base.googleDriveTrigger",
       "typeVersion": 1,
       "position": [
-        -1232,
-        -320
+        -1120,
+        -288
       ],
       "id": "4df99f7c-08f8-4710-9fad-c8aa75bf33e9",
       "name": "Google Drive Trigger",
@@ -54,8 +54,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        -1056,
-        -320
+        -768,
+        -288
       ],
       "id": "30c59100-495f-4761-a2a4-1c8f11e9f438",
       "name": "Download file",
@@ -79,8 +79,8 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        32,
-        -544
+        48,
+        -512
       ],
       "id": "fcd196b0-b1a3-43a7-baba-d1d4694d6f6f",
       "name": "Download Resume for Slack",
@@ -89,8 +89,7 @@
           "id": "LfxkcZh6LfuiSUVZ",
           "name": "HR Resume"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -229,8 +228,8 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        -736,
-        -320
+        -448,
+        -288
       ],
       "id": "63eb55f4-cf24-4ae6-b71b-fc08d6add41c",
       "name": "Fields Mapping"
@@ -251,7 +250,7 @@
               "rightValue": 20,
               "operator": {
                 "type": "number",
-                "operation": "gt"
+                "operation": "gte"
               }
             }
           ],
@@ -263,12 +262,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -208,
-        -528
+        -192,
+        -496
       ],
       "id": "e7a6bd84-504f-4988-a8a3-cede73e0b0be",
-      "name": "Score Check",
-      "disabled": true
+      "name": "Score Check"
     },
     {
       "parameters": {
@@ -281,8 +279,8 @@
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.4,
       "position": [
-        224,
-        -544
+        240,
+        -512
       ],
       "id": "0beabb70-157f-4feb-b95f-c91a00a84c6c",
       "name": "Upload and msg in Slack channel",
@@ -290,10 +288,9 @@
       "credentials": {
         "slackApi": {
           "id": "U9uliJjQ3EA0Dl4Z",
-          "name": "Slack account 2"
+          "name": "oddle-n8n"
         }
-      },
-      "disabled": true
+      }
     },
     {
       "parameters": {
@@ -324,13 +321,14 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -208,
-        -272
+        -192,
+        -256
       ],
       "id": "2afbab13-331d-4e53-b0a5-959667326c94",
       "name": "Get row(s) in sheet",
       "alwaysOutputData": true,
       "retryOnFail": false,
+      "executeOnce": false,
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "lKlCw1t1KbqNL0X6",
@@ -355,8 +353,8 @@
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        -896,
-        -320
+        -608,
+        -288
       ],
       "id": "a778155a-eeb7-4ae8-b248-d8be493e5ec8",
       "name": "Analyze document",
@@ -366,41 +364,6 @@
           "name": "Oddle's Google Gemini(PaLM) API account"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "c556d663-1f1a-4140-b44d-496f87827344",
-              "name": "existing_row_count",
-              "value": "={{ $items(\"Get row(s) in sheet\").length }}",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        0,
-        -272
-      ],
-      "id": "e68708ab-c57a-4734-9abb-fedd261d59db",
-      "name": "Edit Fields",
-      "executeOnce": true
-    },
-    {
-      "parameters": {},
-      "type": "n8n-nodes-base.timeSaved",
-      "typeVersion": 1,
-      "position": [
-        -160,
-        144
-      ],
-      "id": "5d6d3be2-0dcc-4bf8-8deb-ec9ca1bff24a",
-      "name": "Time Saved"
     },
     {
       "parameters": {
@@ -444,7 +407,7 @@
             "Summary": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Summary'] }}",
             "Resume Link": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Resume Link'] }}",
             "Submission Timestamp": "={{ new Date($('Google Drive Trigger').item.json.createdTime).toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }) }}",
-            "Submission Count": "={{ $json['Submission Count'] }}"
+            "Submission Count": "={{ $items(\"Get row(s) in sheet\").length +1}}"
           },
           "matchingColumns": [],
           "schema": [
@@ -664,8 +627,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        672,
-        -288
+        320,
+        -160
       ],
       "id": "4c099349-05e7-4442-bb8b-2f00a5ecbef9",
       "name": "Append row in sheet1",
@@ -675,52 +638,6 @@
           "name": "HR resume"
         }
       }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "1301f951-b99a-443c-a7f6-c5800cec2479",
-              "name": "Submission Count",
-              "value": "={{ Number($json.existing_row_count) }}",
-              "type": "number"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        432,
-        -192
-      ],
-      "id": "3baca180-b909-4fec-8fd8-2f519512a375",
-      "name": "First-Timer"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "0df2de93-c975-45c6-ab0d-7eb48ff6b895",
-              "name": "Submission Count",
-              "value": "={{ +$json.existing_row_count +1}}",
-              "type": "number"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        432,
-        -368
-      ],
-      "id": "62213b8c-7368-4c59-ab2e-128669a4de40",
-      "name": "Repeat Branch"
     },
     {
       "parameters": {
@@ -734,11 +651,12 @@
           "conditions": [
             {
               "id": "d1ec7409-427a-4ed3-bb59-e550388e4efc",
-              "leftValue": "={{ $json.existing_row_count }}",
-              "rightValue": 1,
+              "leftValue": "={{ $json[\"Submission Count\"]}}",
+              "rightValue": 0,
               "operator": {
                 "type": "number",
-                "operation": "gt"
+                "operation": "empty",
+                "singleValue": true
               }
             }
           ],
@@ -750,11 +668,12 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        192,
-        -272
+        -32,
+        -256
       ],
       "id": "bde4c1a4-20cd-46b4-9fbe-7e7a09d14269",
-      "name": "Check for Repeat"
+      "name": "Check for Repeat",
+      "executeOnce": false
     },
     {
       "parameters": {
@@ -763,22 +682,343 @@
       "type": "n8n-nodes-base.splitInBatches",
       "typeVersion": 3,
       "position": [
-        -528,
-        -256
+        -976,
+        -288
       ],
       "id": "2ea19dce-4c04-4969-bd33-3a51651c635f",
       "name": "Loop Over Items"
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "name": "Replace Me",
-      "typeVersion": 1,
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1301f951-b99a-443c-a7f6-c5800cec2479",
+              "name": "Submission Count",
+              "value": "={{ $items(\"Get row(s) in sheet\").length + 1 }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
       "position": [
-        -368,
-        -128
+        160,
+        -160
       ],
-      "id": "23d03d7c-1686-4902-882b-a14480e8563e"
+      "id": "3baca180-b909-4fec-8fd8-2f519512a375",
+      "name": "Repeat",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko",
+          "mode": "list",
+          "cachedResultName": "BDR resume filtering",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "BDR",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Candidate Name": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Candidate Name\"] }}",
+            "Email": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Email\"]}}",
+            "Age": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Age\"]}}",
+            "Highest Education Level": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Highest Education Level\"] }}",
+            "Years of Experience": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Years of Experience'] }}",
+            "Relevant Years of Experience": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Relevant Years of Experience'] }}",
+            "Coachability Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Coachability Score'] }}",
+            "Coachability Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Coachability Evidence'] }}",
+            "Curiosity Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Curiosity Score'] }}",
+            "Curiosity Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Curiosity Evidence'] }}",
+            "Prior Success Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Prior Success Score'] }}",
+            "Prior Success Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Prior Success Evidence'] }}",
+            "Intelligence Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Intelligence Score'] }}",
+            "Intelligence Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Intelligence Evidence'] }}",
+            "Work Ethic Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Work Ethic Score'] }}",
+            "Work Ethic Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Work Ethic Evidence'] }}",
+            "Total Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Total Score'] }}",
+            "Strengths": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Strengths'] }}",
+            "Potential Concern": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Potential Concerns'] }}",
+            "Summary": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Summary'] }}",
+            "Resume Link": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Resume Link'] }}",
+            "Submission Timestamp": "={{ new Date($('Google Drive Trigger').item.json.createdTime).toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }) }}",
+            "Submission Count": "={{ $items(\"Get row(s) in sheet\").length }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Candidate Name",
+              "displayName": "Candidate Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Age",
+              "displayName": "Age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Highest Education Level",
+              "displayName": "Highest Education Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Years of Experience",
+              "displayName": "Years of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Relevant Years of Experience",
+              "displayName": "Relevant Years of Experience",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Coachability Score",
+              "displayName": "Coachability Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Coachability Evidence",
+              "displayName": "Coachability Evidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Curiosity Score",
+              "displayName": "Curiosity Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Curiosity Evidence",
+              "displayName": "Curiosity Evidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prior Success Score",
+              "displayName": "Prior Success Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Prior Success Evidence",
+              "displayName": "Prior Success Evidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intelligence Score",
+              "displayName": "Intelligence Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Intelligence Evidence",
+              "displayName": "Intelligence Evidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Ethic Score",
+              "displayName": "Work Ethic Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Work Ethic Evidence",
+              "displayName": "Work Ethic Evidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total Score",
+              "displayName": "Total Score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Strengths",
+              "displayName": "Strengths",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Potential Concern",
+              "displayName": "Potential Concern",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Resume Link",
+              "displayName": "Resume Link",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submission Timestamp",
+              "displayName": "Submission Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submission Count",
+              "displayName": "Submission Count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        -304
+      ],
+      "id": "d51a3e50-0558-462e-bbd7-41e6aada8133",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "lKlCw1t1KbqNL0X6",
+          "name": "HR resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "Label_9018097886652933215"
+          ]
+        },
+        "options": {
+          "downloadAttachments": true
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1136,
+        -48
+      ],
+      "id": "23726c66-d2d3-485a-91fc-14bedf59cde3",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "LmHhiXnGh1CCIO0M",
+          "name": "HR-Linkedin"
+        }
+      }
     }
   ],
   "connections": {
@@ -786,7 +1026,7 @@
       "main": [
         [
           {
-            "node": "Download file",
+            "node": "Loop Over Items",
             "type": "main",
             "index": 0
           }
@@ -824,7 +1064,7 @@
             "index": 0
           },
           {
-            "node": "Loop Over Items",
+            "node": "Get row(s) in sheet",
             "type": "main",
             "index": 0
           }
@@ -851,7 +1091,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Check for Repeat",
             "type": "main",
             "index": 0
           }
@@ -869,51 +1109,18 @@
         ]
       ]
     },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "Check for Repeat",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "First-Timer": {
-      "main": [
-        [
-          {
-            "node": "Append row in sheet1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Check for Repeat": {
       "main": [
         [
           {
-            "node": "Repeat Branch",
+            "node": "Append row in sheet",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "First-Timer",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Repeat Branch": {
-      "main": [
-        [
-          {
-            "node": "Append row in sheet1",
+            "node": "Repeat",
             "type": "main",
             "index": 0
           }
@@ -922,23 +1129,50 @@
     },
     "Loop Over Items": {
       "main": [
+        [],
         [
           {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Replace Me",
+            "node": "Download file",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Replace Me": {
+    "Append row in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Repeat": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger": {
       "main": [
         [
           {
@@ -960,15 +1194,15 @@
   },
   "staticData": {
     "node:Google Drive Trigger": {
-      "lastTimeChecked": "2026-02-16T03:24:45Z"
+      "lastTimeChecked": "2026-02-16T06:42:29Z"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6944f7aa-4b5c-419a-baca-d0a2f3bb6a88",
-  "activeVersionId": "6944f7aa-4b5c-419a-baca-d0a2f3bb6a88",
+  "versionId": "039085bc-738f-4ebb-a7af-ce605f1f9720",
+  "activeVersionId": "e2aa60cd-1c26-4921-aacc-ce0e31b9417f",
   "triggerCount": 1,
   "shared": [
     {
@@ -980,9 +1214,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-16T03:24:03.798Z",
-    "createdAt": "2026-02-16T03:24:00.925Z",
-    "versionId": "6944f7aa-4b5c-419a-baca-d0a2f3bb6a88",
+    "updatedAt": "2026-02-16T06:42:29.453Z",
+    "createdAt": "2026-02-16T06:42:22.825Z",
+    "versionId": "e2aa60cd-1c26-4921-aacc-ce0e31b9417f",
     "workflowId": "hidIdCkL4yT5FhH7",
     "nodes": [
       {
@@ -1008,8 +1242,8 @@
         "type": "n8n-nodes-base.googleDriveTrigger",
         "typeVersion": 1,
         "position": [
-          -1232,
-          -320
+          -1120,
+          -288
         ],
         "id": "4df99f7c-08f8-4710-9fad-c8aa75bf33e9",
         "name": "Google Drive Trigger",
@@ -1033,8 +1267,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          -1056,
-          -320
+          -768,
+          -288
         ],
         "id": "30c59100-495f-4761-a2a4-1c8f11e9f438",
         "name": "Download file",
@@ -1058,8 +1292,8 @@
         "type": "n8n-nodes-base.googleDrive",
         "typeVersion": 3,
         "position": [
-          32,
-          -544
+          48,
+          -512
         ],
         "id": "fcd196b0-b1a3-43a7-baba-d1d4694d6f6f",
         "name": "Download Resume for Slack",
@@ -1068,8 +1302,7 @@
             "id": "LfxkcZh6LfuiSUVZ",
             "name": "HR Resume"
           }
-        },
-        "disabled": true
+        }
       },
       {
         "parameters": {
@@ -1208,8 +1441,8 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          -736,
-          -320
+          -448,
+          -288
         ],
         "id": "63eb55f4-cf24-4ae6-b71b-fc08d6add41c",
         "name": "Fields Mapping"
@@ -1230,7 +1463,7 @@
                 "rightValue": 20,
                 "operator": {
                   "type": "number",
-                  "operation": "gt"
+                  "operation": "gte"
                 }
               }
             ],
@@ -1242,12 +1475,11 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          -208,
-          -528
+          -192,
+          -496
         ],
         "id": "e7a6bd84-504f-4988-a8a3-cede73e0b0be",
-        "name": "Score Check",
-        "disabled": true
+        "name": "Score Check"
       },
       {
         "parameters": {
@@ -1260,8 +1492,8 @@
         "type": "n8n-nodes-base.slack",
         "typeVersion": 2.4,
         "position": [
-          224,
-          -544
+          240,
+          -512
         ],
         "id": "0beabb70-157f-4feb-b95f-c91a00a84c6c",
         "name": "Upload and msg in Slack channel",
@@ -1271,8 +1503,7 @@
             "id": "U9uliJjQ3EA0Dl4Z",
             "name": "Slack account 2"
           }
-        },
-        "disabled": true
+        }
       },
       {
         "parameters": {
@@ -1303,13 +1534,14 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          -208,
-          -272
+          -192,
+          -256
         ],
         "id": "2afbab13-331d-4e53-b0a5-959667326c94",
         "name": "Get row(s) in sheet",
         "alwaysOutputData": true,
         "retryOnFail": false,
+        "executeOnce": false,
         "credentials": {
           "googleSheetsOAuth2Api": {
             "id": "lKlCw1t1KbqNL0X6",
@@ -1334,8 +1566,8 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          -896,
-          -320
+          -608,
+          -288
         ],
         "id": "a778155a-eeb7-4ae8-b248-d8be493e5ec8",
         "name": "Analyze document",
@@ -1347,36 +1579,12 @@
         }
       },
       {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "c556d663-1f1a-4140-b44d-496f87827344",
-                "name": "existing_row_count",
-                "value": "={{ $items(\"Get row(s) in sheet\").length }}",
-                "type": "string"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          0,
-          -272
-        ],
-        "id": "e68708ab-c57a-4734-9abb-fedd261d59db",
-        "name": "Edit Fields",
-        "executeOnce": true
-      },
-      {
         "parameters": {},
         "type": "n8n-nodes-base.timeSaved",
         "typeVersion": 1,
         "position": [
-          -160,
-          144
+          -48,
+          176
         ],
         "id": "5d6d3be2-0dcc-4bf8-8deb-ec9ca1bff24a",
         "name": "Time Saved"
@@ -1423,7 +1631,7 @@
               "Summary": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Summary'] }}",
               "Resume Link": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Resume Link'] }}",
               "Submission Timestamp": "={{ new Date($('Google Drive Trigger').item.json.createdTime).toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }) }}",
-              "Submission Count": "={{ $json['Submission Count'] }}"
+              "Submission Count": "={{ $items(\"Get row(s) in sheet\").length +1}}"
             },
             "matchingColumns": [],
             "schema": [
@@ -1643,8 +1851,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          672,
-          -288
+          320,
+          -160
         ],
         "id": "4c099349-05e7-4442-bb8b-2f00a5ecbef9",
         "name": "Append row in sheet1",
@@ -1654,52 +1862,6 @@
             "name": "HR resume"
           }
         }
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "1301f951-b99a-443c-a7f6-c5800cec2479",
-                "name": "Submission Count",
-                "value": "={{ Number($json.existing_row_count) }}",
-                "type": "number"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          432,
-          -192
-        ],
-        "id": "3baca180-b909-4fec-8fd8-2f519512a375",
-        "name": "First-Timer"
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "0df2de93-c975-45c6-ab0d-7eb48ff6b895",
-                "name": "Submission Count",
-                "value": "={{ +$json.existing_row_count +1}}",
-                "type": "number"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.set",
-        "typeVersion": 3.4,
-        "position": [
-          432,
-          -368
-        ],
-        "id": "62213b8c-7368-4c59-ab2e-128669a4de40",
-        "name": "Repeat Branch"
       },
       {
         "parameters": {
@@ -1713,11 +1875,12 @@
             "conditions": [
               {
                 "id": "d1ec7409-427a-4ed3-bb59-e550388e4efc",
-                "leftValue": "={{ $json.existing_row_count }}",
-                "rightValue": 1,
+                "leftValue": "={{ $json[\"Submission Count\"]}}",
+                "rightValue": 0,
                 "operator": {
                   "type": "number",
-                  "operation": "gt"
+                  "operation": "empty",
+                  "singleValue": true
                 }
               }
             ],
@@ -1729,11 +1892,12 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          192,
-          -272
+          -32,
+          -256
         ],
         "id": "bde4c1a4-20cd-46b4-9fbe-7e7a09d14269",
-        "name": "Check for Repeat"
+        "name": "Check for Repeat",
+        "executeOnce": false
       },
       {
         "parameters": {
@@ -1742,22 +1906,309 @@
         "type": "n8n-nodes-base.splitInBatches",
         "typeVersion": 3,
         "position": [
-          -528,
-          -256
+          -976,
+          -288
         ],
         "id": "2ea19dce-4c04-4969-bd33-3a51651c635f",
         "name": "Loop Over Items"
       },
       {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "name": "Replace Me",
-        "typeVersion": 1,
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "1301f951-b99a-443c-a7f6-c5800cec2479",
+                "name": "Submission Count",
+                "value": "={{ $items(\"Get row(s) in sheet\").length + 1 }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
         "position": [
-          -368,
-          -128
+          160,
+          -160
         ],
-        "id": "23d03d7c-1686-4902-882b-a14480e8563e"
+        "id": "3baca180-b909-4fec-8fd8-2f519512a375",
+        "name": "Repeat",
+        "executeOnce": true
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko",
+            "mode": "list",
+            "cachedResultName": "BDR resume filtering",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "BDR",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/114fFFQOcZ8VOkSVelicMBroqit1ZyyTniyc3hp_Ijko/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "Candidate Name": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Candidate Name\"] }}",
+              "Email": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Email\"]}}",
+              "Age": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Age\"]}}",
+              "Highest Education Level": "={{ $items(\"Fields Mapping\")[$itemIndex].json[\"Highest Education Level\"] }}",
+              "Years of Experience": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Years of Experience'] }}",
+              "Relevant Years of Experience": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Relevant Years of Experience'] }}",
+              "Coachability Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Coachability Score'] }}",
+              "Coachability Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Coachability Evidence'] }}",
+              "Curiosity Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Curiosity Score'] }}",
+              "Curiosity Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Curiosity Evidence'] }}",
+              "Prior Success Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Prior Success Score'] }}",
+              "Prior Success Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Prior Success Evidence'] }}",
+              "Intelligence Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Intelligence Score'] }}",
+              "Intelligence Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Intelligence Evidence'] }}",
+              "Work Ethic Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Work Ethic Score'] }}",
+              "Work Ethic Evidence": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Work Ethic Evidence'] }}",
+              "Total Score": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Total Score'] }}",
+              "Strengths": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Strengths'] }}",
+              "Potential Concern": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Potential Concerns'] }}",
+              "Summary": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Summary'] }}",
+              "Resume Link": "={{ $items(\"Fields Mapping\")[$itemIndex].json['Resume Link'] }}",
+              "Submission Timestamp": "={{ new Date($('Google Drive Trigger').item.json.createdTime).toLocaleDateString('en-CA', { timeZone: 'Asia/Singapore' }) }}",
+              "Submission Count": "={{ $items(\"Get row(s) in sheet\").length }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "Candidate Name",
+                "displayName": "Candidate Name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Email",
+                "displayName": "Email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Age",
+                "displayName": "Age",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Highest Education Level",
+                "displayName": "Highest Education Level",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Years of Experience",
+                "displayName": "Years of Experience",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Relevant Years of Experience",
+                "displayName": "Relevant Years of Experience",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Coachability Score",
+                "displayName": "Coachability Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Coachability Evidence",
+                "displayName": "Coachability Evidence",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Curiosity Score",
+                "displayName": "Curiosity Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Curiosity Evidence",
+                "displayName": "Curiosity Evidence",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Prior Success Score",
+                "displayName": "Prior Success Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Prior Success Evidence",
+                "displayName": "Prior Success Evidence",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Intelligence Score",
+                "displayName": "Intelligence Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Intelligence Evidence",
+                "displayName": "Intelligence Evidence",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Work Ethic Score",
+                "displayName": "Work Ethic Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Work Ethic Evidence",
+                "displayName": "Work Ethic Evidence",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Total Score",
+                "displayName": "Total Score",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Strengths",
+                "displayName": "Strengths",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Potential Concern",
+                "displayName": "Potential Concern",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Summary",
+                "displayName": "Summary",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Resume Link",
+                "displayName": "Resume Link",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Submission Timestamp",
+                "displayName": "Submission Timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "Submission Count",
+                "displayName": "Submission Count",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          320,
+          -304
+        ],
+        "id": "d51a3e50-0558-462e-bbd7-41e6aada8133",
+        "name": "Append row in sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "lKlCw1t1KbqNL0X6",
+            "name": "HR resume"
+          }
+        }
       }
     ],
     "connections": {
@@ -1765,7 +2216,7 @@
         "main": [
           [
             {
-              "node": "Download file",
+              "node": "Loop Over Items",
               "type": "main",
               "index": 0
             }
@@ -1803,7 +2254,7 @@
               "index": 0
             },
             {
-              "node": "Loop Over Items",
+              "node": "Get row(s) in sheet",
               "type": "main",
               "index": 0
             }
@@ -1830,7 +2281,7 @@
         "main": [
           [
             {
-              "node": "Edit Fields",
+              "node": "Check for Repeat",
               "type": "main",
               "index": 0
             }
@@ -1848,51 +2299,18 @@
           ]
         ]
       },
-      "Edit Fields": {
-        "main": [
-          [
-            {
-              "node": "Check for Repeat",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "First-Timer": {
-        "main": [
-          [
-            {
-              "node": "Append row in sheet1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Check for Repeat": {
         "main": [
           [
             {
-              "node": "Repeat Branch",
+              "node": "Append row in sheet",
               "type": "main",
               "index": 0
             }
           ],
           [
             {
-              "node": "First-Timer",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Repeat Branch": {
-        "main": [
-          [
-            {
-              "node": "Append row in sheet1",
+              "node": "Repeat",
               "type": "main",
               "index": 0
             }
@@ -1901,23 +2319,39 @@
       },
       "Loop Over Items": {
         "main": [
+          [],
           [
             {
-              "node": "Get row(s) in sheet",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Replace Me",
+              "node": "Download file",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Replace Me": {
+      "Append row in sheet1": {
+        "main": [
+          [
+            {
+              "node": "Loop Over Items",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Repeat": {
+        "main": [
+          [
+            {
+              "node": "Append row in sheet1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Append row in sheet": {
         "main": [
           [
             {
@@ -1930,7 +2364,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 6944f7aa",
+    "name": "V1.1",
     "description": "",
     "autosaved": false
   },
