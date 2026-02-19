@@ -1,0 +1,190 @@
+{
+  "updatedAt": "2026-02-19T07:01:37.122Z",
+  "createdAt": "2026-02-19T03:23:25.320Z",
+  "id": "bb1BcKgdzpO9doCZ",
+  "name": "[Resume Filter] Google Drive Input",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "11Kr5uB1bPOLpbe8KOIVTTkV5_b_b249J",
+          "mode": "list",
+          "cachedResultName": "SG BDR Resume Consolidation",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/11Kr5uB1bPOLpbe8KOIVTTkV5_b_b249J"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1168,
+        -320
+      ],
+      "id": "3193fc07-ec50-406b-ace8-cd97c32d6680",
+      "name": "Google Drive Trigger",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LfxkcZh6LfuiSUVZ",
+          "name": "HR Resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -816,
+        -320
+      ],
+      "id": "8ad9829c-f601-4304-998d-1b2c55cac1e7",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "LfxkcZh6LfuiSUVZ",
+          "name": "HR Resume"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1024,
+        -320
+      ],
+      "id": "c8b73db0-55c0-4fb7-8446-ca6729fc36dd",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "dAYRrdYOTLvDN57A",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/dAYRrdYOTLvDN57A",
+          "cachedResultName": "[Resume Filter] Core"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "mode": "each",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -640,
+        -320
+      ],
+      "id": "0fbcd2aa-30f1-4b0c-9858-b7a760c5d04a",
+      "name": "Call '[Resume Filter] Core'"
+    }
+  ],
+  "connections": {
+    "Google Drive Trigger": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Call '[Resume Filter] Core'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call '[Resume Filter] Core'": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "dynamic",
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "IZuklOUhRfmulPCb",
+    "timezone": "Asia/Singapore"
+  },
+  "staticData": {
+    "node:Google Drive Trigger": {
+      "lastTimeChecked": "2026-02-19T02:05:11Z"
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "2c1327a5-0208-496e-9183-dfb5c2480805",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-02-19T03:23:25.320Z",
+      "createdAt": "2026-02-19T03:23:25.320Z",
+      "role": "workflow:owner",
+      "workflowId": "bb1BcKgdzpO9doCZ",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
