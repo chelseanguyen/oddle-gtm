@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-06T07:28:58.539Z",
+  "updatedAt": "2026-02-24T05:35:46.987Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -186,13 +186,6 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -221,13 +214,6 @@
     },
     {
       "parameters": {
-        "pollTimes": {
-          "item": [
-            {
-              "mode": "everyMinute"
-            }
-          ]
-        },
         "triggerOn": "specificFolder",
         "folderToWatch": {
           "__rl": true,
@@ -1317,16 +1303,16 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-02-20T08:45:44Z"
+      "lastTimeChecked": "2026-02-24T06:57:47Z"
     },
     "node:When doc is edited": {
-      "lastTimeChecked": "2026-02-20T08:45:45Z"
+      "lastTimeChecked": "2026-02-24T06:57:47Z"
     },
     "node:When doc is edited1": {
-      "lastTimeChecked": "2026-02-20T08:45:45Z"
+      "lastTimeChecked": "2026-02-24T06:57:49Z"
     },
     "node:When doc is added": {
-      "lastTimeChecked": "2026-02-20T08:45:45Z"
+      "lastTimeChecked": "2026-02-24T06:57:48Z"
     },
     "node:Row added": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1344,8 +1330,8 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "6e815306-2fc0-4bce-8749-3ec510acd420",
-  "activeVersionId": "6e815306-2fc0-4bce-8749-3ec510acd420",
+  "versionId": "53182baa-0849-4f3e-95e0-e5e8f415870b",
+  "activeVersionId": "53182baa-0849-4f3e-95e0-e5e8f415870b",
   "triggerCount": 6,
   "shared": [
     {
@@ -1357,9 +1343,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-12T02:53:12.699Z",
-    "createdAt": "2026-02-06T07:28:58.543Z",
-    "versionId": "6e815306-2fc0-4bce-8749-3ec510acd420",
+    "updatedAt": "2026-02-23T02:46:39.505Z",
+    "createdAt": "2026-02-23T02:46:33.125Z",
+    "versionId": "53182baa-0849-4f3e-95e0-e5e8f415870b",
     "workflowId": "pwY4BW0QygQifccI",
     "nodes": [
       {
@@ -1542,13 +1528,6 @@
       },
       {
         "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyMinute"
-              }
-            ]
-          },
           "triggerOn": "specificFolder",
           "folderToWatch": {
             "__rl": true,
@@ -1577,13 +1556,6 @@
       },
       {
         "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyMinute"
-              }
-            ]
-          },
           "triggerOn": "specificFolder",
           "folderToWatch": {
             "__rl": true,
@@ -2664,7 +2636,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 6e815306",
+    "name": "Version 53182baa",
     "description": "",
     "autosaved": false
   },
