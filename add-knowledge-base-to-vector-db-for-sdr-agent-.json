@@ -1722,13 +1722,13 @@
     "node:Row added": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastIndexChecked": 25
+      "lastIndexChecked": 26
     },
     "node:Row updated": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastRevision": 530,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=530&exportFormat=xlsx"
+      "lastRevision": 560,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=560&exportFormat=xlsx"
     },
     "node:Row added1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1738,8 +1738,8 @@
     "node:Row updated1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1121523145,
-      "lastRevision": 530,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=530&exportFormat=xlsx"
+      "lastRevision": 560,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=560&exportFormat=xlsx"
     },
     "node:Row added2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1749,8 +1749,8 @@
     "node:Row updated2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1475459238,
-      "lastRevision": 530,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=530&exportFormat=xlsx"
+      "lastRevision": 560,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=560&exportFormat=xlsx"
     }
   },
   "meta": {
@@ -1758,7 +1758,7 @@
   },
   "pinData": {},
   "versionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
-  "activeVersionId": "d901bed1-9c0e-49aa-b987-d5dda7332d59",
+  "activeVersionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
   "triggerCount": 6,
   "shared": [
     {
@@ -1770,9 +1770,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-25T09:05:26.162Z",
-    "createdAt": "2026-02-25T09:05:08.577Z",
-    "versionId": "d901bed1-9c0e-49aa-b987-d5dda7332d59",
+    "updatedAt": "2026-02-25T11:21:52.044Z",
+    "createdAt": "2026-02-25T09:14:30.487Z",
+    "versionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
     "workflowId": "pwY4BW0QygQifccI",
     "nodes": [
       {
@@ -2433,9 +2433,9 @@
           "mode": "insert",
           "tableName": {
             "__rl": true,
-            "value": "response_handling_wa_sg",
+            "value": "response_handling_wa_sg_os",
             "mode": "list",
-            "cachedResultName": "response_handling_wa_sg"
+            "cachedResultName": "response_handling_wa_sg_os"
           },
           "options": {}
         },
@@ -2457,7 +2457,7 @@
       {
         "parameters": {
           "operation": "delete",
-          "tableId": "response_handling_wa_sg",
+          "tableId": "response_handling_wa_sg_os",
           "filterType": "string",
           "filterString": "=metadata->>type=eq.{{ $json.type }}"
         },
@@ -2593,9 +2593,9 @@
           "mode": "insert",
           "tableName": {
             "__rl": true,
-            "value": "response_handling_wa_sg",
+            "value": "response_handling_wa_sg_os",
             "mode": "list",
-            "cachedResultName": "response_handling_wa_sg"
+            "cachedResultName": "response_handling_wa_sg_os"
           },
           "embeddingBatchSize": null,
           "options": {}
@@ -2765,9 +2765,9 @@
           "mode": "insert",
           "tableName": {
             "__rl": true,
-            "value": "response_handling_wa_dubai",
+            "value": "response_handling_wa_dubai_or",
             "mode": "list",
-            "cachedResultName": "response_handling_wa_dubai"
+            "cachedResultName": "response_handling_wa_dubai_or"
           },
           "options": {}
         },
@@ -2789,7 +2789,7 @@
       {
         "parameters": {
           "operation": "delete",
-          "tableId": "response_handling_wa_dubai",
+          "tableId": "response_handling_wa_dubai_or",
           "filterType": "string",
           "filterString": "=metadata->>type=eq.{{ $json.type }}"
         },
@@ -2925,9 +2925,9 @@
           "mode": "insert",
           "tableName": {
             "__rl": true,
-            "value": "response_handling_wa_dubai",
+            "value": "response_handling_wa_dubai_or",
             "mode": "list",
-            "cachedResultName": "response_handling_wa_dubai"
+            "cachedResultName": "response_handling_wa_dubai_or"
           },
           "embeddingBatchSize": null,
           "options": {}
@@ -3468,7 +3468,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version d901bed1",
+    "name": "Version 4b70c165",
     "description": "",
     "autosaved": false
   },
