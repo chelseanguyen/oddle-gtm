@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-26T09:34:07.458Z",
+  "updatedAt": "2026-02-27T03:59:48.315Z",
   "createdAt": "2026-02-25T08:52:31.198Z",
   "id": "wNAgEdw1aQPMSRjf",
   "name": "[WhatsApp] SDR Agent - OS Marketplace",
@@ -214,7 +214,7 @@
       "type": "n8n-nodes-base.switch",
       "position": [
         144,
-        -96
+        -144
       ],
       "typeVersion": 3.2
     },
@@ -228,7 +228,7 @@
       "typeVersion": 2.1,
       "position": [
         -384,
-        0
+        -48
       ],
       "id": "7db42b56-a767-4c91-bfc5-0c20941f3265",
       "name": "Receive Reply",
@@ -300,76 +300,23 @@
     },
     {
       "parameters": {
-        "jsCode": "// This node extracts image URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst imagesFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is image and has a link\n    if (msg.type === 'image' && msg.image && msg.image.link) {\n      imagesFound.push({\n        imageUrl: msg.image.link,\n        caption: msg.image.caption || \"\",\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// If no images were found, you might want to return an empty item \n// or a specific message to avoid errors in later nodes\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        736,
-        -176
-      ],
-      "id": "5d9ecee5-1fa1-4320-8b74-7a31b0e709ed",
-      "name": "Get image URL"
-    },
-    {
-      "parameters": {
-        "jsCode": "// This node extracts voice/audio URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst audioFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Whapi uses 'voice' for voice notes and 'audio' for uploaded files\n    const audioData = msg.voice || msg.audio;\n    \n    if ((msg.type === 'voice' || msg.type === 'audio') && audioData && audioData.link) {\n      audioFound.push({\n        audioUrl: audioData.link,\n        chatId: msg.chat_id,\n        sender: msg.from_name,\n        seconds: audioData.seconds || 0,\n        mime_type: audioData.mime_type\n      });\n    }\n  }\n}\n\n// If no audio was found, return a null object to prevent workflow crashes\nreturn audioFound.length > 0 ? audioFound : [{ audioUrl: null, status: \"no audio found\" }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        736,
-        32
-      ],
-      "id": "1e5a4b21-d157-486f-b7f5-4861837f242c",
-      "name": "Get Voice URL"
-    },
-    {
-      "parameters": {
-        "resource": "audio",
-        "modelId": {
-          "__rl": true,
-          "value": "models/gemini-3-flash-preview",
-          "mode": "list",
-          "cachedResultName": "models/gemini-3-flash-preview"
-        },
-        "audioUrls": "={{ $json.audioUrl }}",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.googleGemini",
-      "typeVersion": 1.1,
-      "position": [
-        960,
-        32
-      ],
-      "id": "593bc26c-ed2c-49a3-bedc-9d9f3d360640",
-      "name": "Transcribe voice message",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "resource": "image",
         "operation": "analyze",
         "modelId": {
           "__rl": true,
-          "value": "models/gemini-2.0-flash",
+          "value": "models/gemini-2.5-flash",
           "mode": "list",
-          "cachedResultName": "models/gemini-2.0-flash"
+          "cachedResultName": "models/gemini-2.5-flash"
         },
         "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
-        "imageUrls": "={{ $json.imageUrl }}",
+        "inputType": "binary",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.googleGemini",
       "typeVersion": 1.1,
       "position": [
-        960,
-        -176
+        1216,
+        -96
       ],
       "id": "8d70e694-9fa7-4dc8-ab9f-337e41a1fe9b",
       "name": "Analyze image",
@@ -379,19 +326,6 @@
           "name": "Oddle's Google Gemini(PaLM) API account"
         }
       }
-    },
-    {
-      "parameters": {
-        "jsCode": "// This node extracts video URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst videosFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is video and has a link\n    if (msg.type === 'video' && msg.video && msg.video.link) {\n      videosFound.push({\n        videoUrl: msg.video.link,\n        caption: msg.video.caption || \"\",\n        seconds: msg.video.seconds || 0,\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// Return video data or a null object to keep the workflow from breaking\nreturn videosFound.length > 0 ? videosFound : [{ videoUrl: null, status: \"no video found\" }];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        736,
-        240
-      ],
-      "id": "9511052f-f289-46ae-8b8d-ae9a503e374b",
-      "name": "Get video URL"
     },
     {
       "parameters": {
@@ -411,83 +345,8 @@
       "name": "Format image description",
       "type": "n8n-nodes-base.set",
       "position": [
-        1216,
-        -176
-      ],
-      "typeVersion": 3.4
-    },
-    {
-      "parameters": {
-        "resource": "video",
-        "operation": "analyze",
-        "modelId": {
-          "__rl": true,
-          "value": "models/gemini-3-flash-preview",
-          "mode": "list",
-          "cachedResultName": "models/gemini-3-flash-preview"
-        },
-        "text": "Here is an video sent by the user. Describe the video briefly and transcribe any voice/audio message in the video.",
-        "videoUrls": "={{ $json.videoUrl }}",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.googleGemini",
-      "typeVersion": 1.1,
-      "position": [
-        960,
-        240
-      ],
-      "id": "8deee6e5-26ea-4cfb-9363-778d4fe94575",
-      "name": "Analyze video",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
-              "name": "text",
-              "type": "string",
-              "value": "={{ $json.content.parts[0].text }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "aba98ba9-e219-41bd-afcb-ec08cca12b16",
-      "name": "Format video description",
-      "type": "n8n-nodes-base.set",
-      "position": [
-        1216,
-        240
-      ],
-      "typeVersion": 3.4
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
-              "name": "text",
-              "type": "string",
-              "value": "={{ $json.content.parts[0].text }}"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "id": "4a079a10-b10c-4b03-8d25-2a10c553c266",
-      "name": "Format voice transcription",
-      "type": "n8n-nodes-base.set",
-      "position": [
-        1216,
-        32
+        1456,
+        -96
       ],
       "typeVersion": 3.4
     },
@@ -537,8 +396,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        736,
-        512
+        768,
+        336
       ],
       "id": "0aa2baed-cfef-46ea-8b36-a5bdd39e40a9",
       "name": "Notify in Slack",
@@ -741,7 +600,7 @@
         "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via *WhatsApp Business*. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 3-5 examples. **Crucial:** Extract the *logical pivot* (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle's Oddle Shop / eShop product.\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp. And only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant.\n\nInstead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like.\n\nBecause you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant’s own branded sales channel. Unlike delivery marketplaces that \"split\" your customer data, Oddle brings everything—reservations, orders, and payments—into one database.\n\nThis allows you to:\n- Stop relying solely on marketplaces like Grab or Foodpanda.\n- Own your customer data 100% so you actually know who your regulars are.\n- Drive repeat orders automatically using built-in CRM and marketing tools.\n\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction (Strict): Identify the Response Handling Knowledge Base  example that most closely matches the lead's intent. You must treat the KB example as a *script template*. Adopt the same questions, the same concessions, and the same specific pivots. You must adopt the specific \"Anchor Logic\" of that example.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base, Core Product Knowledge or Websites.\n  - Focus on the result (owning data/reducing commissions) rather than the features.\n  - Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab/Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategic Cloning: Replicate the exact sales pivot used in the KB.\n    - If the KB asks about \"review windows,\" you ask about review windows. \n    - If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners what switched to another platform and returned to Oddle (Singapore) mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: \n  - Ask for that person's name & phone number.\n  - If they only provide email, ask for that person's name and phone number.  \n  - If they already provide a number, then don't ask, just acknowledge. \n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know.\nDo you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be extremely concise. Maximum 110 words. If you can say it in 20, do it.\n- Tone: Text-heavy, functional, and \"low-friction.\" No corporate fluff, no \"enthusiasm\" fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- Structure: Use 1-2 short paragraphs maximum. Match the \"density\" of the lead's message.\n- The \"Double-Enter\" Rule: If a response is more than 3 sentences, it must be broken into two very short paragraphs to ensure it fits on one phone screen without a \"read more\" break.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items (if any). No other symbols.\n- Vocabulary: Use vocabularies that are approppriate for food online ordering context instead of dining-in, for example: \"customer\" instead of \"guest\", \"restaurant\" instead of \"venue\", \"order\" instead of \"visit\" and so on.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp only. Only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant. Instead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like. Because you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant's own branded sales channel. Unlike delivery marketplaces that split your customer data, Oddle brings everything, reservations, orders, and payments, into one database. This allows you to stop relying solely on marketplaces like Grab or Foodpanda, own your customer data 100% so you actually know who your regulars are, and drive repeat orders automatically using built-in CRM and marketing tools. Essentially, it turns your customer data into a plan for growth instead of guesswork.\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Core Product Knowledge. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Core Product Knowledge, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Core Product Knowledge depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Core Product Knowledge. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
         }
       },
       "id": "db341755-374a-4d0b-986f-23c6568a2076",
@@ -861,7 +720,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        4016,
+        3920,
         -96
       ],
       "id": "b6db9f24-2206-4957-b060-c7ae6f601d1e",
@@ -1001,7 +860,7 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        4032,
+        3728,
         -656
       ],
       "id": "7b36ea94-f72e-477f-ab81-a32d32c2e624",
@@ -1020,7 +879,7 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        3824,
+        3520,
         -640
       ],
       "id": "7fd9d007-f708-4981-bc76-9bfa48067510",
@@ -1044,7 +903,7 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.7,
       "position": [
-        4592,
+        4288,
         -656
       ],
       "id": "8fe6c362-ef72-4469-8dc7-2ac6873b64f2",
@@ -1057,7 +916,7 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        4384,
+        4080,
         -480
       ],
       "id": "dbcf95fe-bc56-4e4b-8a24-8d3989ab5abf",
@@ -1155,7 +1014,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        4800,
+        4496,
         -656
       ],
       "id": "334beea4-e4cb-4b63-8e75-c820aab70d94",
@@ -1177,7 +1036,7 @@
       "type": "n8n-nodes-base.evaluation",
       "typeVersion": 4.8,
       "position": [
-        4240,
+        3936,
         -656
       ],
       "id": "5301a2c7-8f4f-41c6-86cf-28c538b569a1",
@@ -1189,7 +1048,7 @@
       "typeVersion": 1,
       "position": [
         144,
-        272
+        224
       ],
       "id": "55a6ca82-941f-49e3-b343-8ce719951e1f",
       "name": "No Operation, do nothing"
@@ -1217,7 +1076,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3824,
+        3520,
         -400
       ],
       "id": "cbca2906-8b2b-4fe4-9479-6a4db7d744c6",
@@ -1238,7 +1097,7 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.5,
       "position": [
-        4032,
+        3728,
         -400
       ],
       "id": "7f7d4bb3-115c-4325-9401-db3f1a9e0547",
@@ -1252,7 +1111,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3712,
+        3408,
         -768
       ],
       "typeVersion": 1,
@@ -1287,7 +1146,7 @@
       "typeVersion": 2.3,
       "position": [
         -176,
-        0
+        -48
       ],
       "id": "b95cccc6-232d-43dc-9e71-72ed48e4f537",
       "name": "Check for reply from SG"
@@ -1512,24 +1371,26 @@
     },
     {
       "parameters": {
-        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/channels/{{ $json.results[0].channelId }}/messages?direction=outgoing&to={{ $json.results[0].featuredParticipants[0].contact.identifierValue }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "count",
-              "value": "10"
-            }
-          ]
-        },
+        "jsCode": "// Extract the main payload\nconst payload = $input.item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        -96
+      ],
+      "id": "5d9ecee5-1fa1-4320-8b74-7a31b0e709ed",
+      "name": "Get image file ID"
+    },
+    {
+      "parameters": {
+        "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
             {
-              "name": "accept",
-              "value": "*/*"
+              "name": "Authorization",
+              "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
             }
           ]
         },
@@ -1538,17 +1399,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2560,
-        -288
+        976,
+        -96
       ],
-      "id": "a1893e4a-b727-4dec-83a8-51762a18e981",
-      "name": "Get outbound message",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "1R4VMEjneoFtqiZe",
-          "name": "Bird API Key"
-        }
-      }
+      "id": "89b8011b-f818-479e-b7bd-cfa2fd1cbb88",
+      "name": "Retrieve image from Bird"
     }
   ],
   "connections": {
@@ -1581,22 +1436,28 @@
         ],
         [
           {
-            "node": "Get image URL",
+            "node": "Get image file ID",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Get Voice URL",
+            "node": "Notify in Slack",
             "type": "main",
             "index": 0
           }
         ],
-        [],
         [
           {
-            "node": "Get video URL",
+            "node": "Notify in Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack",
             "type": "main",
             "index": 0
           }
@@ -1665,28 +1526,6 @@
         ]
       ]
     },
-    "Get image URL": {
-      "main": [
-        [
-          {
-            "node": "Analyze image",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get Voice URL": {
-      "main": [
-        [
-          {
-            "node": "Transcribe voice message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Analyze image": {
       "main": [
         [
@@ -1698,62 +1537,7 @@
         ]
       ]
     },
-    "Transcribe voice message": {
-      "main": [
-        [
-          {
-            "node": "Format voice transcription",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Format image description": {
-      "main": [
-        [
-          {
-            "node": "Get User's Message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get video URL": {
-      "main": [
-        [
-          {
-            "node": "Analyze video",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Analyze video": {
-      "main": [
-        [
-          {
-            "node": "Format video description",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Format video description": {
-      "main": [
-        [
-          {
-            "node": "Get User's Message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Format voice transcription": {
       "main": [
         [
           {
@@ -1996,6 +1780,28 @@
           }
         ]
       ]
+    },
+    "Get image file ID": {
+      "main": [
+        [
+          {
+            "node": "Retrieve image from Bird",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve image from Bird": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2032,16 +1838,16 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "messagebird-request-timestamp": "1772086757",
             "content-type": "application/json; charset=utf-8",
-            "messagebird-request-id": "051d426f-adcc-46f2-aa33-6fda65fd2aa7",
+            "messagebird-request-id": "73d27bd1-ba32-464d-abb9-9fa7d2a8562e",
+            "messagebird-request-timestamp": "1772094811",
             "user-agent": "Messagebird/Requests develop:8c9cc536",
-            "content-length": "885",
-            "x-cloud-trace-context": "cf6fb9c4300b6b32276e3abf085f501a/7691188801763341563",
+            "content-length": "1174",
+            "x-cloud-trace-context": "5f8b5fe1fed6db83889fb086a1152836/4624140211033960549",
             "x-forwarded-proto": "https",
-            "traceparent": "00-cf6fb9c4300b6b32276e3abf085f501a-6abc97772d90f4fb-00",
-            "x-forwarded-for": "13.127.212.189",
-            "forwarded": "for=\"13.127.212.189\";proto=https",
+            "traceparent": "00-5f8b5fe1fed6db83889fb086a1152836-402c3f05ae477065-00",
+            "x-forwarded-for": "15.206.201.69",
+            "forwarded": "for=\"15.206.201.69\";proto=https",
             "accept-encoding": "gzip"
           },
           "params": {},
@@ -2050,15 +1856,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "0f717eae-cc2a-4984-9799-5a8b07589bde",
+              "id": "851d9f54-e819-49d6-af44-bd61bfab664d",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "id": "a65c2810-ebf1-4fd3-aaf7-bb7c473acad3",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
+                  "identifierValue": "+6585315474",
                   "annotations": {
-                    "name": "Chelsea Nguyen"
+                    "name": "Nooruddin"
                   }
                 }
               },
@@ -2069,346 +1875,76 @@
                 }
               },
               "body": {
-                "type": "text",
-                "text": {
-                  "text": "Mostly small orders"
+                "type": "image",
+                "image": {
+                  "images": [
+                    {
+                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/851d9f54-e819-49d6-af44-bd61bfab664d/media/fe47f106-ad60-4615-8847-4e511a40d19c"
+                    }
+                  ]
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1772086754",
-                  "user_locale": "cmn"
+                  "timestamp": "1772094806",
+                  "user_locale": "cmn",
+                  "whatsapp.media.type": "image"
                 }
               },
               "reference": "",
+              "replyTo": {
+                "id": "de1f0d4c-aa8e-4597-a30f-400442add7fb",
+                "order": 0,
+                "type": "message"
+              },
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU5MDU3MDY1NBUCABIYFDNBMzQyOTZEODQwODJGRURCOUQwAA=="
+                  "platformReference": "wamid.HBgKNjU4NTMxNTQ3NBUCABIYIEFDQkFBODZERUQ3NzE4ODUyNjU2QzJBQTE0MDIzODhGAA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-02-26T06:19:17.24Z",
-              "createdAt": "2026-02-26T06:19:17.158Z",
-              "updatedAt": "2026-02-26T06:19:17.24Z",
+              "lastStatusAt": "2026-02-26T08:33:30.933Z",
+              "createdAt": "2026-02-26T08:33:30.792Z",
+              "updatedAt": "2026-02-26T08:33:30.933Z",
               "batchId": null
             }
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook-test/sg-sdr-os",
-          "executionMode": "test"
+          "webhookUrl": "https://workflow.oddle.center/webhook/sg-sdr-os",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Get image file ID": [
+      {
+        "json": {
+          "messageId": "851d9f54-e819-49d6-af44-bd61bfab664d",
+          "mediaFileId": "fe47f106-ad60-4615-8847-4e511a40d19c",
+          "imageUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/851d9f54-e819-49d6-af44-bd61bfab664d/media/fe47f106-ad60-4615-8847-4e511a40d19c",
+          "caption": "",
+          "senderNumber": "+6585315474",
+          "sender": "Nooruddin"
         },
         "pairedItem": {
           "item": 0
         }
       }
     ],
-    "Get company name": [
+    "Analyze image": [
       {
         "json": {
-          "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-          "computedDisplayName": "Chelsea Nguyen",
-          "featuredIdentifiers": [
-            {
-              "key": "phonenumber",
-              "value": "+6590570654"
-            },
-            {
-              "key": "emailaddress",
-              "value": "chelsea@oddle.me"
-            }
-          ],
-          "identifierCount": 2,
-          "attributes": {
-            "avatarUrl": "",
-            "company": "ABC",
-            "country": "",
-            "deliveryPlatform": "Grab",
-            "displayName": "Chelsea Nguyen",
-            "emailaddress": [
-              "chelsea@oddle.me"
+          "content": {
+            "parts": [
+              {
+                "text": "This image is a screenshot from an Android mobile phone showing a \"Thank you\" confirmation page for an online discovery call.\n\n**Image Description:**\n\nThe screenshot is predominantly white, with a gray background visible around a central white card.\n\nAt the very top, a dark gray status bar shows:\n*   On the left: \"16:33\" (time), followed by icons for what appear to be tabs, messages, and Gmail (\"M\").\n*   On the right: \"Vo)) LTE\", \"4G\" connectivity, an upward arrow, \"50%\" battery life, and a battery icon.\n\nBelow the status bar is a dark gray browser address bar, displaying:\n*   A home icon and a refresh/settings icon on the left.\n*   The URL: \"forms.oddle.me/oddle-discc\" (partially visible).\n*   On the right: The number \"11\" (likely indicating open tabs) and a three-dot menu icon.\n\nThe main content of the screen features:\n*   A light blue circle with a dark blue checkmark inside, centered at the top.\n*   Below the checkmark, the text \"Thank you\" is displayed in large, bold, dark gray letters.\n*   A white rectangular card with rounded corners is centered below the \"Thank you\" message. This card contains details about an event:\n    *   The title \"Oddle Online Discovery Call Singapore\" in bold, dark gray text.\n    *   Below the title, there's a section for the organizer: A green square icon with a white \"J\" inside, next to \"Jia Li Yew\" and \"Organizer\" below it.\n    *   Next, a globe icon is shown beside the text \"Asia/Singapore\".\n    *   A clock icon is displayed next to the date and time: \"Mar 4, 2026 10:30 AM - 11:30 AM\".\n    *   Finally, a video camera icon is present next to \"Google Meet\", indicating the meeting platform.\n\nAt the bottom of the screen, there's a standard Android navigation bar with three icons:\n*   Three vertical lines (recent apps button).\n*   A circle (home button).\n*   A left arrow (back button).\n\n**Text Transcription:**\n\n*   16:33\n*   M\n*   forms.oddle.me/oddle-discc\n*   Vo)) LTE\n*   4G\n*   50%\n*   11\n*   Thank you\n*   Oddle Online Discovery Call Singapore\n*   J\n*   Jia Li Yew\n*   Organizer\n*   Asia/Singapore\n*   Mar 4, 2026 10:30 AM - 11:30 AM\n*   Google Meet"
+              }
             ],
-            "firstName": "Chelsea",
-            "gender": "",
-            "lastName": "Nguyen",
-            "locales": [],
-            "phonenumber": [
-              "+6590570654"
-            ],
-            "reachableIdentifiersForEmailMarketing": [
-              "chelsea@oddle.me"
-            ],
-            "reachableIdentifiersForEmailTransactional": [
-              "chelsea@oddle.me"
-            ],
-            "reachableIdentifiersForSmsMarketing": [
-              "+6590570654"
-            ],
-            "reachableIdentifiersForSmsTransactional": [
-              "+6590570654"
-            ],
-            "reachableIdentifiersForWhatsAppMarketing": [
-              "+6590570654"
-            ],
-            "reachableIdentifiersForWhatsAppTransactional": [
-              "+6590570654"
-            ],
-            "subscribedEmail": true,
-            "subscribedPush": true,
-            "subscribedRcs": true,
-            "subscribedSms": true,
-            "subscribedWhatsApp": true,
-            "timezone": "Asia/Singapore"
+            "role": "model"
           },
-          "listIds": [
-            "098291e0-4aa8-481b-b8aa-f98b9f7ed9c4",
-            "38175f8a-a4bc-4fda-80ac-7e2768e04632",
-            "409353bc-aa2a-4313-9684-619d925994f9",
-            "a7b3c0ab-8320-4bc1-893b-b5a0b6b93a47",
-            "ba318b8a-d093-4e73-9494-9b30cebcae6e",
-            "c74e7fe9-e302-4e17-bfeb-c0ce80975990",
-            "ef4f8d9f-9154-4d66-806a-6e9840994f24"
-          ],
-          "isAnonymous": false,
-          "createdAt": "2023-12-18T09:31:26.237Z",
-          "updatedAt": "2026-02-26T06:10:12.387Z"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ],
-    "Get conversation ID": [
-      {
-        "json": {
-          "results": [
-            {
-              "id": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-              "name": "",
-              "description": "",
-              "status": "active",
-              "style": "default",
-              "visibility": "public",
-              "accessibility": "open",
-              "featuredParticipants": [
-                {
-                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                  "type": "contact",
-                  "status": "active",
-                  "displayName": "Chelsea Nguyen",
-                  "avatarUrl": "",
-                  "contact": {
-                    "identifierKey": "phonenumber",
-                    "identifierValue": "+6590570654",
-                    "platformAddressSelector": "identifiers.phonenumber",
-                    "platformAddress": "+6590570654"
-                  }
-                }
-              ],
-              "activeParticipantCount": 1,
-              "pendingParticipantCount": 0,
-              "initiatingParticipant": {
-                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                "type": "contact",
-                "status": "active",
-                "displayName": "Chelsea Nguyen",
-                "avatarUrl": "",
-                "contact": {
-                  "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
-                  "platformAddressSelector": "identifiers.phonenumber",
-                  "platformAddress": "+6590570654"
-                }
-              },
-              "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
-              "lastMessage": {
-                "id": "0f717eae-cc2a-4984-9799-5a8b07589bde",
-                "type": "text",
-                "preview": {
-                  "text": "Mostly small orders"
-                },
-                "recipients": [],
-                "status": "delivered",
-                "sender": {
-                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                  "type": "contact",
-                  "status": "active",
-                  "displayName": "Chelsea Nguyen",
-                  "avatarUrl": "",
-                  "contact": {
-                    "identifierKey": "phonenumber",
-                    "identifierValue": "+6590570654",
-                    "platformAddressSelector": "identifiers.phonenumber",
-                    "platformAddress": "+6590570654"
-                  }
-                },
-                "createdAt": "2026-02-26T06:19:17.158Z",
-                "draft": false
-              },
-              "createdAt": "2025-12-10T03:02:03.144Z",
-              "updatedAt": "2026-02-26T06:19:17.158Z",
-              "platformStyle": "direct",
-              "lastMessageOutgoingAt": null,
-              "lastMessageIncomingAt": "2026-02-26T06:19:17.158Z",
-              "hasDraft": false
-            }
-          ]
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ],
-    "Get Chat History": [
-      {
-        "json": {
-          "results": [
-            {
-              "id": "0f717eae-cc2a-4984-9799-5a8b07589bde",
-              "conversationId": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-              "reference": "0f717eae-cc2a-4984-9799-5a8b07589bde",
-              "sender": {
-                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                "type": "contact",
-                "status": "active",
-                "displayName": "Chelsea Nguyen",
-                "avatarUrl": "",
-                "contact": {
-                  "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
-                  "platformAddressSelector": "identifiers.phonenumber",
-                  "platformAddress": "+6590570654"
-                }
-              },
-              "draft": false,
-              "status": "delivered",
-              "source": "channels",
-              "body": {
-                "type": "text",
-                "text": {
-                  "text": "Mostly small orders"
-                }
-              },
-              "interactions": null,
-              "createdAt": "2026-02-26T06:19:17.158Z",
-              "updatedAt": "2026-02-26T06:19:17.158Z",
-              "meta": {
-                "extraInformation": {
-                  "timestamp": "1772086754",
-                  "user_locale": "cmn"
-                }
-              }
-            },
-            {
-              "id": "8c0f5168-5e29-4c22-8501-5c58270fa9e6",
-              "conversationId": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-              "reference": "8c0f5168-5e29-4c22-8501-5c58270fa9e6",
-              "sender": {
-                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                "type": "contact",
-                "status": "active",
-                "displayName": "Chelsea Nguyen",
-                "avatarUrl": "",
-                "contact": {
-                  "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
-                  "platformAddressSelector": "identifiers.phonenumber",
-                  "platformAddress": "+6590570654"
-                }
-              },
-              "draft": false,
-              "status": "delivered",
-              "source": "channels",
-              "body": {
-                "type": "text",
-                "text": {
-                  "text": "Ok"
-                }
-              },
-              "interactions": null,
-              "createdAt": "2025-12-11T04:59:55.916Z",
-              "updatedAt": "2025-12-11T04:59:55.916Z",
-              "meta": {
-                "extraInformation": {
-                  "timestamp": "1765429194",
-                  "user_locale": "cmn"
-                }
-              }
-            },
-            {
-              "id": "689815fe-ac3b-4164-a7d7-af3b6ff2524a",
-              "conversationId": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-              "reference": "689815fe-ac3b-4164-a7d7-af3b6ff2524a",
-              "sender": {
-                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                "type": "contact",
-                "status": "active",
-                "displayName": "Chelsea Nguyen",
-                "avatarUrl": "",
-                "contact": {
-                  "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
-                  "platformAddressSelector": "identifiers.phonenumber",
-                  "platformAddress": "+6590570654"
-                }
-              },
-              "draft": false,
-              "status": "delivered",
-              "source": "channels",
-              "body": {
-                "type": "text",
-                "text": {
-                  "text": "test again"
-                }
-              },
-              "interactions": null,
-              "createdAt": "2025-12-10T05:53:49.963Z",
-              "updatedAt": "2025-12-10T05:53:49.963Z",
-              "meta": {
-                "extraInformation": {
-                  "timestamp": "1765346027",
-                  "user_locale": "cmn"
-                }
-              }
-            },
-            {
-              "id": "9e1b1d29-61df-449f-a930-6f9cf1c803a8",
-              "conversationId": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-              "reference": "9e1b1d29-61df-449f-a930-6f9cf1c803a8",
-              "sender": {
-                "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
-                "type": "contact",
-                "status": "active",
-                "displayName": "Chelsea Nguyen",
-                "avatarUrl": "",
-                "contact": {
-                  "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
-                  "platformAddressSelector": "identifiers.phonenumber",
-                  "platformAddress": "+6590570654"
-                }
-              },
-              "draft": false,
-              "status": "delivered",
-              "source": "channels",
-              "body": {
-                "type": "text",
-                "text": {
-                  "text": "test"
-                }
-              },
-              "interactions": null,
-              "createdAt": "2025-12-10T03:02:03.144Z",
-              "updatedAt": "2025-12-10T03:02:03.144Z",
-              "meta": {
-                "extraInformation": {
-                  "timestamp": "1765335719",
-                  "user_locale": "cmn"
-                }
-              }
-            }
-          ]
+          "finishReason": "STOP",
+          "index": 0
         },
         "pairedItem": {
           "item": 0
@@ -2416,8 +1952,8 @@
       }
     ]
   },
-  "versionId": "03d9a7f0-f300-4ecd-acd6-c20f8944d4b5",
-  "activeVersionId": "03d9a7f0-f300-4ecd-acd6-c20f8944d4b5",
+  "versionId": "67242703-82ee-4442-a8e8-72a5f53d4ec8",
+  "activeVersionId": "67242703-82ee-4442-a8e8-72a5f53d4ec8",
   "triggerCount": 1,
   "shared": [
     {
@@ -2429,9 +1965,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-26T09:34:09.152Z",
-    "createdAt": "2026-02-26T09:34:07.460Z",
-    "versionId": "03d9a7f0-f300-4ecd-acd6-c20f8944d4b5",
+    "updatedAt": "2026-02-27T03:59:50.387Z",
+    "createdAt": "2026-02-27T03:59:48.322Z",
+    "versionId": "67242703-82ee-4442-a8e8-72a5f53d4ec8",
     "workflowId": "wNAgEdw1aQPMSRjf",
     "nodes": [
       {
@@ -2642,7 +2178,7 @@
         "type": "n8n-nodes-base.switch",
         "position": [
           144,
-          -96
+          -144
         ],
         "typeVersion": 3.2
       },
@@ -2656,7 +2192,7 @@
         "typeVersion": 2.1,
         "position": [
           -384,
-          0
+          -48
         ],
         "id": "7db42b56-a767-4c91-bfc5-0c20941f3265",
         "name": "Receive Reply",
@@ -2728,76 +2264,23 @@
       },
       {
         "parameters": {
-          "jsCode": "// This node extracts image URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst imagesFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is image and has a link\n    if (msg.type === 'image' && msg.image && msg.image.link) {\n      imagesFound.push({\n        imageUrl: msg.image.link,\n        caption: msg.image.caption || \"\",\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// If no images were found, you might want to return an empty item \n// or a specific message to avoid errors in later nodes\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          736,
-          -176
-        ],
-        "id": "5d9ecee5-1fa1-4320-8b74-7a31b0e709ed",
-        "name": "Get image URL"
-      },
-      {
-        "parameters": {
-          "jsCode": "// This node extracts voice/audio URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst audioFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Whapi uses 'voice' for voice notes and 'audio' for uploaded files\n    const audioData = msg.voice || msg.audio;\n    \n    if ((msg.type === 'voice' || msg.type === 'audio') && audioData && audioData.link) {\n      audioFound.push({\n        audioUrl: audioData.link,\n        chatId: msg.chat_id,\n        sender: msg.from_name,\n        seconds: audioData.seconds || 0,\n        mime_type: audioData.mime_type\n      });\n    }\n  }\n}\n\n// If no audio was found, return a null object to prevent workflow crashes\nreturn audioFound.length > 0 ? audioFound : [{ audioUrl: null, status: \"no audio found\" }];"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          736,
-          32
-        ],
-        "id": "1e5a4b21-d157-486f-b7f5-4861837f242c",
-        "name": "Get Voice URL"
-      },
-      {
-        "parameters": {
-          "resource": "audio",
-          "modelId": {
-            "__rl": true,
-            "value": "models/gemini-3-flash-preview",
-            "mode": "list",
-            "cachedResultName": "models/gemini-3-flash-preview"
-          },
-          "audioUrls": "={{ $json.audioUrl }}",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.googleGemini",
-        "typeVersion": 1.1,
-        "position": [
-          960,
-          32
-        ],
-        "id": "593bc26c-ed2c-49a3-bedc-9d9f3d360640",
-        "name": "Transcribe voice message",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
           "resource": "image",
           "operation": "analyze",
           "modelId": {
             "__rl": true,
-            "value": "models/gemini-2.0-flash",
+            "value": "models/gemini-2.5-flash",
             "mode": "list",
-            "cachedResultName": "models/gemini-2.0-flash"
+            "cachedResultName": "models/gemini-2.5-flash"
           },
           "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
-          "imageUrls": "={{ $json.imageUrl }}",
+          "inputType": "binary",
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          960,
-          -176
+          1216,
+          -96
         ],
         "id": "8d70e694-9fa7-4dc8-ab9f-337e41a1fe9b",
         "name": "Analyze image",
@@ -2807,19 +2290,6 @@
             "name": "Oddle's Google Gemini(PaLM) API account"
           }
         }
-      },
-      {
-        "parameters": {
-          "jsCode": "// This node extracts video URLs from the Whapi payload\nconst messages = $input.item.json.body.messages;\nconst videosFound = [];\n\nif (messages && Array.isArray(messages)) {\n  for (const msg of messages) {\n    // Check if the message type is video and has a link\n    if (msg.type === 'video' && msg.video && msg.video.link) {\n      videosFound.push({\n        videoUrl: msg.video.link,\n        caption: msg.video.caption || \"\",\n        seconds: msg.video.seconds || 0,\n        chatId: msg.chat_id,\n        sender: msg.from_name\n      });\n    }\n  }\n}\n\n// Return video data or a null object to keep the workflow from breaking\nreturn videosFound.length > 0 ? videosFound : [{ videoUrl: null, status: \"no video found\" }];"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          736,
-          240
-        ],
-        "id": "9511052f-f289-46ae-8b8d-ae9a503e374b",
-        "name": "Get video URL"
       },
       {
         "parameters": {
@@ -2839,83 +2309,8 @@
         "name": "Format image description",
         "type": "n8n-nodes-base.set",
         "position": [
-          1216,
-          -176
-        ],
-        "typeVersion": 3.4
-      },
-      {
-        "parameters": {
-          "resource": "video",
-          "operation": "analyze",
-          "modelId": {
-            "__rl": true,
-            "value": "models/gemini-3-flash-preview",
-            "mode": "list",
-            "cachedResultName": "models/gemini-3-flash-preview"
-          },
-          "text": "Here is an video sent by the user. Describe the video briefly and transcribe any voice/audio message in the video.",
-          "videoUrls": "={{ $json.videoUrl }}",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.googleGemini",
-        "typeVersion": 1.1,
-        "position": [
-          960,
-          240
-        ],
-        "id": "8deee6e5-26ea-4cfb-9363-778d4fe94575",
-        "name": "Analyze video",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
-                "name": "text",
-                "type": "string",
-                "value": "={{ $json.content.parts[0].text }}"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "aba98ba9-e219-41bd-afcb-ec08cca12b16",
-        "name": "Format video description",
-        "type": "n8n-nodes-base.set",
-        "position": [
-          1216,
-          240
-        ],
-        "typeVersion": 3.4
-      },
-      {
-        "parameters": {
-          "assignments": {
-            "assignments": [
-              {
-                "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
-                "name": "text",
-                "type": "string",
-                "value": "={{ $json.content.parts[0].text }}"
-              }
-            ]
-          },
-          "options": {}
-        },
-        "id": "4a079a10-b10c-4b03-8d25-2a10c553c266",
-        "name": "Format voice transcription",
-        "type": "n8n-nodes-base.set",
-        "position": [
-          1216,
-          32
+          1456,
+          -96
         ],
         "typeVersion": 3.4
       },
@@ -2965,8 +2360,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          736,
-          512
+          768,
+          336
         ],
         "id": "0aa2baed-cfef-46ea-8b36-a5bdd39e40a9",
         "name": "Notify in Slack",
@@ -3169,7 +2564,7 @@
           "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via *WhatsApp Business*. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 3-5 examples. **Crucial:** Extract the *logical pivot* (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle's Oddle Shop / eShop product.\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp. And only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant.\n\nInstead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like.\n\nBecause you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant’s own branded sales channel. Unlike delivery marketplaces that \"split\" your customer data, Oddle brings everything—reservations, orders, and payments—into one database.\n\nThis allows you to:\n- Stop relying solely on marketplaces like Grab or Foodpanda.\n- Own your customer data 100% so you actually know who your regulars are.\n- Drive repeat orders automatically using built-in CRM and marketing tools.\n\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignore a question already asked.\n- Strategic Mapping: Identify the core intent of the lead’s message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- Logic Extraction (Strict): Identify the Response Handling Knowledge Base  example that most closely matches the lead's intent. You must treat the KB example as a *script template*. Adopt the same questions, the same concessions, and the same specific pivots. You must adopt the specific \"Anchor Logic\" of that example.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base, Core Product Knowledge or Websites.\n  - Focus on the result (owning data/reducing commissions) rather than the features.\n  - Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab/Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first \"soft\" objection (e.g., \"We are happy with our current system\"). You must attempt ONE rebuttal using the Response Handling Knowledge Base.\n- Strategic Cloning: Replicate the exact sales pivot used in the KB.\n    - If the KB asks about \"review windows,\" you ask about review windows. \n    - If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; the goal is to earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners what switched to another platform and returned to Oddle (Singapore) mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: \n  - Ask for that person's name & phone number.\n  - If they only provide email, ask for that person's name and phone number.  \n  - If they already provide a number, then don't ask, just acknowledge. \n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know.\nDo you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge\"\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be extremely concise. Maximum 110 words. If you can say it in 20, do it.\n- Tone: Text-heavy, functional, and \"low-friction.\" No corporate fluff, no \"enthusiasm\" fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- Structure: Use 1-2 short paragraphs maximum. Match the \"density\" of the lead's message.\n- The \"Double-Enter\" Rule: If a response is more than 3 sentences, it must be broken into two very short paragraphs to ensure it fits on one phone screen without a \"read more\" break.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items (if any). No other symbols.\n- Vocabulary: Use vocabularies that are approppriate for food online ordering context instead of dining-in, for example: \"customer\" instead of \"guest\", \"restaurant\" instead of \"venue\", \"order\" instead of \"visit\" and so on.\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp only. Only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant. Instead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like. Because you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant's own branded sales channel. Unlike delivery marketplaces that split your customer data, Oddle brings everything, reservations, orders, and payments, into one database. This allows you to stop relying solely on marketplaces like Grab or Foodpanda, own your customer data 100% so you actually know who your regulars are, and drive repeat orders automatically using built-in CRM and marketing tools. Essentially, it turns your customer data into a plan for growth instead of guesswork.\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Core Product Knowledge. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Core Product Knowledge, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Core Product Knowledge depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Core Product Knowledge. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
           }
         },
         "id": "db341755-374a-4d0b-986f-23c6568a2076",
@@ -3289,7 +2684,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          4016,
+          3920,
           -96
         ],
         "id": "b6db9f24-2206-4957-b060-c7ae6f601d1e",
@@ -3429,7 +2824,7 @@
         "type": "n8n-nodes-base.evaluation",
         "typeVersion": 4.7,
         "position": [
-          4032,
+          3728,
           -656
         ],
         "id": "7b36ea94-f72e-477f-ab81-a32d32c2e624",
@@ -3448,7 +2843,7 @@
         "type": "n8n-nodes-base.evaluation",
         "typeVersion": 4.7,
         "position": [
-          3824,
+          3520,
           -640
         ],
         "id": "7fd9d007-f708-4981-bc76-9bfa48067510",
@@ -3472,7 +2867,7 @@
         "type": "n8n-nodes-base.evaluation",
         "typeVersion": 4.7,
         "position": [
-          4592,
+          4288,
           -656
         ],
         "id": "8fe6c362-ef72-4469-8dc7-2ac6873b64f2",
@@ -3485,7 +2880,7 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "typeVersion": 1,
         "position": [
-          4384,
+          4080,
           -480
         ],
         "id": "dbcf95fe-bc56-4e4b-8a24-8d3989ab5abf",
@@ -3583,7 +2978,7 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          4800,
+          4496,
           -656
         ],
         "id": "334beea4-e4cb-4b63-8e75-c820aab70d94",
@@ -3605,7 +3000,7 @@
         "type": "n8n-nodes-base.evaluation",
         "typeVersion": 4.8,
         "position": [
-          4240,
+          3936,
           -656
         ],
         "id": "5301a2c7-8f4f-41c6-86cf-28c538b569a1",
@@ -3617,7 +3012,7 @@
         "typeVersion": 1,
         "position": [
           144,
-          272
+          224
         ],
         "id": "55a6ca82-941f-49e3-b343-8ce719951e1f",
         "name": "No Operation, do nothing"
@@ -3645,7 +3040,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3824,
+          3520,
           -400
         ],
         "id": "cbca2906-8b2b-4fe4-9479-6a4db7d744c6",
@@ -3666,7 +3061,7 @@
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1.5,
         "position": [
-          4032,
+          3728,
           -400
         ],
         "id": "7f7d4bb3-115c-4325-9401-db3f1a9e0547",
@@ -3680,7 +3075,7 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          3712,
+          3408,
           -768
         ],
         "typeVersion": 1,
@@ -3715,7 +3110,7 @@
         "typeVersion": 2.3,
         "position": [
           -176,
-          0
+          -48
         ],
         "id": "b95cccc6-232d-43dc-9e71-72ed48e4f537",
         "name": "Check for reply from SG"
@@ -3940,24 +3335,26 @@
       },
       {
         "parameters": {
-          "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/channels/{{ $json.results[0].channelId }}/messages?direction=outgoing&to={{ $json.results[0].featuredParticipants[0].contact.identifierValue }}",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendQuery": true,
-          "queryParameters": {
-            "parameters": [
-              {
-                "name": "count",
-                "value": "10"
-              }
-            ]
-          },
+          "jsCode": "// Extract the main payload\nconst payload = $input.item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          736,
+          -96
+        ],
+        "id": "5d9ecee5-1fa1-4320-8b74-7a31b0e709ed",
+        "name": "Get image file ID"
+      },
+      {
+        "parameters": {
+          "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
           "sendHeaders": true,
           "headerParameters": {
             "parameters": [
               {
-                "name": "accept",
-                "value": "*/*"
+                "name": "Authorization",
+                "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
               }
             ]
           },
@@ -3966,17 +3363,11 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2560,
-          -288
+          976,
+          -96
         ],
-        "id": "a1893e4a-b727-4dec-83a8-51762a18e981",
-        "name": "Get outbound message",
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "1R4VMEjneoFtqiZe",
-            "name": "Bird API Key"
-          }
-        }
+        "id": "89b8011b-f818-479e-b7bd-cfa2fd1cbb88",
+        "name": "Retrieve image from Bird"
       }
     ],
     "connections": {
@@ -4009,22 +3400,28 @@
           ],
           [
             {
-              "node": "Get image URL",
+              "node": "Get image file ID",
               "type": "main",
               "index": 0
             }
           ],
           [
             {
-              "node": "Get Voice URL",
+              "node": "Notify in Slack",
               "type": "main",
               "index": 0
             }
           ],
-          [],
           [
             {
-              "node": "Get video URL",
+              "node": "Notify in Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Notify in Slack",
               "type": "main",
               "index": 0
             }
@@ -4093,28 +3490,6 @@
           ]
         ]
       },
-      "Get image URL": {
-        "main": [
-          [
-            {
-              "node": "Analyze image",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Get Voice URL": {
-        "main": [
-          [
-            {
-              "node": "Transcribe voice message",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Analyze image": {
         "main": [
           [
@@ -4126,62 +3501,7 @@
           ]
         ]
       },
-      "Transcribe voice message": {
-        "main": [
-          [
-            {
-              "node": "Format voice transcription",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Format image description": {
-        "main": [
-          [
-            {
-              "node": "Get User's Message",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Get video URL": {
-        "main": [
-          [
-            {
-              "node": "Analyze video",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Analyze video": {
-        "main": [
-          [
-            {
-              "node": "Format video description",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Format video description": {
-        "main": [
-          [
-            {
-              "node": "Get User's Message",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Format voice transcription": {
         "main": [
           [
             {
@@ -4424,10 +3744,32 @@
             }
           ]
         ]
+      },
+      "Get image file ID": {
+        "main": [
+          [
+            {
+              "node": "Retrieve image from Bird",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Retrieve image from Bird": {
+        "main": [
+          [
+            {
+              "node": "Analyze image",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 03d9a7f0",
+    "name": "Version 67242703",
     "description": "",
     "autosaved": false
   },
