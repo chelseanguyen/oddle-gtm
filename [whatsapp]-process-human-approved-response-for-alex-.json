@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-26T07:39:20.429Z",
+  "updatedAt": "2026-03-02T08:27:42.969Z",
   "createdAt": "2026-02-05T06:36:49.966Z",
   "id": "iW7MF8aPEB5WE3Z2",
   "name": "[WhatsApp] Process human-approved response for Alex",
@@ -473,51 +473,24 @@
             "host": "workflow.oddle.center",
             "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
             "accept": "application/json,*/*",
-            "x-slack-signature": "v0=eab4f97f74b43523ae34fc30d773def84e39e4486ab27db9f34551c0b4be4aff",
-            "x-slack-request-timestamp": "1772089922",
-            "content-length": "4117",
+            "x-slack-signature": "v0=ffa3e1334080f74535d584697d30d355ef71d9c05ec3948bf82843de3ba1739c",
+            "x-slack-request-timestamp": "1772439579",
+            "content-length": "3904",
             "content-type": "application/x-www-form-urlencoded",
-            "x-cloud-trace-context": "2006f6aea4a5bdb4823fac5871401936/14933639353806349085;o=1",
+            "x-cloud-trace-context": "cc66bb5881f4f4dc7179d6b7a2d4b3c8/1658413158742395039;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-2006f6aea4a5bdb4823fac5871401936-cf3ef1ded76be31d-01",
-            "x-forwarded-for": "100.53.23.252",
-            "forwarded": "for=\"100.53.23.252\";proto=https",
+            "traceparent": "00-cc66bb5881f4f4dc7179d6b7a2d4b3c8-1703ddfb31ac889f-01",
+            "x-forwarded-for": "52.87.169.247",
+            "forwarded": "for=\"52.87.169.247\";proto=https",
             "accept-encoding": "gzip,deflate"
           },
           "params": {},
           "query": {},
           "body": {
-            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U0FASTJ1H\",\"username\":\"chelsea\",\"name\":\"chelsea\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0ABFM500DV\",\"token\":\"ypD5cbrF1Fph1wRVZBTahAOZ\",\"container\":{\"type\":\"message\",\"message_ts\":\"1772089811.398419\",\"channel_id\":\"C0AHMPEV5DX\",\"is_ephemeral\":false},\"trigger_id\":\"10586968882034.3033437246.46418e027e0107a002f891ea5230a4b5\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C0AHMPEV5DX\",\"name\":\"noti-sdr-wa-agent-sg\"},\"message\":{\"user\":\"U0ABQNMMR0T\",\"type\":\"message\",\"ts\":\"1772089811.398419\",\"bot_id\":\"B0AC0N80884\",\"app_id\":\"A0ABFM500DV\",\"text\":\"New prospect reply needs approval\",\"team\":\"T030ZCV78\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"PVDLT\",\"text\":{\"type\":\"plain_text\",\"text\":\":bell: New Prospect Reply\",\"emoji\":true}},{\"type\":\"divider\",\"block_id\":\"aInCu\"},{\"type\":\"section\",\"block_id\":\"JltBX\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Number:*\\n+6590570654\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Restaurant:*\\nABC\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"nAKNA\"},{\"type\":\"section\",\"block_id\":\"LXZ2g\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's Reply:*\\n```Mostly small orders```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"th5m8\"},{\"type\":\"section\",\"block_id\":\"NZCaS\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent Generated Response:*\\n```Understood. Many restaurants we partner with operate the same way, focusing on a high volume of smaller orders.\\n\\nThe key advantage we offer for these setups is *capturing customer data* with every transaction. This allows you to use our automation to turn those one-off orders into repeat customers through targeted marketing.\\n\\nAre you currently able to capture any data from these orders today, or are they mostly anonymous?```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"aLdiR\"},{\"type\":\"actions\",\"block_id\":\"approval_actions\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"style\":\"primary\",\"value\":\"17f4ab02-f16b-41c7-95d5-2bac19118bc2||22c5243b-3d44-4590-82d7-534d77642dbd\"},{\"type\":\"button\",\"action_id\":\"reject\",\"text\":{\"type\":\"plain_text\",\"text\":\":pencil2: Reject &amp; Send manually\",\"emoji\":true},\"style\":\"danger\",\"value\":\"17f4ab02-f16b-41c7-95d5-2bac19118bc2||22c5243b-3d44-4590-82d7-534d77642dbd\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T030ZCV78\\/10580577689731\\/qfQQ9Ka1JIMq8LY8EiTRKYUZ\",\"actions\":[{\"action_id\":\"approve\",\"block_id\":\"approval_actions\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"value\":\"17f4ab02-f16b-41c7-95d5-2bac19118bc2||22c5243b-3d44-4590-82d7-534d77642dbd\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1772089922.732826\"}]}"
+            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U06UPB4K0AW\",\"username\":\"chloei.garcia\",\"name\":\"chloei.garcia\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0ABFM500DV\",\"token\":\"ypD5cbrF1Fph1wRVZBTahAOZ\",\"container\":{\"type\":\"message\",\"message_ts\":\"1772407108.854429\",\"channel_id\":\"C0AHMPEV5DX\",\"is_ephemeral\":false},\"trigger_id\":\"10603374239763.3033437246.cfea62c42164cb538b3cd6d876840ea1\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C0AHMPEV5DX\",\"name\":\"noti-sdr-wa-agent-sg\"},\"message\":{\"user\":\"U0ABQNMMR0T\",\"type\":\"message\",\"ts\":\"1772407108.854429\",\"bot_id\":\"B0AC0N80884\",\"app_id\":\"A0ABFM500DV\",\"text\":\"New prospect reply needs approval\",\"team\":\"T030ZCV78\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"5vrWB\",\"text\":{\"type\":\"plain_text\",\"text\":\":bell: New Prospect Reply\",\"emoji\":true}},{\"type\":\"divider\",\"block_id\":\"BNxkm\"},{\"type\":\"section\",\"block_id\":\"hrBy6\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Number:*\\n+6582180123\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Restaurant:*\\nSakon Thai\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"NKUp+\"},{\"type\":\"section\",\"block_id\":\"rocU2\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's Reply:*\\n```Hi Alan, for all Sakon Thai outlets. Kindly refer to my colleague Bajin as he is the one in charge```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"qx+wS\"},{\"type\":\"section\",\"block_id\":\"0An9\\/\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent Generated Response:*\\n```Thanks Jade. Do you have a phone number for Bajin by any chance? I'll reach out to him directly and update our records.```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"doZxC\"},{\"type\":\"actions\",\"block_id\":\"approval_actions\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"style\":\"primary\",\"value\":\"aa221fc9-5448-41c0-b0c9-a435368fc1be||22c5243b-3d44-4590-82d7-534d77642dbd\"},{\"type\":\"button\",\"action_id\":\"reject\",\"text\":{\"type\":\"plain_text\",\"text\":\":pencil2: Reject &amp; Send manually\",\"emoji\":true},\"style\":\"danger\",\"value\":\"aa221fc9-5448-41c0-b0c9-a435368fc1be||22c5243b-3d44-4590-82d7-534d77642dbd\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T030ZCV78\\/10607706632278\\/mdaFJljXVbhsN9blDDgI4esN\",\"actions\":[{\"action_id\":\"approve\",\"block_id\":\"approval_actions\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"value\":\"aa221fc9-5448-41c0-b0c9-a435368fc1be||22c5243b-3d44-4590-82d7-534d77642dbd\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1772439579.166008\"}]}"
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook-test/message-approved-alex",
-          "executionMode": "test"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ],
-    "Parse Slack Payload": [
-      {
-        "json": {
-          "action_id": "approve",
-          "bird_conversation_id": "17f4ab02-f16b-41c7-95d5-2bac19118bc2",
-          "bird_participant_id": null,
-          "bird_channel_id": "22c5243b-3d44-4590-82d7-534d77642dbd",
-          "slack_channel_id": "C0AHMPEV5DX",
-          "slack_channel_name": "noti-sdr-wa-agent-sg",
-          "slack_user_id": "U0FASTJ1H",
-          "slack_user_name": "chelsea",
-          "company_name": "ABC",
-          "lead_identifier": "+6590570654",
-          "message_type": "block_actions",
-          "lead_message": "Mostly small orders",
-          "ai_generated_response": "Understood. Many restaurants we partner with operate the same way, focusing on a high volume of smaller orders.\n\nThe key advantage we offer for these setups is *capturing customer data* with every transaction. This allows you to use our automation to turn those one-off orders into repeat customers through targeted marketing.\n\nAre you currently able to capture any data from these orders today, or are they mostly anonymous?",
-          "response_url": "https://hooks.slack.com/actions/T030ZCV78/10580577689731/qfQQ9Ka1JIMq8LY8EiTRKYUZ",
-          "original_message_ts": "1772089811.398419"
-        },
-        "pairedItem": {
-          "item": 0
+          "webhookUrl": "https://workflow.oddle.center/webhook/message-approved-alex",
+          "executionMode": "production"
         }
       }
     ]
