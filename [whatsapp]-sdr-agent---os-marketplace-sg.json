@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-02T02:40:52.340Z",
+  "updatedAt": "2026-03-03T08:49:24.219Z",
   "createdAt": "2026-02-25T08:52:31.198Z",
   "id": "wNAgEdw1aQPMSRjf",
   "name": "[WhatsApp] SDR Agent - OS Marketplace",
@@ -600,7 +600,7 @@
         "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp only. Only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant. Instead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like. Because you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant's own branded sales channel. Unlike delivery marketplaces that split your customer data, Oddle brings everything, reservations, orders, and payments, into one database. This allows you to stop relying solely on marketplaces like Grab or Foodpanda, own your customer data 100% so you actually know who your regulars are, and drive repeat orders automatically using built-in CRM and marketing tools. Essentially, it turns your customer data into a plan for growth instead of guesswork.\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Core Product Knowledge. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Core Product Knowledge, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Core Product Knowledge depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Core Product Knowledge. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Last-Minute / On-Demand Orders**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
         }
       },
       "id": "db341755-374a-4d0b-986f-23c6568a2076",
@@ -619,8 +619,8 @@
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        3552,
-        432
+        3504,
+        448
       ],
       "id": "910ef193-135e-475a-af96-7bfcf1f8f6c0",
       "name": "Embeddings Google Gemini",
@@ -649,8 +649,8 @@
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
       "typeVersion": 1.3,
       "position": [
-        3552,
-        272
+        3504,
+        288
       ],
       "id": "1ee1c33d-05c1-4325-a91e-3deda6514d8e",
       "name": "Response Handling Knowledge Base",
@@ -1407,32 +1407,50 @@
     },
     {
       "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "42095fc9-a525-4364-a34e-965edc87fd5a",
-              "name": "message_id",
-              "value": "={{ $('Receive Reply').item.json.body.payload.id }}",
-              "type": "string"
-            },
-            {
-              "id": "16f9b2e8-764e-4a3a-9849-50396aecec82",
-              "name": "sender_phone",
-              "value": "={{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}",
-              "type": "string"
-            }
-          ]
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contains comprehensive product knowledge about Oddle and Oddle Shop, including what the platform does, key features, and value propositions. Use this to answer prospect questions about Oddle's products and capabilities.",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
         },
+        "topK": 5,
         "options": {}
       },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
       "position": [
-        64,
-        -64
+        3776,
+        288
       ],
-      "id": "54b3663c-241c-47fa-a9f7-10f0a582d303",
-      "name": "Edit Fields1"
+      "id": "c6210e3e-6b66-44e6-ad3e-643d9e329cb7",
+      "name": "Product Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3776,
+        448
+      ],
+      "id": "14437758-1ed1-4c85-9f18-094f30702022",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1796,7 +1814,7 @@
       "main": [
         [
           {
-            "node": "Edit Fields1",
+            "node": "Redirect Message Types",
             "type": "main",
             "index": 0
           }
@@ -1832,12 +1850,23 @@
         ]
       ]
     },
-    "Edit Fields1": {
-      "main": [
+    "Product Knowledge Base": {
+      "ai_tool": [
         [
           {
-            "node": "Redirect Message Types",
-            "type": "main",
+            "node": "Response Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Product Knowledge Base",
+            "type": "ai_embedding",
             "index": 0
           }
         ]
@@ -1992,8 +2021,8 @@
       }
     ]
   },
-  "versionId": "5bc2928d-e4f2-4076-bf3e-633ed36d0d56",
-  "activeVersionId": "67242703-82ee-4442-a8e8-72a5f53d4ec8",
+  "versionId": "022c055d-83dc-4729-a46f-287cb7f2c31d",
+  "activeVersionId": "022c055d-83dc-4729-a46f-287cb7f2c31d",
   "triggerCount": 1,
   "shared": [
     {
@@ -2005,9 +2034,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-27T03:59:50.387Z",
-    "createdAt": "2026-02-27T03:59:48.322Z",
-    "versionId": "67242703-82ee-4442-a8e8-72a5f53d4ec8",
+    "updatedAt": "2026-03-03T08:49:28.894Z",
+    "createdAt": "2026-03-03T08:48:16.999Z",
+    "versionId": "022c055d-83dc-4729-a46f-287cb7f2c31d",
     "workflowId": "wNAgEdw1aQPMSRjf",
     "nodes": [
       {
@@ -2052,7 +2081,7 @@
         "name": "Get User's Message",
         "type": "n8n-nodes-base.set",
         "position": [
-          1824,
+          2032,
           -96
         ],
         "typeVersion": 3.4
@@ -2217,7 +2246,7 @@
         "name": "Redirect Message Types",
         "type": "n8n-nodes-base.switch",
         "position": [
-          144,
+          352,
           -144
         ],
         "typeVersion": 3.2
@@ -2231,7 +2260,7 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -384,
+          -416,
           -48
         ],
         "id": "7db42b56-a767-4c91-bfc5-0c20941f3265",
@@ -2245,7 +2274,7 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          960,
+          1168,
           -400
         ],
         "name": "Topic Output Parser",
@@ -2263,7 +2292,7 @@
         "type": "@n8n/n8n-nodes-langchain.agent",
         "typeVersion": 1.6,
         "position": [
-          784,
+          992,
           -560
         ],
         "name": "Check if Bot Message",
@@ -2277,7 +2306,7 @@
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "typeVersion": 1,
         "position": [
-          736,
+          944,
           -400
         ],
         "name": "Google Gemini LLM",
@@ -2296,7 +2325,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          2848,
+          3056,
           -96
         ],
         "name": "Parse Chat History",
@@ -2319,7 +2348,7 @@
         "type": "@n8n/n8n-nodes-langchain.googleGemini",
         "typeVersion": 1.1,
         "position": [
-          1216,
+          1424,
           -96
         ],
         "id": "8d70e694-9fa7-4dc8-ab9f-337e41a1fe9b",
@@ -2349,7 +2378,7 @@
         "name": "Format image description",
         "type": "n8n-nodes-base.set",
         "position": [
-          1456,
+          1664,
           -96
         ],
         "typeVersion": 3.4
@@ -2372,7 +2401,7 @@
         "name": "Format response",
         "type": "n8n-nodes-base.set",
         "position": [
-          1344,
+          1552,
           -576
         ],
         "typeVersion": 3.4
@@ -2400,7 +2429,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          768,
+          976,
           336
         ],
         "id": "0aa2baed-cfef-46ea-8b36-a5bdd39e40a9",
@@ -2421,7 +2450,7 @@
         "name": "Google Gemini Chat Model1",
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
         "position": [
-          3328,
+          3536,
           96
         ],
         "typeVersion": 1,
@@ -2439,7 +2468,7 @@
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
         "position": [
-          3648,
+          3856,
           96
         ],
         "id": "cf0a3faa-a600-445f-9c9e-0b3d76b06fc7",
@@ -2505,7 +2534,7 @@
         "type": "n8n-nodes-base.switch",
         "typeVersion": 3.4,
         "position": [
-          1104,
+          1312,
           -560
         ],
         "id": "5d43f9c1-07d3-445c-8cae-f44d4e0a4234",
@@ -2516,7 +2545,7 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          1344,
+          1552,
           -384
         ],
         "id": "ae5d9f21-8283-4f55-bb26-1f68fe7f5bb2",
@@ -2552,7 +2581,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2288,
+          2496,
           -96
         ],
         "id": "77de98d0-6987-4ebc-86f6-aed14889e335",
@@ -2586,7 +2615,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2560,
+          2768,
           -96
         ],
         "id": "0b0598de-74ff-4e49-b926-906ba426e33e",
@@ -2604,14 +2633,14 @@
           "text": "=- Prospect's latest message: {{ $json.lead_message }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n\n**Core Product Knowledge**\n- Use these points to answer \"What is Oddle?\" or \"What is Oddle Shop?\". \n- Constraint: Distill these into 1-2 conversational sentences for WhatsApp only. Only answer when asked.\n\n1) What is Oddle\n\nOddle is an all-in-one growth platform that helps you stop relying on separate, messy tools for your restaurant. Instead of having your customer info scattered across different delivery apps and reservation systems, Oddle puts everything into one database. This gives you a clear picture of who your regulars are and what they like. Because you own 100% of that data, you can use our automated marketing tools to bring them back for repeat orders and grow your sales more predictably.\n\n2) What is Oddle Shop\nOddle Shop is your restaurant's own branded sales channel. Unlike delivery marketplaces that split your customer data, Oddle brings everything, reservations, orders, and payments, into one database. This allows you to stop relying solely on marketplaces like Grab or Foodpanda, own your customer data 100% so you actually know who your regulars are, and drive repeat orders automatically using built-in CRM and marketing tools. Essentially, it turns your customer data into a plan for growth instead of guesswork.\nEssentially, it turns your customer data into a plan for growth instead of guesswork.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Core Product Knowledge. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Core Product Knowledge, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Core Product Knowledge depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Core Product Knowledge. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Website (https://www.oddle.me): Use for specific product/feature queries.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 2: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Last-Minute / On-Demand Orders**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 3: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
           }
         },
         "id": "db341755-374a-4d0b-986f-23c6568a2076",
         "name": "Response Agent",
         "type": "@n8n/n8n-nodes-langchain.agent",
         "position": [
-          3408,
+          3616,
           -96
         ],
         "typeVersion": 1.6
@@ -2623,8 +2652,8 @@
         "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
         "typeVersion": 1,
         "position": [
-          3344,
-          432
+          3504,
+          448
         ],
         "id": "910ef193-135e-475a-af96-7bfcf1f8f6c0",
         "name": "Embeddings Google Gemini",
@@ -2653,8 +2682,8 @@
         "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
         "typeVersion": 1.3,
         "position": [
-          3344,
-          272
+          3504,
+          288
         ],
         "id": "1ee1c33d-05c1-4325-a91e-3deda6514d8e",
         "name": "Response Handling Knowledge Base",
@@ -2695,7 +2724,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2064,
+          2272,
           -96
         ],
         "id": "dc73c58b-78b4-4048-a245-39f354e26008",
@@ -2724,7 +2753,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3920,
+          4128,
           -96
         ],
         "id": "b6db9f24-2206-4957-b060-c7ae6f601d1e",
@@ -2830,7 +2859,7 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          3056,
+          3264,
           -96
         ],
         "id": "6e7a6b6c-b75c-42a7-8fe6-9aa4ecdfe50f",
@@ -3051,8 +3080,8 @@
         "type": "n8n-nodes-base.noOp",
         "typeVersion": 1,
         "position": [
-          144,
-          224
+          16,
+          128
         ],
         "id": "55a6ca82-941f-49e3-b343-8ce719951e1f",
         "name": "No Operation, do nothing"
@@ -3134,7 +3163,7 @@
             "conditions": [
               {
                 "id": "2c761342-1b37-4add-b95d-3d09c764111d",
-                "leftValue": "={{ $json.body.payload.sender.contact.identifierValue }}",
+                "leftValue": "={{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}",
                 "rightValue": "+65",
                 "operator": {
                   "type": "string",
@@ -3149,7 +3178,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.3,
         "position": [
-          -176,
+          -192,
           -48
         ],
         "id": "b95cccc6-232d-43dc-9e71-72ed48e4f537",
@@ -3361,7 +3390,7 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          1344,
+          1552,
           -768
         ],
         "id": "7ceda314-55f0-48cb-9ad3-5c5072011cc2",
@@ -3380,7 +3409,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          736,
+          944,
           -96
         ],
         "id": "5d9ecee5-1fa1-4320-8b74-7a31b0e709ed",
@@ -3403,11 +3432,58 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          976,
+          1184,
           -96
         ],
         "id": "89b8011b-f818-479e-b7bd-cfa2fd1cbb88",
         "name": "Retrieve image from Bird"
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Contains comprehensive product knowledge about Oddle and Oddle Shop, including what the platform does, key features, and value propositions. Use this to answer prospect questions about Oddle's products and capabilities.",
+          "tableName": {
+            "__rl": true,
+            "value": "oddle_eshop_knowledge_base",
+            "mode": "list",
+            "cachedResultName": "oddle_eshop_knowledge_base"
+          },
+          "topK": 5,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          3776,
+          288
+        ],
+        "id": "c6210e3e-6b66-44e6-ad3e-643d9e329cb7",
+        "name": "Product Knowledge Base",
+        "credentials": {
+          "supabaseApi": {
+            "id": "aJzMx5t2Q4kcZ8EL",
+            "name": "Supabase Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-embedding-001"
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          3776,
+          448
+        ],
+        "id": "14437758-1ed1-4c85-9f18-094f30702022",
+        "name": "Embeddings Google Gemini1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3806,10 +3882,32 @@
             }
           ]
         ]
+      },
+      "Product Knowledge Base": {
+        "ai_tool": [
+          [
+            {
+              "node": "Response Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini1": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Product Knowledge Base",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 67242703",
+    "name": "Version 022c055d",
     "description": "",
     "autosaved": false
   },
