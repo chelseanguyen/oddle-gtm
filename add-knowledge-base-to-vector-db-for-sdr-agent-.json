@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-02-25T09:14:30.483Z",
+  "updatedAt": "2026-03-03T08:34:22.313Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -55,12 +55,12 @@
     },
     {
       "parameters": {
-        "modelName": "text-embedding-004"
+        "modelName": "models/gemini-embedding-001"
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        64,
+        176,
         848
       ],
       "name": "Google Gemini Embeddings1",
@@ -89,7 +89,7 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        272,
+        368,
         848
       ],
       "id": "0975c07d-9344-4f40-b055-bea41d6d17c0",
@@ -97,33 +97,7 @@
     },
     {
       "parameters": {
-        "mode": "insert",
-        "tableName": {
-          "__rl": true,
-          "value": "prospecting_guide",
-          "mode": "list",
-          "cachedResultName": "prospecting_guide"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1,
-      "position": [
-        176,
-        640
-      ],
-      "name": "Store Prospecting Guide to DB",
-      "id": "7e3744dd-e8fc-4438-ac59-eb48ec8a9d2e",
-      "credentials": {
-        "supabaseApi": {
-          "id": "aJzMx5t2Q4kcZ8EL",
-          "name": "Supabase Account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "## Add Prospecting Guide from Google Docs",
+        "content": "## Add Product Knowledge from Google Docs",
         "height": 544,
         "width": 1200,
         "color": 6
@@ -187,7 +161,7 @@
     {
       "parameters": {
         "operation": "delete",
-        "tableId": "prospecting_guide",
+        "tableId": "oddle_eshop_knowledge_base",
         "filterType": "string",
         "filterString": "=metadata->>file_id=eq.{{ $json.id }}"
       },
@@ -209,12 +183,12 @@
     },
     {
       "parameters": {
-        "modelName": "text-embedding-004"
+        "modelName": "models/gemini-embedding-001"
       },
       "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
       "typeVersion": 1,
       "position": [
-        272,
+        384,
         1408
       ],
       "name": "Google Gemini Embeddings2",
@@ -243,37 +217,11 @@
       "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
       "typeVersion": 1.1,
       "position": [
-        480,
+        576,
         1408
       ],
       "id": "5f7d39f3-5375-4125-a380-3a6d250c2ef2",
       "name": "Default Data Loader2"
-    },
-    {
-      "parameters": {
-        "mode": "insert",
-        "tableName": {
-          "__rl": true,
-          "value": "prospecting_guide",
-          "mode": "list",
-          "cachedResultName": "prospecting_guide"
-        },
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-      "typeVersion": 1,
-      "position": [
-        384,
-        1200
-      ],
-      "name": "Store Prospecting Guide to DB1",
-      "id": "bf6aaa1d-dce0-441d-b777-834a211f1ce8",
-      "credentials": {
-        "supabaseApi": {
-          "id": "aJzMx5t2Q4kcZ8EL",
-          "name": "Supabase Account"
-        }
-      }
     },
     {
       "parameters": {
@@ -496,7 +444,7 @@
           "mode": "list",
           "cachedResultName": "response_handling_guide"
         },
-        "embeddingBatchSize": null,
+        "embeddingBatchSize": {},
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -828,7 +776,7 @@
           "mode": "list",
           "cachedResultName": "response_handling_wa_sg_os"
         },
-        "embeddingBatchSize": null,
+        "embeddingBatchSize": {},
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -1160,7 +1108,7 @@
           "mode": "list",
           "cachedResultName": "response_handling_wa_dubai_or"
         },
-        "embeddingBatchSize": null,
+        "embeddingBatchSize": {},
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -1254,6 +1202,126 @@
           "name": "Oddle's Google Gemini(PaLM) API account"
         }
       }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 15
+            }
+          ]
+        },
+        "triggerOn": "specificFolder",
+        "folderToWatch": {
+          "__rl": true,
+          "value": "16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X",
+          "mode": "list",
+          "cachedResultName": "Knowledge Base for SDR Agent",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X"
+        },
+        "event": "fileCreated",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -368,
+        640
+      ],
+      "id": "43e95781-692a-4cf1-bf66-c2e28d7e4ec6",
+      "name": "When new doc is added",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        176,
+        640
+      ],
+      "name": "Store Product Knowledge",
+      "id": "7e3744dd-e8fc-4438-ac59-eb48ec8a9d2e",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 15
+            }
+          ]
+        },
+        "triggerOn": "specificFile",
+        "fileToWatch": {
+          "__rl": true,
+          "value": "1GNxA2VUUWSPycTq36Nss4sMImHZomH-177jwEj6r_a8",
+          "mode": "list",
+          "cachedResultName": "Oddle & eShop Product Knowledge",
+          "cachedResultUrl": "https://docs.google.com/document/d/1GNxA2VUUWSPycTq36Nss4sMImHZomH-177jwEj6r_a8/edit?usp=drivesdk"
+        }
+      },
+      "type": "n8n-nodes-base.googleDriveTrigger",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1200
+      ],
+      "id": "70c2ec94-5137-42aa-819c-6880198a0741",
+      "name": "When doc is edited",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "XQkqRkcwXsp05RId",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        384,
+        1200
+      ],
+      "name": "Update Product Knowledge",
+      "id": "bf6aaa1d-dce0-441d-b777-834a211f1ce8",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1261,7 +1329,7 @@
       "ai_embedding": [
         [
           {
-            "node": "Store Prospecting Guide to DB",
+            "node": "Store Product Knowledge",
             "type": "ai_embedding",
             "index": 0
           }
@@ -1272,7 +1340,7 @@
       "ai_document": [
         [
           {
-            "node": "Store Prospecting Guide to DB",
+            "node": "Store Product Knowledge",
             "type": "ai_document",
             "index": 0
           }
@@ -1283,7 +1351,7 @@
       "main": [
         [
           {
-            "node": "Store Prospecting Guide to DB",
+            "node": "Store Product Knowledge",
             "type": "main",
             "index": 0
           }
@@ -1294,7 +1362,7 @@
       "main": [
         [
           {
-            "node": "Store Prospecting Guide to DB1",
+            "node": "Update Product Knowledge",
             "type": "main",
             "index": 0
           }
@@ -1305,7 +1373,7 @@
       "ai_embedding": [
         [
           {
-            "node": "Store Prospecting Guide to DB1",
+            "node": "Update Product Knowledge",
             "type": "ai_embedding",
             "index": 0
           }
@@ -1316,7 +1384,7 @@
       "ai_document": [
         [
           {
-            "node": "Store Prospecting Guide to DB1",
+            "node": "Update Product Knowledge",
             "type": "ai_document",
             "index": 0
           }
@@ -1696,6 +1764,28 @@
           }
         ]
       ]
+    },
+    "When new doc is added": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When doc is edited": {
+      "main": [
+        [
+          {
+            "node": "Delete a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1708,7 +1798,7 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-02-25T02:03:08Z"
+      "lastTimeChecked": "2026-03-03T08:32:12Z"
     },
     "node:When doc is edited": {
       "lastTimeChecked": "2026-02-25T02:03:08Z"
@@ -1757,9 +1847,9 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
-  "activeVersionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
-  "triggerCount": 6,
+  "versionId": "ff8022b8-7694-4c00-b168-4f85ee271340",
+  "activeVersionId": "0fb13ea9-4041-48b3-b351-ce9e822c2e2d",
+  "triggerCount": 7,
   "shared": [
     {
       "updatedAt": "2026-01-29T07:40:48.647Z",
@@ -1770,9 +1860,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-02-25T11:21:52.044Z",
-    "createdAt": "2026-02-25T09:14:30.487Z",
-    "versionId": "4b70c165-6de0-4010-80ac-ac0a1c47218c",
+    "updatedAt": "2026-03-03T08:32:13.475Z",
+    "createdAt": "2026-03-03T08:31:55.595Z",
+    "versionId": "0fb13ea9-4041-48b3-b351-ce9e822c2e2d",
     "workflowId": "pwY4BW0QygQifccI",
     "nodes": [
       {
@@ -1824,12 +1914,12 @@
       },
       {
         "parameters": {
-          "modelName": "text-embedding-004"
+          "modelName": "models/gemini-embedding-001"
         },
         "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
         "typeVersion": 1,
         "position": [
-          64,
+          176,
           848
         ],
         "name": "Google Gemini Embeddings1",
@@ -1858,7 +1948,7 @@
         "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
         "typeVersion": 1.1,
         "position": [
-          272,
+          368,
           848
         ],
         "id": "0975c07d-9344-4f40-b055-bea41d6d17c0",
@@ -1866,33 +1956,7 @@
       },
       {
         "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "prospecting_guide",
-            "mode": "list",
-            "cachedResultName": "prospecting_guide"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          176,
-          640
-        ],
-        "name": "Store Prospecting Guide to DB",
-        "id": "7e3744dd-e8fc-4438-ac59-eb48ec8a9d2e",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Add Prospecting Guide from Google Docs",
+          "content": "## Add Product Knowledge from Google Docs",
           "height": 544,
           "width": 1200,
           "color": 6
@@ -2265,7 +2329,7 @@
             "mode": "list",
             "cachedResultName": "response_handling_guide"
           },
-          "embeddingBatchSize": null,
+          "embeddingBatchSize": {},
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -2597,7 +2661,7 @@
             "mode": "list",
             "cachedResultName": "response_handling_wa_sg_os"
           },
-          "embeddingBatchSize": null,
+          "embeddingBatchSize": {},
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -2929,7 +2993,7 @@
             "mode": "list",
             "cachedResultName": "response_handling_wa_dubai_or"
           },
-          "embeddingBatchSize": null,
+          "embeddingBatchSize": {},
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
@@ -3023,6 +3087,67 @@
             "name": "Oddle's Google Gemini(PaLM) API account"
           }
         }
+      },
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "hour": 15
+              }
+            ]
+          },
+          "triggerOn": "specificFolder",
+          "folderToWatch": {
+            "__rl": true,
+            "value": "16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X",
+            "mode": "list",
+            "cachedResultName": "Knowledge Base for SDR Agent",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X"
+          },
+          "event": "fileCreated",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleDriveTrigger",
+        "typeVersion": 1,
+        "position": [
+          -368,
+          640
+        ],
+        "id": "43e95781-692a-4cf1-bf66-c2e28d7e4ec6",
+        "name": "When new doc is added",
+        "credentials": {
+          "googleDriveOAuth2Api": {
+            "id": "XQkqRkcwXsp05RId",
+            "name": "Google Drive account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "insert",
+          "tableName": {
+            "__rl": true,
+            "value": "oddle_eshop_knowledge_base",
+            "mode": "list",
+            "cachedResultName": "oddle_eshop_knowledge_base"
+          },
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1,
+        "position": [
+          176,
+          640
+        ],
+        "name": "Store Product Knowledge",
+        "id": "7e3744dd-e8fc-4438-ac59-eb48ec8a9d2e",
+        "credentials": {
+          "supabaseApi": {
+            "id": "aJzMx5t2Q4kcZ8EL",
+            "name": "Supabase Account"
+          }
+        }
       }
     ],
     "connections": {
@@ -3030,7 +3155,7 @@
         "ai_embedding": [
           [
             {
-              "node": "Store Prospecting Guide to DB",
+              "node": "Store Product Knowledge",
               "type": "ai_embedding",
               "index": 0
             }
@@ -3041,7 +3166,7 @@
         "ai_document": [
           [
             {
-              "node": "Store Prospecting Guide to DB",
+              "node": "Store Product Knowledge",
               "type": "ai_document",
               "index": 0
             }
@@ -3052,7 +3177,7 @@
         "main": [
           [
             {
-              "node": "Store Prospecting Guide to DB",
+              "node": "Store Product Knowledge",
               "type": "main",
               "index": 0
             }
@@ -3465,10 +3590,21 @@
             }
           ]
         ]
+      },
+      "When new doc is added": {
+        "main": [
+          [
+            {
+              "node": "Download file",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 4b70c165",
+    "name": "Version 0fb13ea9",
     "description": "",
     "autosaved": false
   },
