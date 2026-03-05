@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-02-25T08:51:34.737Z",
+  "updatedAt": "2026-03-05T02:42:31.904Z",
   "createdAt": "2026-01-27T09:02:31.185Z",
   "id": "eXEVf6BDPaBy3uWd",
   "name": "[WhatsApp] SDR Agent - Template",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -2446,7 +2446,7 @@
       }
     ]
   },
-  "versionId": "3eb787ca-2485-4396-a509-774c7a33b8b8",
+  "versionId": "a0619513-22f9-4198-add5-4d46ffaf0eb0",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
