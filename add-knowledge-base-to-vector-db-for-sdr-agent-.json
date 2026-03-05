@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-03-03T08:34:22.313Z",
+  "updatedAt": "2026-03-05T03:01:24.143Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
-  "active": true,
+  "active": false,
   "isArchived": false,
   "nodes": [
     {
@@ -1322,6 +1322,338 @@
           "name": "Supabase Account"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "## Add Objections Handling guide for WA SDR Agent (MY)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
+        "height": 608,
+        "width": 1296,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4128,
+        -880
+      ],
+      "typeVersion": 1,
+      "id": "61a70cbf-5b1e-4783-a0fb-0f05034790b6",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Prospect’s message: \"${data.content}\"\n\nHow to respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4448,
+        -784
+      ],
+      "id": "52d57f89-0929-4ac1-a4e4-188d8611f8bb",
+      "name": "Parse training content6"
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $json.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "type",
+                "value": "={{ $json.metadata.type }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        4896,
+        -592
+      ],
+      "id": "bdcad637-eb4a-426e-8b5b-0903eb8bc3fa",
+      "name": "Default Data Loader9"
+    },
+    {
+      "parameters": {
+        "separator": "*&^%$&*()",
+        "chunkSize": 1000000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        4896,
+        -416
+      ],
+      "id": "817478b4-2f76-400c-b11b-a27a362fb56a",
+      "name": "Character Text Splitter6"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_wa_my",
+          "mode": "list",
+          "cachedResultName": "response_handling_wa_my"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1,
+      "position": [
+        4768,
+        -784
+      ],
+      "name": "Store Objections Guide to DB3",
+      "id": "237f6372-a6e7-4cfe-bf22-7ddbe89c3a4e",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "tableId": "response_handling_wa_my",
+        "filterType": "string",
+        "filterString": "=metadata->>type=eq.{{ $json.type }}"
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        4464,
+        -128
+      ],
+      "id": "527f0103-6fcf-48ac-b526-71529103db3b",
+      "name": "Delete a row5",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the original data from the Google Sheets trigger node\n// Using $('Row updated3').all() to reference the trigger directly,\nconst originalItems = $('Row updated3').all();\n\n// Loop through every item received from the Google Sheet node\nreturn originalItems.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  // This formats the prospect message and response for the knowledge base\n  const documentText = `Prospect's message: \"${data.content}\"\n\nHow to respond:\n\n${data.response_sent}`;\n\n  // Return the structured object for the vector store\n  // - content: the text to be embedded and stored\n  // - metadata: additional fields for filtering/retrieval\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4704,
+        -128
+      ],
+      "id": "ea444ae3-faa3-4bb1-98c2-05da1e567291",
+      "name": "Parse training content7"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "hour": 15
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
+          "mode": "list",
+          "cachedResultName": "Objections Handling guide for SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 625641366,
+          "mode": "list",
+          "cachedResultName": "whatsapp_my_os_or",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=625641366"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        4240,
+        -784
+      ],
+      "id": "2857ff94-b675-4977-9159-f7bc133e2674",
+      "name": "Row added3",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pDR6QZ9oC3DsT1h3",
+          "name": "Google Sheets Account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyHour"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
+          "mode": "list",
+          "cachedResultName": "Objections Handling guide for SDR Agent",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 625641366,
+          "mode": "list",
+          "cachedResultName": "whatsapp_my_os_or",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=625641366"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        4224,
+        -128
+      ],
+      "id": "c81a4b6a-500a-488e-bc0c-d251493f4a8a",
+      "name": "Row updated3",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pDR6QZ9oC3DsT1h3",
+          "name": "Google Sheets Account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update changes from Objections Handling for WA SDR Agent (MY)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0\n",
+        "height": 656,
+        "width": 1296,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4128,
+        -224
+      ],
+      "typeVersion": 1,
+      "id": "3060a40c-cc31-417c-89f5-e954e994a428",
+      "name": "Sticky Note9"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_wa_my",
+          "mode": "list",
+          "cachedResultName": "response_handling_wa_my"
+        },
+        "embeddingBatchSize": null,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        4912,
+        -128
+      ],
+      "id": "690a8e45-d68b-4a4e-9408-dc991a8db01f",
+      "name": "Supabase Vector Store3",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4816,
+        64
+      ],
+      "id": "77f920ad-3d9d-48b0-8a4b-cd2bbc6a2a1c",
+      "name": "Embeddings Google Gemini6",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonMode": "expressionData",
+        "jsonData": "={{ $('Parse training content7').item.json.content }}",
+        "textSplittingMode": "custom",
+        "options": {
+          "metadata": {
+            "metadataValues": [
+              {
+                "name": "type",
+                "value": "={{ $('Parse training content7').item.json.metadata.type }}"
+              }
+            ]
+          }
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        4976,
+        48
+      ],
+      "id": "ffcb576f-56de-44f1-8624-d22cb02f4aa6",
+      "name": "Default Data Loader5"
+    },
+    {
+      "parameters": {
+        "separator": "*&^%$&*()",
+        "chunkSize": 1000000
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        4976,
+        208
+      ],
+      "id": "ad77055e-c177-4bad-848e-517a0721f0da",
+      "name": "Character Text Splitter7"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        4720,
+        -624
+      ],
+      "id": "1f13af50-d7d8-44ad-99b9-24499ac0a195",
+      "name": "Embeddings Google Gemini7",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
     }
   ],
   "connections": {
@@ -1786,6 +2118,127 @@
           }
         ]
       ]
+    },
+    "Parse training content6": {
+      "main": [
+        [
+          {
+            "node": "Store Objections Guide to DB3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader9": {
+      "ai_document": [
+        [
+          {
+            "node": "Store Objections Guide to DB3",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter6": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader9",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a row5": {
+      "main": [
+        [
+          {
+            "node": "Parse training content7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse training content7": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row added3": {
+      "main": [
+        [
+          {
+            "node": "Parse training content6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Row updated3": {
+      "main": [
+        [
+          {
+            "node": "Delete a row5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini6": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store3",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader5": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store3",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Character Text Splitter7": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader5",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini7": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Store Objections Guide to DB3",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -1798,7 +2251,7 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-03-04T05:37:44Z"
+      "lastTimeChecked": "2026-03-05T01:47:21Z"
     },
     "node:When doc is edited": {
       "lastTimeChecked": "2026-02-25T02:03:08Z"
@@ -1817,8 +2270,8 @@
     "node:Row updated": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastRevision": 571,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=571&exportFormat=xlsx"
+      "lastRevision": 630,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
     },
     "node:Row added1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1828,8 +2281,8 @@
     "node:Row updated1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1121523145,
-      "lastRevision": 571,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=571&exportFormat=xlsx"
+      "lastRevision": 630,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
     },
     "node:Row added2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -1839,16 +2292,16 @@
     "node:Row updated2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1475459238,
-      "lastRevision": 571,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=571&exportFormat=xlsx"
+      "lastRevision": 630,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "ff8022b8-7694-4c00-b168-4f85ee271340",
-  "activeVersionId": "0fb13ea9-4041-48b3-b351-ce9e822c2e2d",
+  "versionId": "9c648aa6-4298-4f95-a2c6-f82f0ea374cb",
+  "activeVersionId": null,
   "triggerCount": 7,
   "shared": [
     {
@@ -1859,1754 +2312,6 @@
       "projectId": "tAHBdayTR1Nb6OKK"
     }
   ],
-  "activeVersion": {
-    "updatedAt": "2026-03-03T08:32:13.475Z",
-    "createdAt": "2026-03-03T08:31:55.595Z",
-    "versionId": "0fb13ea9-4041-48b3-b351-ce9e822c2e2d",
-    "workflowId": "pwY4BW0QygQifccI",
-    "nodes": [
-      {
-        "parameters": {
-          "content": "## Add Objections Handling guide for Email SDR Agent (AU)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
-          "height": 608,
-          "width": 1296,
-          "color": 3
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -448,
-          -880
-        ],
-        "typeVersion": 1,
-        "id": "6b1b0b8c-dc48-4989-955f-73346852874d",
-        "name": "Sticky Note"
-      },
-      {
-        "parameters": {
-          "operation": "download",
-          "fileId": {
-            "__rl": true,
-            "value": "={{ $('When new doc is added').item.json.id }}",
-            "mode": "id"
-          },
-          "options": {
-            "googleFileConversion": {
-              "conversion": {
-                "docsToFormat": "application/pdf"
-              }
-            }
-          }
-        },
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          -160,
-          640
-        ],
-        "id": "51189bbe-5177-4ded-a6db-71728f66773b",
-        "name": "Download file",
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "XQkqRkcwXsp05RId",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          176,
-          848
-        ],
-        "name": "Google Gemini Embeddings1",
-        "id": "728580cb-69a7-4dc3-ae68-3279f02cf9c2",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "dataType": "binary",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "file_id",
-                  "value": "={{$json.id}}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          368,
-          848
-        ],
-        "id": "0975c07d-9344-4f40-b055-bea41d6d17c0",
-        "name": "Default Data Loader1"
-      },
-      {
-        "parameters": {
-          "content": "## Add Product Knowledge from Google Docs",
-          "height": 544,
-          "width": 1200,
-          "color": 6
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -448,
-          512
-        ],
-        "typeVersion": 1,
-        "id": "e7784c48-7ec5-4f92-9082-0de5497cf968",
-        "name": "Sticky Note1"
-      },
-      {
-        "parameters": {
-          "operation": "download",
-          "fileId": {
-            "__rl": true,
-            "value": "={{ $('When doc is edited').item.json.id }}",
-            "mode": "id"
-          },
-          "options": {
-            "googleFileConversion": {
-              "conversion": {
-                "docsToFormat": "application/pdf"
-              }
-            }
-          }
-        },
-        "type": "n8n-nodes-base.googleDrive",
-        "typeVersion": 3,
-        "position": [
-          80,
-          1200
-        ],
-        "id": "f0c3564e-bbff-4cd4-b7ec-8b6f6c485a9a",
-        "name": "Download file1",
-        "executeOnce": true,
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "XQkqRkcwXsp05RId",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Update changes from Google Docs files\nOnly update one doc at a time",
-          "height": 496,
-          "width": 1200
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -448,
-          1104
-        ],
-        "typeVersion": 1,
-        "id": "85028e8e-3b0c-475d-8e0f-2be9ac03a740",
-        "name": "Sticky Note2"
-      },
-      {
-        "parameters": {
-          "operation": "delete",
-          "tableId": "prospecting_guide",
-          "filterType": "string",
-          "filterString": "=metadata->>file_id=eq.{{ $json.id }}"
-        },
-        "type": "n8n-nodes-base.supabase",
-        "typeVersion": 1,
-        "position": [
-          -144,
-          1200
-        ],
-        "id": "78f791be-7d8a-4e86-8625-db4ee5a79eb1",
-        "name": "Delete a row",
-        "alwaysOutputData": true,
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "text-embedding-004"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          272,
-          1408
-        ],
-        "name": "Google Gemini Embeddings2",
-        "id": "a3c4b007-e5f3-456c-a4d8-7f2bde741f38",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "dataType": "binary",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "file_id",
-                  "value": "={{ $('When doc is edited').item.json.id }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          480,
-          1408
-        ],
-        "id": "5f7d39f3-5375-4125-a380-3a6d250c2ef2",
-        "name": "Default Data Loader2"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "prospecting_guide",
-            "mode": "list",
-            "cachedResultName": "prospecting_guide"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          384,
-          1200
-        ],
-        "name": "Store Prospecting Guide to DB1",
-        "id": "bf6aaa1d-dce0-441d-b777-834a211f1ce8",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Prospect’s message: \"${data.content}\"\n\nHow to respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          -128,
-          -784
-        ],
-        "id": "bf516147-4c1b-4d7e-a18a-ac26f52321e1",
-        "name": "Parse training content"
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          320,
-          -592
-        ],
-        "id": "0322f487-b192-4404-b747-1116680f9509",
-        "name": "Default Data Loader6"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          320,
-          -416
-        ],
-        "id": "3982aef3-957d-4715-9399-cf79779365d7",
-        "name": "Character Text Splitter1"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_guide",
-            "mode": "list",
-            "cachedResultName": "response_handling_guide"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          192,
-          -784
-        ],
-        "name": "Store Objections Guide to DB1",
-        "id": "abbc3a67-1ec4-4596-8ff7-c86cba9bb46f",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "delete",
-          "tableId": "response_handling_guide",
-          "filterType": "string",
-          "filterString": "=metadata->>type=eq.{{ $json.type }}"
-        },
-        "type": "n8n-nodes-base.supabase",
-        "typeVersion": 1,
-        "position": [
-          -112,
-          -128
-        ],
-        "id": "90a816a8-0fb4-41f2-9a2f-3ff3d143edf4",
-        "name": "Delete a row2",
-        "alwaysOutputData": true,
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// Get the original data from the Google Sheets trigger node\n// Using $('Row updated').all() to reference the trigger directly,\nconst originalItems = $('Row updated').all();\n\n// Loop through every item received from the Google Sheet node\nreturn originalItems.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  // This formats the prospect message and response for the knowledge base\n  const documentText = `Prospect's message: \"${data.content}\"\n\nHow to respond:\n\n${data.response_sent}`;\n\n  // Return the structured object for the vector store\n  // - content: the text to be embedded and stored\n  // - metadata: additional fields for filtering/retrieval\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          128,
-          -128
-        ],
-        "id": "d54119d7-92f0-4367-ac4c-3a927ad1ff9f",
-        "name": "Parse training content1"
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "hour": 15
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": "gid=0",
-            "mode": "list",
-            "cachedResultName": "email",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
-          },
-          "event": "rowAdded",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          -336,
-          -784
-        ],
-        "id": "6d19e4f6-d510-4487-8d96-12af8d9047db",
-        "name": "Row added",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyHour"
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": "gid=0",
-            "mode": "list",
-            "cachedResultName": "email",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=0"
-          },
-          "event": "rowUpdate",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          -352,
-          -128
-        ],
-        "id": "9cd7400d-a109-48a4-8d57-601a16e9b7d6",
-        "name": "Row updated",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Update changes from Objections Handling for Email SDR Agent (AU)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0\n",
-          "height": 656,
-          "width": 1296,
-          "color": 4
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          -448,
-          -224
-        ],
-        "typeVersion": 1,
-        "id": "6ef26a51-1649-40af-b45f-6114982cb518",
-        "name": "Sticky Note5"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_guide",
-            "mode": "list",
-            "cachedResultName": "response_handling_guide"
-          },
-          "embeddingBatchSize": {},
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1.3,
-        "position": [
-          336,
-          -128
-        ],
-        "id": "ab1b95ad-f56f-4eb7-9cf3-b6cf5d3eb120",
-        "name": "Supabase Vector Store",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          240,
-          64
-        ],
-        "id": "f1eb0551-b241-4a4a-81fd-3c10a34296b5",
-        "name": "Embeddings Google Gemini",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $('Parse training content1').item.json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $('Parse training content1').item.json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          400,
-          48
-        ],
-        "id": "25318ac0-380c-4968-b3f9-a1be15745e04",
-        "name": "Default Data Loader"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          400,
-          208
-        ],
-        "id": "df9b01c7-edd2-4d81-a210-d5c0517da73c",
-        "name": "Character Text Splitter"
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          144,
-          -624
-        ],
-        "id": "a398f889-a481-4435-8575-df2821ec0814",
-        "name": "Embeddings Google Gemini1",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Add Objections Handling guide for WA SDR Agent (SG)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
-          "height": 608,
-          "width": 1296,
-          "color": 3
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          1088,
-          -880
-        ],
-        "typeVersion": 1,
-        "id": "b08eaab7-3bd4-49b4-9f23-3ce8c63ea856",
-        "name": "Sticky Note3"
-      },
-      {
-        "parameters": {
-          "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Prospect’s message: \"${data.content}\"\n\nHow to respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1408,
-          -784
-        ],
-        "id": "8251e8c7-eccb-48b0-a569-c05fdd464d06",
-        "name": "Parse training content2"
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          1856,
-          -592
-        ],
-        "id": "488d3376-bc2b-4992-b7e3-e7dbebd0899a",
-        "name": "Default Data Loader7"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          1856,
-          -416
-        ],
-        "id": "7345b44c-1d41-4bd8-a099-8495cf12b52d",
-        "name": "Character Text Splitter2"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_wa_sg_os",
-            "mode": "list",
-            "cachedResultName": "response_handling_wa_sg_os"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          1728,
-          -784
-        ],
-        "name": "Store Objections Guide to DB",
-        "id": "7aa03212-3388-43a0-89df-d6c9ec333320",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "delete",
-          "tableId": "response_handling_wa_sg_os",
-          "filterType": "string",
-          "filterString": "=metadata->>type=eq.{{ $json.type }}"
-        },
-        "type": "n8n-nodes-base.supabase",
-        "typeVersion": 1,
-        "position": [
-          1424,
-          -128
-        ],
-        "id": "a6545749-819a-4cd5-8249-90b1665acf8e",
-        "name": "Delete a row3",
-        "alwaysOutputData": true,
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// Get the original data from the Google Sheets trigger node\n// Using $('Row updated1').all() to reference the trigger directly,\nconst originalItems = $('Row updated1').all();\n\n// Loop through every item received from the Google Sheet node\nreturn originalItems.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  // This formats the prospect message and response for the knowledge base\n  const documentText = `Prospect's message: \"${data.content}\"\n\nHow to respond:\n\n${data.response_sent}`;\n\n  // Return the structured object for the vector store\n  // - content: the text to be embedded and stored\n  // - metadata: additional fields for filtering/retrieval\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          1664,
-          -128
-        ],
-        "id": "1ef5b60b-4471-43a7-baa8-653a66491837",
-        "name": "Parse training content3"
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "hour": 15
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": 1121523145,
-            "mode": "list",
-            "cachedResultName": "whatsapp_sg_os",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=1121523145"
-          },
-          "event": "rowAdded",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          1200,
-          -784
-        ],
-        "id": "9a7bc86d-1ab8-44ab-a292-43e0a3ecf91d",
-        "name": "Row added1",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyHour"
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": 1121523145,
-            "mode": "list",
-            "cachedResultName": "whatsapp_sg_os",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=1121523145"
-          },
-          "event": "rowUpdate",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          1184,
-          -128
-        ],
-        "id": "ad72b804-93a8-4da7-9b3d-a02d13586b97",
-        "name": "Row updated1",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Update changes from Objections Handling for WA SDR Agent (SG)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0\n",
-          "height": 656,
-          "width": 1296,
-          "color": 4
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          1088,
-          -224
-        ],
-        "typeVersion": 1,
-        "id": "8df4ff2b-d04b-4cd7-b479-7eb700cf8b3b",
-        "name": "Sticky Note6"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_wa_sg_os",
-            "mode": "list",
-            "cachedResultName": "response_handling_wa_sg_os"
-          },
-          "embeddingBatchSize": {},
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1.3,
-        "position": [
-          1872,
-          -128
-        ],
-        "id": "29cf5fc8-79e6-44d4-9c26-06f15a2d61f4",
-        "name": "Supabase Vector Store1",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          1776,
-          64
-        ],
-        "id": "d8c7ecc1-2f5a-4abb-80db-4bc4abbe3078",
-        "name": "Embeddings Google Gemini2",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $('Parse training content3').item.json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $('Parse training content3').item.json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          1936,
-          48
-        ],
-        "id": "8af6a974-d124-4321-9d44-33bb760b15c2",
-        "name": "Default Data Loader3"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          1936,
-          208
-        ],
-        "id": "6a375ad0-ca99-4934-971d-f74876bd81f0",
-        "name": "Character Text Splitter3"
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          1680,
-          -624
-        ],
-        "id": "b1005d53-7c9d-4f52-8e4d-0b6fc07896ce",
-        "name": "Embeddings Google Gemini3",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Add Objections Handling guide for WA SDR Agent (Dubai)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
-          "height": 608,
-          "width": 1296,
-          "color": 3
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          2624,
-          -880
-        ],
-        "typeVersion": 1,
-        "id": "d9ad0937-8753-4dd5-9db4-ee4a10f926f2",
-        "name": "Sticky Note4"
-      },
-      {
-        "parameters": {
-          "jsCode": "// Loop through every item received from the Google Sheet node\nreturn items.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  const documentText = `Prospect’s message: \"${data.content}\"\n\nHow to respond: \n\n${data.response_sent}`;\n\n  // Return the structured object\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          2944,
-          -784
-        ],
-        "id": "be42ceeb-f67e-4110-93be-ac487145a25e",
-        "name": "Parse training content4"
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          3392,
-          -592
-        ],
-        "id": "4d86a418-e7ee-4d26-9071-686f979c072a",
-        "name": "Default Data Loader8"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          3392,
-          -416
-        ],
-        "id": "77495a90-540b-4e44-84ed-85d4bb8417b5",
-        "name": "Character Text Splitter4"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_wa_dubai_or",
-            "mode": "list",
-            "cachedResultName": "response_handling_wa_dubai_or"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          3264,
-          -784
-        ],
-        "name": "Store Objections Guide to DB2",
-        "id": "136e7da9-6ca7-406d-bfe9-c0405ac3c44e",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "operation": "delete",
-          "tableId": "response_handling_wa_dubai_or",
-          "filterType": "string",
-          "filterString": "=metadata->>type=eq.{{ $json.type }}"
-        },
-        "type": "n8n-nodes-base.supabase",
-        "typeVersion": 1,
-        "position": [
-          2960,
-          -128
-        ],
-        "id": "e6ea9093-af47-4acb-b173-148e63c750da",
-        "name": "Delete a row4",
-        "alwaysOutputData": true,
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsCode": "// Get the original data from the Google Sheets trigger node\n// Using $('Row updated2').all() to reference the trigger directly,\nconst originalItems = $('Row updated2').all();\n\n// Loop through every item received from the Google Sheet node\nreturn originalItems.map(item => {\n  const data = item.json;\n\n  // Prepare the human-readable document content\n  // This formats the prospect message and response for the knowledge base\n  const documentText = `Prospect's message: \"${data.content}\"\n\nHow to respond:\n\n${data.response_sent}`;\n\n  // Return the structured object for the vector store\n  // - content: the text to be embedded and stored\n  // - metadata: additional fields for filtering/retrieval\n  return {\n    json: {\n      content: documentText,\n      metadata: {\n        type: data.type,\n      }\n    }\n  };\n});\n"
-        },
-        "type": "n8n-nodes-base.code",
-        "typeVersion": 2,
-        "position": [
-          3200,
-          -128
-        ],
-        "id": "9258cfb8-fc94-4963-8b33-1ada2ad6f1c6",
-        "name": "Parse training content5"
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "hour": 15
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": 1475459238,
-            "mode": "list",
-            "cachedResultName": "whatsapp_dubai",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=1475459238"
-          },
-          "event": "rowAdded",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          2736,
-          -784
-        ],
-        "id": "b1a1397e-dcf8-4c9b-b095-7bcdb46d0cae",
-        "name": "Row added2",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "mode": "everyHour"
-              }
-            ]
-          },
-          "documentId": {
-            "__rl": true,
-            "value": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
-            "mode": "list",
-            "cachedResultName": "Objections Handling guide for SDR Agent",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?usp=drivesdk"
-          },
-          "sheetName": {
-            "__rl": true,
-            "value": 1475459238,
-            "mode": "list",
-            "cachedResultName": "whatsapp_dubai",
-            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit#gid=1475459238"
-          },
-          "event": "rowUpdate",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleSheetsTrigger",
-        "typeVersion": 1,
-        "position": [
-          2720,
-          -128
-        ],
-        "id": "c7314ed7-6373-4335-bd24-cc78fd8a37ed",
-        "name": "Row updated2",
-        "credentials": {
-          "googleSheetsTriggerOAuth2Api": {
-            "id": "pDR6QZ9oC3DsT1h3",
-            "name": "Google Sheets Account 2"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Update changes from Objections Handling for WA SDR Agent (Dubai)\nFrom Google Sheet\nhttps://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0\n",
-          "height": 656,
-          "width": 1296,
-          "color": 4
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          2624,
-          -224
-        ],
-        "typeVersion": 1,
-        "id": "2ada5cbb-e125-4749-9b0b-def8beb6f6b1",
-        "name": "Sticky Note7"
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "response_handling_wa_dubai_or",
-            "mode": "list",
-            "cachedResultName": "response_handling_wa_dubai_or"
-          },
-          "embeddingBatchSize": {},
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1.3,
-        "position": [
-          3408,
-          -128
-        ],
-        "id": "6b71bb8a-eb07-4ad7-8cac-291092a49dcc",
-        "name": "Supabase Vector Store2",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          3312,
-          64
-        ],
-        "id": "4238ba54-beb0-4eaf-85bb-3b43af984d2f",
-        "name": "Embeddings Google Gemini4",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "jsonMode": "expressionData",
-          "jsonData": "={{ $('Parse training content5').item.json.content }}",
-          "textSplittingMode": "custom",
-          "options": {
-            "metadata": {
-              "metadataValues": [
-                {
-                  "name": "type",
-                  "value": "={{ $('Parse training content5').item.json.metadata.type }}"
-                }
-              ]
-            }
-          }
-        },
-        "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
-        "typeVersion": 1.1,
-        "position": [
-          3472,
-          48
-        ],
-        "id": "54930bf5-d25c-4fdc-9ded-601d7afc5d72",
-        "name": "Default Data Loader4"
-      },
-      {
-        "parameters": {
-          "separator": "*&^%$&*()",
-          "chunkSize": 1000000
-        },
-        "type": "@n8n/n8n-nodes-langchain.textSplitterCharacterTextSplitter",
-        "typeVersion": 1,
-        "position": [
-          3472,
-          208
-        ],
-        "id": "7891e0a3-a412-45e9-a1cc-fd9c311c3b43",
-        "name": "Character Text Splitter5"
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-embedding-001"
-        },
-        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          3216,
-          -624
-        ],
-        "id": "25a70331-bf05-4619-92bf-183159d573bb",
-        "name": "Embeddings Google Gemini5",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "pollTimes": {
-            "item": [
-              {
-                "hour": 15
-              }
-            ]
-          },
-          "triggerOn": "specificFolder",
-          "folderToWatch": {
-            "__rl": true,
-            "value": "16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X",
-            "mode": "list",
-            "cachedResultName": "Knowledge Base for SDR Agent",
-            "cachedResultUrl": "https://drive.google.com/drive/folders/16bayXrwigTbUhTyJN06z9ZdfIcEE0B-X"
-          },
-          "event": "fileCreated",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.googleDriveTrigger",
-        "typeVersion": 1,
-        "position": [
-          -368,
-          640
-        ],
-        "id": "43e95781-692a-4cf1-bf66-c2e28d7e4ec6",
-        "name": "When new doc is added",
-        "credentials": {
-          "googleDriveOAuth2Api": {
-            "id": "XQkqRkcwXsp05RId",
-            "name": "Google Drive account"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "mode": "insert",
-          "tableName": {
-            "__rl": true,
-            "value": "oddle_eshop_knowledge_base",
-            "mode": "list",
-            "cachedResultName": "oddle_eshop_knowledge_base"
-          },
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
-        "typeVersion": 1,
-        "position": [
-          176,
-          640
-        ],
-        "name": "Store Product Knowledge",
-        "id": "7e3744dd-e8fc-4438-ac59-eb48ec8a9d2e",
-        "credentials": {
-          "supabaseApi": {
-            "id": "aJzMx5t2Q4kcZ8EL",
-            "name": "Supabase Account"
-          }
-        }
-      }
-    ],
-    "connections": {
-      "Google Gemini Embeddings1": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Store Product Knowledge",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader1": {
-        "ai_document": [
-          [
-            {
-              "node": "Store Product Knowledge",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Download file": {
-        "main": [
-          [
-            {
-              "node": "Store Product Knowledge",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Download file1": {
-        "main": [
-          [
-            {
-              "node": "Store Prospecting Guide to DB1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Gemini Embeddings2": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Store Prospecting Guide to DB1",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader2": {
-        "ai_document": [
-          [
-            {
-              "node": "Store Prospecting Guide to DB1",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Delete a row": {
-        "main": [
-          [
-            {
-              "node": "Download file1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader6": {
-        "ai_document": [
-          [
-            {
-              "node": "Store Objections Guide to DB1",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter1": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader6",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content": {
-        "main": [
-          [
-            {
-              "node": "Store Objections Guide to DB1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Delete a row2": {
-        "main": [
-          [
-            {
-              "node": "Parse training content1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row added": {
-        "main": [
-          [
-            {
-              "node": "Parse training content",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row updated": {
-        "main": [
-          [
-            {
-              "node": "Delete a row2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content1": {
-        "main": [
-          [
-            {
-              "node": "Supabase Vector Store",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Supabase Vector Store",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader": {
-        "ai_document": [
-          [
-            {
-              "node": "Supabase Vector Store",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini1": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Store Objections Guide to DB1",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content2": {
-        "main": [
-          [
-            {
-              "node": "Store Objections Guide to DB",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader7": {
-        "ai_document": [
-          [
-            {
-              "node": "Store Objections Guide to DB",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter2": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader7",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Delete a row3": {
-        "main": [
-          [
-            {
-              "node": "Parse training content3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content3": {
-        "main": [
-          [
-            {
-              "node": "Supabase Vector Store1",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row added1": {
-        "main": [
-          [
-            {
-              "node": "Parse training content2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row updated1": {
-        "main": [
-          [
-            {
-              "node": "Delete a row3",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini2": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Supabase Vector Store1",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader3": {
-        "ai_document": [
-          [
-            {
-              "node": "Supabase Vector Store1",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter3": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader3",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini3": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Store Objections Guide to DB",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content4": {
-        "main": [
-          [
-            {
-              "node": "Store Objections Guide to DB2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader8": {
-        "ai_document": [
-          [
-            {
-              "node": "Store Objections Guide to DB2",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter4": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader8",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Delete a row4": {
-        "main": [
-          [
-            {
-              "node": "Parse training content5",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Parse training content5": {
-        "main": [
-          [
-            {
-              "node": "Supabase Vector Store2",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row added2": {
-        "main": [
-          [
-            {
-              "node": "Parse training content4",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Row updated2": {
-        "main": [
-          [
-            {
-              "node": "Delete a row4",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini4": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Supabase Vector Store2",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Default Data Loader4": {
-        "ai_document": [
-          [
-            {
-              "node": "Supabase Vector Store2",
-              "type": "ai_document",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Character Text Splitter5": {
-        "ai_textSplitter": [
-          [
-            {
-              "node": "Default Data Loader4",
-              "type": "ai_textSplitter",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Embeddings Google Gemini5": {
-        "ai_embedding": [
-          [
-            {
-              "node": "Store Objections Guide to DB2",
-              "type": "ai_embedding",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "When new doc is added": {
-        "main": [
-          [
-            {
-              "node": "Download file",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      }
-    },
-    "authors": "Oddle Engineer",
-    "name": "Version 0fb13ea9",
-    "description": "",
-    "autosaved": false
-  },
+  "activeVersion": null,
   "tags": []
 }
