@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-05T03:01:24.143Z",
+  "updatedAt": "2026-03-11T03:31:49.695Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -1278,7 +1278,7 @@
           "__rl": true,
           "value": "1GNxA2VUUWSPycTq36Nss4sMImHZomH-177jwEj6r_a8",
           "mode": "list",
-          "cachedResultName": "Oddle & eShop Product Knowledge",
+          "cachedResultName": "Oddle & Product Knowledge",
           "cachedResultUrl": "https://docs.google.com/document/d/1GNxA2VUUWSPycTq36Nss4sMImHZomH-177jwEj6r_a8/edit?usp=drivesdk"
         }
       },
@@ -2251,7 +2251,7 @@
   },
   "staticData": {
     "node:When new doc is added": {
-      "lastTimeChecked": "2026-03-05T01:47:21Z"
+      "lastTimeChecked": "2026-03-11T07:00:28Z"
     },
     "node:When doc is edited": {
       "lastTimeChecked": "2026-02-25T02:03:08Z"
@@ -2270,19 +2270,19 @@
     "node:Row updated": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 0,
-      "lastRevision": 630,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
+      "lastRevision": 634,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=634&exportFormat=xlsx"
     },
     "node:Row added1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1121523145,
-      "lastIndexChecked": 23
+      "lastIndexChecked": 25
     },
     "node:Row updated1": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1121523145,
-      "lastRevision": 630,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
+      "lastRevision": 686,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=686&exportFormat=xlsx"
     },
     "node:Row added2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
@@ -2292,15 +2292,15 @@
     "node:Row updated2": {
       "documentId": "1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg",
       "sheetId": 1475459238,
-      "lastRevision": 630,
-      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=630&exportFormat=xlsx"
+      "lastRevision": 686,
+      "lastRevisionLink": "https://docs.google.com/spreadsheets/export?id=1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg&revision=686&exportFormat=xlsx"
     }
   },
   "meta": {
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "9c648aa6-4298-4f95-a2c6-f82f0ea374cb",
+  "versionId": "0f8fae84-3a79-4f70-b78a-ffc55caa8fee",
   "activeVersionId": null,
   "triggerCount": 7,
   "shared": [
