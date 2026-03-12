@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-03-11T08:42:43.878Z",
+  "updatedAt": "2026-03-12T02:31:25.391Z",
   "createdAt": "2026-03-11T07:19:45.976Z",
   "id": "ZmDjfEDwSABfR1XW",
   "name": "[Inbound] Funnel BrandCheck Leads to Attio",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -23773,7 +23773,7 @@
       }
     ]
   },
-  "versionId": "9aaade56-a135-45cd-b36a-90f2682acce3",
+  "versionId": "f5f6d894-7b74-4139-8d71-afa0ecc7a5e5",
   "activeVersionId": null,
   "triggerCount": 0,
   "shared": [
