@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-11T03:31:49.695Z",
+  "updatedAt": "2026-03-12T09:05:32.844Z",
   "createdAt": "2026-01-29T07:40:48.647Z",
   "id": "pwY4BW0QygQifccI",
   "name": "Add Knowledge Base to Vector DB for SDR Agent",
@@ -138,8 +138,8 @@
       "executeOnce": true,
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "XQkqRkcwXsp05RId",
-          "name": "Google Drive account"
+          "id": "tTZOi8hGY5Gbzzz0",
+          "name": "Google Drive account 4"
         }
       }
     },
@@ -1292,8 +1292,8 @@
       "name": "When doc is edited",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "XQkqRkcwXsp05RId",
-          "name": "Google Drive account"
+          "id": "tTZOi8hGY5Gbzzz0",
+          "name": "Google Drive account 4"
         }
       }
     },
@@ -2300,7 +2300,7 @@
     "templateCredsSetupCompleted": true
   },
   "pinData": {},
-  "versionId": "0f8fae84-3a79-4f70-b78a-ffc55caa8fee",
+  "versionId": "5774b831-2959-4ceb-8c6c-350eda6ea86a",
   "activeVersionId": null,
   "triggerCount": 7,
   "shared": [
