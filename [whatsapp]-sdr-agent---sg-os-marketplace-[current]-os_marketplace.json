@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-11T06:28:04.051Z",
+  "updatedAt": "2026-03-12T02:43:46.853Z",
   "createdAt": "2026-03-10T02:30:44.332Z",
   "id": "WamnPrGluo92mwT7",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [current]",
@@ -386,7 +386,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const receiveReply = $('Receive Reply').item.json;\nconst payload = receiveReply.body.payload;\nconst phoneNumber = payload.sender.contact.identifierValue;\nconst channelId = payload.channelId;\nconst contactId = payload.sender.contact.id;\nconst messageType = payload.body.type;\nconst messageText = payload.body?.text?.text ||\n                    payload.body?.caption ||\n                    `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    channel_id: channelId,\n    contact_id: contactId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
+        "jsCode": "const receiveReply = $('Receive Reply').item.json;\nconst payload = receiveReply.body.payload;\nconst phoneNumber = payload.sender.contact.identifierValue;\nconst channelId = payload.channelId;\nconst contactId = payload.sender.contact.id;\nconst messageType = payload.body.type;\nconst messageText = payload.body?.text?.text ||\n                    payload.body?.image?.text ||\n                    payload.body?.caption ||\n                    `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    channel_id: channelId,\n    contact_id: contactId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -493,10 +493,10 @@
       "parameters": {
         "conditions": {
           "options": {
-            "caseSensitive": true,
+            "version": 3,
             "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
+            "caseSensitive": true,
+            "typeValidation": "strict"
           },
           "conditions": [
             {
@@ -558,7 +558,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -646,10 +646,10 @@
       "parameters": {
         "conditions": {
           "options": {
-            "caseSensitive": true,
+            "version": 3,
             "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
+            "caseSensitive": true,
+            "typeValidation": "strict"
           },
           "conditions": [
             {
@@ -1057,7 +1057,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+        "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1129,7 +1129,7 @@
               "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
               "name": "text",
               "type": "string",
-              "value": "={{ $json.content.parts[0].text }}"
+              "value": "={{ $json.content.parts[0].text + ($('Get image file ID').item.json.caption ? '\\n\\nUser\\'s caption: \"' + $('Get image file ID').item.json.caption + '\"' : '') }}"
             }
           ]
         },
@@ -2437,49 +2437,21 @@
         }
       }
     ],
-    "Get image file ID": [
-      {
-        "json": {
-          "messageId": "851d9f54-e819-49d6-af44-bd61bfab664d",
-          "mediaFileId": "fe47f106-ad60-4615-8847-4e511a40d19c",
-          "imageUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/851d9f54-e819-49d6-af44-bd61bfab664d/media/fe47f106-ad60-4615-8847-4e511a40d19c",
-          "caption": "",
-          "senderNumber": "+6585315474",
-          "sender": "Nooruddin"
-        }
-      }
-    ],
-    "Analyze image": [
-      {
-        "json": {
-          "content": {
-            "parts": [
-              {
-                "text": "This image is a screenshot from an Android mobile phone showing a \"Thank you\" confirmation page for an online discovery call.\n\n**Image Description:**\n\nThe screenshot is predominantly white, with a gray background visible around a central white card.\n\nAt the very top, a dark gray status bar shows:\n*   On the left: \"16:33\" (time), followed by icons for what appear to be tabs, messages, and Gmail (\"M\").\n*   On the right: \"Vo)) LTE\", \"4G\" connectivity, an upward arrow, \"50%\" battery life, and a battery icon.\n\nBelow the status bar is a dark gray browser address bar, displaying:\n*   A home icon and a refresh/settings icon on the left.\n*   The URL: \"forms.oddle.me/oddle-discc\" (partially visible).\n*   On the right: The number \"11\" (likely indicating open tabs) and a three-dot menu icon.\n\nThe main content of the screen features:\n*   A light blue circle with a dark blue checkmark inside, centered at the top.\n*   Below the checkmark, the text \"Thank you\" is displayed in large, bold, dark gray letters.\n*   A white rectangular card with rounded corners is centered below the \"Thank you\" message. This card contains details about an event:\n    *   The title \"Oddle Online Discovery Call Singapore\" in bold, dark gray text.\n    *   Below the title, there's a section for the organizer: A green square icon with a white \"J\" inside, next to \"Jia Li Yew\" and \"Organizer\" below it.\n    *   Next, a globe icon is shown beside the text \"Asia/Singapore\".\n    *   A clock icon is displayed next to the date and time: \"Mar 4, 2026 10:30 AM - 11:30 AM\".\n    *   Finally, a video camera icon is present next to \"Google Meet\", indicating the meeting platform.\n\nAt the bottom of the screen, there's a standard Android navigation bar with three icons:\n*   Three vertical lines (recent apps button).\n*   A circle (home button).\n*   A left arrow (back button).\n\n**Text Transcription:**\n\n*   16:33\n*   M\n*   forms.oddle.me/oddle-discc\n*   Vo)) LTE\n*   4G\n*   50%\n*   11\n*   Thank you\n*   Oddle Online Discovery Call Singapore\n*   J\n*   Jia Li Yew\n*   Organizer\n*   Asia/Singapore\n*   Mar 4, 2026 10:30 AM - 11:30 AM\n*   Google Meet"
-              }
-            ],
-            "role": "model"
-          },
-          "finishReason": "STOP",
-          "index": 0
-        }
-      }
-    ],
     "Receive Reply": [
       {
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "messagebird-request-id": "705c5b19-aed2-47bd-b07e-29da035b75ea",
-            "messagebird-request-timestamp": "1772676417",
-            "user-agent": "Messagebird/Requests develop:8c9cc536",
+            "messagebird-request-id": "c93db71f-c7d1-4d7a-a710-8b99bfea2f52",
+            "messagebird-request-timestamp": "1773224783",
             "content-type": "application/json; charset=utf-8",
-            "content-length": "892",
-            "x-cloud-trace-context": "239a524e613b8e4d6b9b0bdbd7d73657/8710713604325250556",
+            "user-agent": "Messagebird/Requests develop:8c9cc536",
+            "content-length": "2011",
+            "x-cloud-trace-context": "3e7c3aff7158952e1788b3b115301504/7127284892878643669",
             "x-forwarded-proto": "https",
-            "traceparent": "00-239a524e613b8e4d6b9b0bdbd7d73657-78e2abdf2df815fc-00",
-            "x-forwarded-for": "3.111.114.53",
-            "forwarded": "for=\"3.111.114.53\";proto=https",
+            "traceparent": "00-3e7c3aff7158952e1788b3b115301504-62e933d91d0a21d5-00",
+            "x-forwarded-for": "13.127.212.189",
+            "forwarded": "for=\"13.127.212.189\";proto=https",
             "accept-encoding": "gzip"
           },
           "params": {},
@@ -2488,15 +2460,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "a6822ee1-9d64-43af-82d1-760f521740f7",
+              "id": "191e0649-8c5c-4d08-80a2-0eb18bdc5a59",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "8aec3ba2-0dee-470d-a775-ac17887af799",
+                  "id": "f787649e-dad4-43fa-93de-bc73bd3067b0",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+6590570654",
+                  "identifierValue": "+6588332655",
                   "annotations": {
-                    "name": "Chelsea Nguyen"
+                    "name": "twinklebellebelle"
                   }
                 }
               },
@@ -2507,41 +2479,47 @@
                 }
               },
               "body": {
-                "type": "text",
-                "text": {
-                  "text": "Do we have access to it?"
+                "type": "image",
+                "image": {
+                  "text": "A new chapter unfolds for Chimichanga at Chimi’s Especial. Our new space brings the same vibrant flavours and relaxed energy, now expressed through a broader Latin perspective. On every plate and in every pour, the Americas come together.\n\nWe are delighted to invite you to our Grand Opening and Ribbon Cutting Ceremony on Thursday, 26 March at 6:00pm at 70 Collyer Quay, #01-01 Customs House.\n\nJoin us for an evening of Latin flavours, reimagined the Chimi’s way, alongside cocktails and waterfront views.\n\nWe would be honoured to have you join us as we celebrate this special milestone.\n\nExperience casual Latin, the Chimi’s way.                \n                                                                                                                                                                                                  \nRSVP at chimisgrandopening.eventbrite.sg by 25 March, 12pm.",
+                  "images": [
+                    {
+                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/191e0649-8c5c-4d08-80a2-0eb18bdc5a59/media/9c34e150-02c2-4d65-a177-c08f26d1089c"
+                    }
+                  ]
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1772676415",
-                  "user_locale": "cmn"
+                  "timestamp": "1773224777",
+                  "user_locale": "cmn",
+                  "whatsapp.media.type": "image"
                 }
               },
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU5MDU3MDY1NBUCABIYFDNBRDIwMkExREI0Mzc4NEZGRTJEAA=="
+                  "platformReference": "wamid.HBgKNjU4ODMzMjY1NRUCABIYFDNBNjA0NDk5RUJDOURCQTYxNzlEAA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-03-05T02:06:57.499Z",
-              "createdAt": "2026-03-05T02:06:57.432Z",
-              "updatedAt": "2026-03-05T02:06:57.499Z",
+              "lastStatusAt": "2026-03-11T10:26:23.545Z",
+              "createdAt": "2026-03-11T10:26:23.458Z",
+              "updatedAt": "2026-03-11T10:26:23.545Z",
               "batchId": null
             }
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook/sg-wa-sdr-os",
+          "webhookUrl": "https://workflow.oddle.center/webhook/sg-wa-sdr-agent",
           "executionMode": "production"
         }
       }
     ]
   },
-  "versionId": "ed92439a-3343-4c06-b608-379929d21280",
-  "activeVersionId": "ed92439a-3343-4c06-b608-379929d21280",
+  "versionId": "f6e82923-fbcb-40a9-9c97-e7b12becb27c",
+  "activeVersionId": "f6e82923-fbcb-40a9-9c97-e7b12becb27c",
   "triggerCount": 1,
   "shared": [
     {
@@ -2553,9 +2531,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-11T06:28:30.484Z",
-    "createdAt": "2026-03-11T06:28:04.055Z",
-    "versionId": "ed92439a-3343-4c06-b608-379929d21280",
+    "updatedAt": "2026-03-12T02:36:16.332Z",
+    "createdAt": "2026-03-12T02:36:16.332Z",
+    "versionId": "f6e82923-fbcb-40a9-9c97-e7b12becb27c",
     "workflowId": "WamnPrGluo92mwT7",
     "nodes": [
       {
@@ -2938,7 +2916,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const receiveReply = $('Receive Reply').item.json;\nconst payload = receiveReply.body.payload;\nconst phoneNumber = payload.sender.contact.identifierValue;\nconst channelId = payload.channelId;\nconst contactId = payload.sender.contact.id;\nconst messageType = payload.body.type;\nconst messageText = payload.body?.text?.text ||\n                    payload.body?.caption ||\n                    `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    channel_id: channelId,\n    contact_id: contactId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
+          "jsCode": "const receiveReply = $('Receive Reply').item.json;\nconst payload = receiveReply.body.payload;\nconst phoneNumber = payload.sender.contact.identifierValue;\nconst channelId = payload.channelId;\nconst contactId = payload.sender.contact.id;\nconst messageType = payload.body.type;\nconst messageText = payload.body?.text?.text ||\n                    payload.body?.image?.text ||\n                    payload.body?.caption ||\n                    `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    channel_id: channelId,\n    contact_id: contactId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -3045,10 +3023,10 @@
         "parameters": {
           "conditions": {
             "options": {
-              "caseSensitive": true,
+              "version": 3,
               "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
+              "caseSensitive": true,
+              "typeValidation": "strict"
             },
             "conditions": [
               {
@@ -3110,7 +3088,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -3198,10 +3176,10 @@
         "parameters": {
           "conditions": {
             "options": {
-              "caseSensitive": true,
+              "version": 3,
               "leftValue": "",
-              "typeValidation": "strict",
-              "version": 3
+              "caseSensitive": true,
+              "typeValidation": "strict"
             },
             "conditions": [
               {
@@ -3609,7 +3587,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+          "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -3681,7 +3659,7 @@
                 "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
                 "name": "text",
                 "type": "string",
-                "value": "={{ $json.content.parts[0].text }}"
+                "value": "={{ $json.content.parts[0].text + ($('Get image file ID').item.json.caption ? '\\n\\nUser\\'s caption: \"' + $('Get image file ID').item.json.caption + '\"' : '') }}"
               }
             ]
           },
@@ -4964,8 +4942,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version ed92439a",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": [
