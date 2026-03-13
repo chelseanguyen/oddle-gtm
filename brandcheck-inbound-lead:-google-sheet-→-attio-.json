@@ -1,9 +1,9 @@
 {
-  "updatedAt": "2026-03-12T09:18:17.904Z",
+  "updatedAt": "2026-03-13T09:09:39.011Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
-  "active": false,
+  "active": true,
   "isArchived": false,
   "nodes": [
     {
@@ -32,13 +32,13 @@
         "event": "rowAdded",
         "options": {}
       },
-      "id": "c8c1709d-92fd-4326-a8f9-0c0e6548a710",
+      "id": "ef6f7aa9-b388-4771-8d6c-db27e53289e7",
       "name": "New Record Created",
       "type": "n8n-nodes-base.googleSheetsTrigger",
       "typeVersion": 1,
       "position": [
-        576,
-        304
+        2240,
+        608
       ],
       "credentials": {
         "googleSheetsTriggerOAuth2Api": {
@@ -63,13 +63,13 @@
         },
         "options": {}
       },
-      "id": "b2c3d4e5-0002-4567-8901-234567890002",
+      "id": "317dff46-3ee5-45d9-8d3c-2768ac5930d4",
       "name": "Read All Sheet Rows",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4,
       "position": [
-        784,
-        304
+        2448,
+        608
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -82,13 +82,13 @@
       "parameters": {
         "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
       },
-      "id": "c3d4e5f6-0003-4567-8901-234567890003",
+      "id": "c9d4066e-95d4-4049-995d-62b4f2984a8c",
       "name": "Deduplicate Check",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        992,
-        304
+        2656,
+        608
       ]
     },
     {
@@ -115,13 +115,13 @@
         },
         "options": {}
       },
-      "id": "d4e5f6a7-0004-4567-8901-234567890004",
+      "id": "0ba4a9cc-6265-458f-af70-e39690d9b865",
       "name": "Is New Lead?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1200,
-        304
+        2864,
+        608
       ]
     },
     {
@@ -144,7 +144,7 @@
             },
             {
               "id": "e385775a-dac1-4bf3-a680-d927de64b94c",
-              "leftValue": "={{ $('Deduplicate Check').item.json.email }}",
+              "leftValue": "={{ $json.email }}",
               "rightValue": "",
               "operator": {
                 "type": "string",
@@ -157,23 +157,23 @@
               "leftValue": "={{ $json.phoneNumber }}",
               "rightValue": "",
               "operator": {
-                "type": "number",
+                "type": "string",
                 "operation": "notEmpty",
                 "singleValue": true
               }
             }
           ],
-          "combinator": "or"
+          "combinator": "and"
         },
         "options": {}
       },
-      "id": "e5f6a7b8-0005-4567-8901-234567890005",
+      "id": "24b6691e-0e4c-46b9-80cc-757172e6b675",
       "name": "Has Email?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        1424,
-        288
+        3296,
+        592
       ]
     },
     {
@@ -200,13 +200,13 @@
         },
         "options": {}
       },
-      "id": "b8c9d0e1-0008-4567-8901-234567890008",
+      "id": "6d491885-b6f4-4a7d-a5ea-d70bc987b1cb",
       "name": "Person Exists via Email?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2080,
-        -48
+        3888,
+        304
       ]
     },
     {
@@ -215,7 +215,8 @@
           "options": {
             "caseSensitive": true,
             "leftValue": "",
-            "typeValidation": "strict"
+            "typeValidation": "strict",
+            "version": 1
           },
           "conditions": [
             {
@@ -232,13 +233,13 @@
         },
         "options": {}
       },
-      "id": "c9d0e1f2-0009-4567-8901-234567890009",
+      "id": "5b831e5b-1eb4-4275-9537-668e339fc505",
       "name": "Person Exists via Phone?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        2080,
-        560
+        3888,
+        912
       ]
     },
     {
@@ -249,21 +250,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": [{ \"first_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\", \"last_name\": \"\" }],\n      \"email_addresses\": [{ \"email_address\": \"{{ $('Deduplicate Check').item.json.email }}\" }],\n      \"phone_numbers\": [{ \"original_phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" }],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"email_addresses\": [\"{{ $('Deduplicate Check').item.json.email }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "e1f2a3b4-0011-4567-8901-234567890011",
+      "id": "c2c6e3f5-ccad-4a76-b11f-0f3b494b9e36",
       "name": "Create New Person (Email Path)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2400,
-        64
+        4192,
+        416
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -275,21 +276,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"{{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "f2a3b4c5-0012-4567-8901-234567890012",
+      "id": "9cbd3207-ee18-4125-8666-94f01a2071f6",
       "name": "Add New Person to Inbound List (Email)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2592,
-        64
+        4400,
+        416
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -301,21 +302,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Phone').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"{{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Phone').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "a3b4c5d6-0013-4567-8901-234567890013",
+      "id": "fb91bb75-ef26-4eb3-af85-2ecf7fcabbb6",
       "name": "Add Existing to Inbound List (Phone)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2624,
-        432
+        4400,
+        784
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -327,21 +328,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": [{ \"first_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\", \"last_name\": \"\" }],\n      \"email_addresses\": [{ \"email_address\": \"{{ $('Deduplicate Check').item.json.email }}\" }],\n      \"phone_numbers\": [{ \"original_phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" }],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "b4c5d6e7-0014-4567-8901-234567890014",
+      "id": "dac6abf9-0c93-4d20-b368-514ee53f7155",
       "name": "Create New Person (Phone Path)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2384,
-        672
+        4192,
+        1024
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -353,21 +354,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"{{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "c5d6e7f8-0015-4567-8901-234567890015",
+      "id": "83ed0ceb-b182-4173-9f44-45bd857fa8ea",
       "name": "Add New Person to Inbound List (Phone)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2608,
-        672
+        4400,
+        1024
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -382,18 +383,18 @@
         "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Deduplicate Check').item.json.email }}\"}}",
         "options": {}
       },
-      "id": "f6a7b8c9-0006-4567-8901-234567890006",
+      "id": "72347cd8-ef2c-4ab4-8e6e-19b7882ae5cf",
       "name": "Search Attio Person by Email",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1824,
-        -48
+        3664,
+        304
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -405,21 +406,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"phone_numbers\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"}}",
+        "jsonBody": "={\"filter\": {\"phone_numbers\": \"+{{ $('Deduplicate Check').item.json.phoneNumber }}\"}}",
         "options": {}
       },
-      "id": "a7b8c9d0-0007-4567-8901-234567890007",
+      "id": "b8733a4a-03c4-4619-ac10-228b603e5cf3",
       "name": "Search Attio Person by Phone",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        1824,
-        560
+        3680,
+        912
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -431,21 +432,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Email').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"{{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Email').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "d0e1f2a3-0010-4567-8901-234567890010",
+      "id": "f80b44b2-26dd-47ed-8645-b19048f1a2e6",
       "name": "Add Person to Inbound Leads list (Email)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2608,
-        -176
+        4400,
+        176
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -457,21 +458,21 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [{ \"original_phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" }],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"email_addresses\": [{ \"email_address\": \"{{ $('Deduplicate Check').item.json.email }}\" }],\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"email_addresses\": [\"{{ $('Deduplicate Check').item.json.email }}\"],\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "update-person-email-001",
+      "id": "8272f1c1-b147-4cf4-baa6-d5d3b34390e7",
       "name": "Update Person (Email Path)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2400,
-        -176
+        4192,
+        176
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -483,46 +484,90 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [{ \"original_phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" }],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"email_addresses\": [{ \"email_address\": \"{{ $('Deduplicate Check').item.json.email }}\" }],\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "update-person-phone-001",
+      "id": "18c9537e-6a65-4649-9bad-f7629420f183",
       "name": "Update Person (Phone Path)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        2384,
-        432
+        4192,
+        784
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
     {
-      "parameters": {},
-      "id": "merge-company-paths-001",
+      "parameters": {
+        "numberInputs": 4
+      },
+      "id": "a6ef553c-af42-44ba-bab6-bae45c25e86d",
       "name": "Merge Company Search Paths",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        3120,
-        192
+        5056,
+        544
       ]
     },
     {
       "parameters": {
-        "jsCode": "const deduplicateData = $('Deduplicate Check').item.json;\nconst website = deduplicateData.website || '';\nconst email = deduplicateData.email || '';\nconst instagramHandle = deduplicateData.instagramHandle || '';\nconst placeId = deduplicateData.placeId || '';\nconst placeName = deduplicateData.placeName || '';\n\nfunction extractDomain(url) {\n  if (!url) return '';\n  try {\n    let domain = url.replace(/^https?:\\/\\//, '').replace(/^www\\./, '');\n    domain = domain.split('/')[0].toLowerCase();\n    return domain;\n  } catch (e) { return ''; }\n}\n\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase();\n}\n\n// Website domain blacklist (social/booking platforms)\nconst websiteBlacklist = ['facebook.com', 'instagram.com', 'chope.co', 'quandoo.com', 'fb.com', 'm.facebook.com', 'chope.com.sg'];\n\n// Email domain blacklist (social/booking + B2C email providers)\nconst emailBlacklist = [\n  // Social/booking platforms\n  'facebook.com', 'instagram.com',\n  // B2C email providers\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net'\n];\n\nfunction isWebsiteBlacklisted(domain) {\n  if (!domain) return true;\n  return websiteBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst websiteDomain = extractDomain(website);\nconst emailDomain = extractEmailDomain(email);\n\nlet personRecordId = '';\nconst listEntry = $json;\nif (listEntry?.data?.parent_record_id) {\n  personRecordId = listEntry.data.parent_record_id;\n}\n\nreturn [{\n  json: {\n    websiteDomain: isWebsiteBlacklisted(websiteDomain) ? '' : websiteDomain,\n    emailDomain: isEmailBlacklisted(emailDomain) ? '' : emailDomain,\n    instagramHandle: instagramHandle.replace('@', ''),\n    placeId,\n    placeName,\n    country: deduplicateData.country || '',\n    cuisine: deduplicateData.cuisine || '',\n    personRecordId\n  }\n}];"
+        "jsCode": "const deduplicateData = $('Deduplicate Check').item.json;\nconst website = deduplicateData.website || '';\nconst email = deduplicateData.email || '';\nconst instagramHandle = deduplicateData.instagramHandle || '';\nconst placeId = deduplicateData.placeId || '';\nconst placeName = deduplicateData.placeName || '';\n\nfunction extractDomain(url) {\n  if (!url) return '';\n  try {\n    let domain = url.replace(/^https?:\\/\\//, '').replace(/^www\\./, '');\n    domain = domain.split('/')[0].toLowerCase();\n    return domain;\n  } catch (e) { return ''; }\n}\n\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase();\n}\n\n// Website domain blacklist (social/booking platforms)\nconst websiteBlacklist = ['facebook.com','m.facebook.com', 'instagram.com','tiktok.com', 'foodpanda.sg', 'quandoo.com', 'foodpanda.com','grab.com','sevenrooms.com','linktr.ee','wa.link','getz.co','bit.ly','google.com','canva.com','canva.site','inline.app','oddle.me','ichefpos.com','lin.ee','line.me','order.nidin.shop','jotform.com','None'];\n\n// Email domain blacklist (social/booking + B2C email providers)\nconst emailBlacklist = [\n  // Social/booking platforms\n  'facebook.com', 'instagram.com',\n  // B2C email providers\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net'\n];\n\nfunction isWebsiteBlacklisted(domain) {\n  if (!domain) return true;\n  return websiteBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst websiteDomain = extractDomain(website);\nconst emailDomain = extractEmailDomain(email);\n\n// Get personRecordId from the Set Person ID node (passed via Merge)\nconst personRecordId = $json.personRecordId || '';\n\nreturn [{\n  json: {\n    websiteDomain: isWebsiteBlacklisted(websiteDomain) ? '' : websiteDomain,\n    emailDomain: isEmailBlacklisted(emailDomain) ? '' : emailDomain,\n    instagramHandle: instagramHandle.replace('@', ''),\n    placeId,\n    placeName,\n    country: deduplicateData.country || '',\n    cuisine: deduplicateData.cuisine || '',\n    personRecordId\n  }\n}];"
       },
-      "id": "prepare-company-search-001",
+      "id": "25059f0c-963e-4477-90c3-a99e89eec4df",
       "name": "Prepare Company Search",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3120,
-        512
+        5264,
+        576
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-website-domain",
+              "leftValue": "={{ $json.websiteDomain }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "e9349fc1-9fe9-4bbb-9d6a-071edbba6061",
+              "leftValue": "={{ $('Prepare Company Search').item.json.websiteDomain }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "b0c5fb07-8a63-4b70-922a-189ce947a6db",
+      "name": "Has Website Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5488,
+        576
       ]
     },
     {
@@ -533,23 +578,98 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"domains\": \"{{ $json.websiteDomain }}\"}}",
+        "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Prepare Company Search').item.json.websiteDomain }}\"\n      }\n    }\n  }\n}",
         "options": {}
       },
-      "id": "search-company-website-001",
-      "name": "Search Company by Website Domain",
+      "id": "42982489-4d8f-4bdc-ba24-e5e73c35b2fe",
+      "name": "Search by Website Domain",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3712,
-        -288
+        5728,
+        416
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-domain",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a9cea50f-687b-4add-897b-98ea644783a5",
+      "name": "Found by Website Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5936,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-email-domain",
+              "leftValue": "={{ $('Prepare Company Search').item.json.emailDomain }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "d3a78501-ed39-469c-a5d0-b0676d3adc64",
+              "leftValue": "={{ $('Prepare Company Search').item.json.emailDomain }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "50bb7297-4902-45cb-bad5-e23acd3afb07",
+      "name": "Has Email Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5952,
+        704
+      ]
     },
     {
       "parameters": {
@@ -559,23 +679,107 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"domains\": \"{{ $json.emailDomain }}\"}}",
+        "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Prepare Company Search').item.json.emailDomain }}\"\n      }\n    }\n  }\n}",
         "options": {}
       },
-      "id": "search-company-email-001",
-      "name": "Search Company by Email Domain",
+      "id": "b8735376-bb4e-4544-9762-6124b128e2b6",
+      "name": "Search by Email Domain",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3712,
-        -64
+        6192,
+        496
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-email",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "54280740-805c-4314-b5a6-ef472ea58575",
+      "name": "Found by Email Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6448,
+        656
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-instagram",
+              "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "ee492c8c-96ed-4e9b-aaa4-2e2c1239a7ca",
+              "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "235e1457-b125-4875-be50-e2411c79e66d",
+              "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+              "rightValue": "None",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "19509c6d-82b6-45af-a812-1004d4ac51d7",
+      "name": "Has Instagram?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6448,
+        896
+      ]
     },
     {
       "parameters": {
@@ -585,23 +789,98 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"instagram\": \"{{ $json.instagramHandle }}\"}}",
+        "jsonBody": "={\n  \"filter\": {\n    \"instagram\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.instagramHandle }}\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "search-company-ig-001",
-      "name": "Search Company by Instagram",
+      "id": "3cefed76-092a-40dc-89d7-28fa6be0a710",
+      "name": "Search by Instagram",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3712,
-        160
+        6736,
+        736
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-ig",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "974ee494-cd0b-40de-8456-d3ce8c63f863",
+      "name": "Found by Instagram?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6960,
+        736
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-placeid",
+              "leftValue": "={{ $('Prepare Company Search').item.json.placeId }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "7744472c-7052-4cff-89ac-e7226255de5d",
+              "leftValue": "={{ $('Prepare Company Search').item.json.placeId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "id": "d0e9b012-d360-426a-99be-9591414bbe3c",
+      "name": "Has Place ID?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        6960,
+        976
+      ]
     },
     {
       "parameters": {
@@ -611,23 +890,56 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"place_id\": \"{{ $json.placeId }}\"}}",
+        "jsonBody": "={\n  \"filter\": {\n    \"place_id\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.placeId }}\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "search-company-placeid-001",
-      "name": "Search Company by PlaceId",
+      "id": "8e0b7e00-fbff-4ee5-ba4f-04895c32ab8e",
+      "name": "Search by Place ID",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3712,
-        368
+        7296,
+        816
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-placeid",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b663e2aa-77a1-40b7-8a92-c1e422a5b521",
+      "name": "Found by Place ID?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        7504,
+        816
+      ]
     },
     {
       "parameters": {
@@ -637,49 +949,48 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\"filter\": {\"name\": \"{{ $json.placeName }}\"}}",
+        "jsonBody": "={\n  \"filter\": {\n    \"name\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.placeName }}\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "search-company-name-001",
-      "name": "Search Company by PlaceName",
+      "id": "4ce16f24-31d4-44c5-bdbe-0594f68bb7d6",
+      "name": "Search by Name",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        3712,
-        592
+        7520,
+        1040
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
     {
       "parameters": {
-        "mode": "combine",
-        "options": {}
+        "jsCode": "// Extract company record ID and prepare data\nconst searchResult = $input.first().json;\nconst preparedData = $('Prepare Company Search').first().json;\n\nlet companyRecordId = '';\nlet foundByMethod = null;\nlet needsInstagramUpdate = false;\n\nif (searchResult.data && searchResult.data.length > 0) {\n  companyRecordId = searchResult.data[0].id.record_id;\n  const company = searchResult.data[0];\n\n  // Helper function to get value from Attio's array format\n  function getAttioValue(fieldArray, subfield = 'value') {\n    if (!fieldArray || fieldArray.length === 0) return null;\n    return fieldArray[0][subfield];\n  }\n\n  // Infer which method found it by checking what matched\n  // Priority order: websiteDomain, emailDomain, instagram, placeId, placeName\n\n  // Check domains (special case - array of domain objects)\n  if (preparedData.websiteDomain && company.values.domains && company.values.domains.length > 0) {\n    const companyDomains = company.values.domains.map(d => d.domain || '').join(',').toLowerCase();\n    if (companyDomains.includes(preparedData.websiteDomain.toLowerCase())) {\n      foundByMethod = 'websiteDomain';\n    }\n  }\n\n  if (!foundByMethod && preparedData.emailDomain && company.values.domains && company.values.domains.length > 0) {\n    const companyDomains = company.values.domains.map(d => d.domain || '').join(',').toLowerCase();\n    if (companyDomains.includes(preparedData.emailDomain.toLowerCase())) {\n      foundByMethod = 'emailDomain';\n    }\n  }\n\n  // Check Instagram\n  if (!foundByMethod && preparedData.instagramHandle) {\n    const companyInstagram = getAttioValue(company.values.instagram);\n    if (companyInstagram && companyInstagram.toLowerCase() === preparedData.instagramHandle.toLowerCase()) {\n      foundByMethod = 'instagram';\n    }\n  }\n\n  // Check Place ID\n  if (!foundByMethod && preparedData.placeId) {\n    const companyPlaceId = getAttioValue(company.values.place_id);\n    if (companyPlaceId && companyPlaceId === preparedData.placeId) {\n      foundByMethod = 'placeId';\n    }\n  }\n\n  // Check Name\n  if (!foundByMethod && preparedData.placeName) {\n    const companyName = getAttioValue(company.values.name);\n    if (companyName && companyName.toLowerCase() === preparedData.placeName.toLowerCase()) {\n      foundByMethod = 'placeName';\n    }\n  }\n\n  // Fallback if we couldn't determine the method\n  if (!foundByMethod) foundByMethod = 'unknown';\n\n  // Check if Instagram needs updating\n  const companyInstagram = getAttioValue(company.values.instagram);\n  needsInstagramUpdate = foundByMethod !== 'instagram' && preparedData.instagramHandle && !companyInstagram;\n}\n\nreturn [{\n  json: {\n    companyRecordId,\n    foundByMethod,\n    needsInstagramUpdate,\n    ...preparedData\n  }\n}];"
       },
-      "id": "merge-search-results-001",
+      "id": "d7ab90cf-f2f6-483e-aae2-b5ec570f229c",
+      "name": "Extract Company Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        8144,
+        464
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 5
+      },
+      "id": "5a656e01-5153-4d55-8235-3f624319edaf",
       "name": "Merge Search Results",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        4032,
-        112
-      ]
-    },
-    {
-      "parameters": {
-        "jsCode": "const preparedData = $('Prepare Company Search').item.json;\n\nlet companyFound = null;\nlet foundByMethod = null;\n\nconst searchNodes = [\n  { name: 'websiteDomain', node: 'Search Company by Website Domain' },\n  { name: 'emailDomain', node: 'Search Company by Email Domain' },\n  { name: 'instagram', node: 'Search Company by Instagram' },\n  { name: 'placeId', node: 'Search Company by PlaceId' },\n  { name: 'placeName', node: 'Search Company by PlaceName' }\n];\n\nfor (const search of searchNodes) {\n  try {\n    const result = $(search.node).item.json;\n    if (result?.data?.length > 0) {\n      companyFound = result.data[0];\n      foundByMethod = search.name;\n      break;\n    }\n  } catch (e) {}\n}\n\nreturn [{\n  json: {\n    companyFound: !!companyFound,\n    companyRecordId: companyFound?.id?.record_id || '',\n    foundByMethod,\n    needsInstagramUpdate: companyFound && foundByMethod !== 'instagram' && preparedData.instagramHandle,\n    ...preparedData\n  }\n}];"
-      },
-      "id": "consolidate-results-001",
-      "name": "Consolidate Company Results",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        4304,
-        112
+        7920,
+        416
       ]
     },
     {
@@ -689,55 +1000,64 @@
             "caseSensitive": true,
             "leftValue": "",
             "typeValidation": "strict",
-            "version": 2
+            "version": 1
           },
           "conditions": [
             {
               "id": "cond-company-found",
-              "leftValue": "={{ $json.companyFound }}",
-              "rightValue": true,
+              "leftValue": "={{ $json.companyRecordId }}",
               "operator": {
-                "type": "boolean",
-                "operation": "equals"
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "cc041a32-9380-4992-89ba-67403ea7041d",
+              "leftValue": "={{ $json.companyRecordId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
               }
             }
           ],
-          "combinator": "and"
+          "combinator": "or"
         },
         "options": {}
       },
-      "id": "company-found-if-001",
+      "id": "efdaada6-917e-474b-ab3a-b8c9f10d68b7",
       "name": "Company Found?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        4608,
-        112
+        8352,
+        464
       ]
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.personRecordId }}",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.companyRecordId }}\" }]\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $('Extract Company Data').item.json.companyRecordId }}\" }]\n    }\n  }\n}",
         "options": {}
       },
-      "id": "link-company-person-001",
+      "id": "6b3cca36-6489-49c0-87a8-e4cbe6906119",
       "name": "Link Company to Person",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4912,
-        -48
+        8624,
+        304
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -748,12 +1068,12 @@
             "caseSensitive": true,
             "leftValue": "",
             "typeValidation": "strict",
-            "version": 2
+            "version": 1
           },
           "conditions": [
             {
               "id": "cond-needs-ig",
-              "leftValue": "={{ $json.needsInstagramUpdate }}",
+              "leftValue": "={{ $('Extract Company Data').item.json.needsInstagramUpdate }}",
               "rightValue": true,
               "operator": {
                 "type": "boolean",
@@ -765,38 +1085,38 @@
         },
         "options": {}
       },
-      "id": "needs-ig-update-001",
+      "id": "712e07ea-721b-4a13-8a1c-4d8a5e6c0dd2",
       "name": "Needs Instagram Update?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        5200,
-        -48
+        8832,
+        304
       ]
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://api.attio.com/v2/objects/companies/records/{{ $json.companyRecordId }}",
+        "url": "=https://api.attio.com/v2/objects/companies/records/{{ $('Extract Company Data').item.json.companyRecordId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"instagram\": \"{{ $json.instagramHandle }}\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\"\n    }\n  }\n}",
         "options": {}
       },
-      "id": "update-company-ig-001",
+      "id": "69c160bb-c0dc-47e5-b730-8d1557f4f5cc",
       "name": "Update Company Instagram",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        5504,
-        -64
+        9104,
+        288
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
@@ -808,28 +1128,28 @@
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $json.placeName }}\",\n      \"primary_location\": \"{{ $json.country }}\",\n      \"country\": \"{{ $json.country }}\",\n      \"instagram\": \"{{ $json.instagramHandle }}\",\n      \"place_id\": \"{{ $json.placeId }}\",\n      \"cuisine\": \"{{ $json.cuisine }}\",\n      \"categories\": \"Restaurants\"\n    }\n  }\n}",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Company Data').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"country\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\",\n      \"place_id\": \"{{ $('Extract Company Data').item.json.placeId }}\",\n      \"cuisine\": \"{{ $('Extract Company Data').item.json.cuisine }}\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
         "options": {}
       },
-      "id": "create-company-001",
+      "id": "58b24735-f6bb-4189-8cb4-f79049ddee14",
       "name": "Create New Company",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        4912,
-        256
+        8624,
+        608
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
     {
       "parameters": {
         "method": "PATCH",
-        "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Consolidate Company Results').item.json.personRecordId }}",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -837,42 +1157,722 @@
         "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
         "options": {}
       },
-      "id": "link-new-company-001",
+      "id": "642f2d55-af8a-4a17-997a-ea1bd13b65cb",
       "name": "Link New Company to Person",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        5200,
-        256
+        8832,
+        608
       ],
       "credentials": {
         "httpHeaderAuth": {
           "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key"
+          "name": "Attio API Key_Header"
         }
       }
     },
     {
-      "parameters": {},
-      "id": "noop-end-001",
-      "name": "End",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
+      "parameters": {
+        "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+      },
+      "id": "279818c4-7786-40c3-8af1-1ce5b0377bea",
+      "name": "Set Person ID (Email Existing)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        5504,
-        224
+        4624,
+        176
       ]
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
+      "parameters": {
+        "jsCode": "// Email New Path: Person was just created\nconst personRecordId = $('Create New Person (Email Path)').item.json.data.id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+      },
+      "id": "0790eef7-d52a-42e7-a718-b4f7f6dbdf3f",
+      "name": "Set Person ID (Email New)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
       "position": [
-        1424,
-        480
+        4624,
+        416
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Phone Existing Path: Person was found by phone search\nconst personRecordId = $('Search Attio Person by Phone').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+      },
+      "id": "f1f3e154-a073-4528-ba11-9f39ae851bd4",
+      "name": "Set Person ID (Phone Existing)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4624,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Phone New Path: Person was just created\nconst personRecordId = $('Create New Person (Phone Path)').item.json.data.id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+      },
+      "id": "7d1a1f24-c585-418d-be0b-e35de3a7f60c",
+      "name": "Set Person ID (Phone New)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4624,
+        1024
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Add blacklist for domain"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        5216,
+        352
       ],
-      "id": "e7945c27-5c63-4c9d-8856-935b4cf8629e",
-      "name": "Skip existing lead"
+      "typeVersion": 1,
+      "id": "70d12cba-792f-4b71-9094-0b04035c0c9e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+          "mode": "list",
+          "cachedResultName": "Brand Check Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Master leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "added to Attio's Inbound list?": "Yes",
+            "phoneNumber": "={{ $('Deduplicate Check').item.json.phoneNumber }}"
+          },
+          "matchingColumns": [
+            "phoneNumber"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "placeName",
+              "displayName": "placeName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "placeId",
+              "displayName": "placeId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "phoneNumber",
+              "displayName": "phoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "cuisine",
+              "displayName": "cuisine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "signatureDishes",
+              "displayName": "signatureDishes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramHandle",
+              "displayName": "instagramHandle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userAgent",
+              "displayName": "userAgent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "overallScore",
+              "displayName": "overallScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "searchRankingScore",
+              "displayName": "searchRankingScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reputationScore",
+              "displayName": "reputationScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gmbScore",
+              "displayName": "gmbScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "socialMediaScore",
+              "displayName": "socialMediaScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "websiteSEOScore",
+              "displayName": "websiteSEOScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pdfLink",
+              "displayName": "pdfLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "added to Attio's Inbound list?",
+              "displayName": "added to Attio's Inbound list?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "week",
+              "displayName": "week",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "month",
+              "displayName": "month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hs target?",
+              "displayName": "hs target?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "existing?",
+              "displayName": "existing?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "duplicates?",
+              "displayName": "duplicates?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        9344,
+        608
+      ],
+      "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
+      "name": "Update Brand Check sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+          "mode": "list",
+          "cachedResultName": "Brand Check Leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Master leads",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "added to Attio's Inbound list?": "No - Duplicated lead",
+            "placeId": "={{ $('Deduplicate Check').item.json.placeId }}"
+          },
+          "matchingColumns": [
+            "placeId"
+          ],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "placeName",
+              "displayName": "placeName",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "placeId",
+              "displayName": "placeId",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "phoneNumber",
+              "displayName": "phoneNumber",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "cuisine",
+              "displayName": "cuisine",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "signatureDishes",
+              "displayName": "signatureDishes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "website",
+              "displayName": "website",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "instagramHandle",
+              "displayName": "instagramHandle",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "userAgent",
+              "displayName": "userAgent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "overallScore",
+              "displayName": "overallScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "searchRankingScore",
+              "displayName": "searchRankingScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reputationScore",
+              "displayName": "reputationScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "gmbScore",
+              "displayName": "gmbScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "socialMediaScore",
+              "displayName": "socialMediaScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "websiteSEOScore",
+              "displayName": "websiteSEOScore",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "role",
+              "displayName": "role",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "pdfLink",
+              "displayName": "pdfLink",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "added to Attio's Inbound list?",
+              "displayName": "added to Attio's Inbound list?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "week",
+              "displayName": "week",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "month",
+              "displayName": "month",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "hs target?",
+              "displayName": "hs target?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "existing?",
+              "displayName": "existing?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "duplicates?",
+              "displayName": "duplicates?",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        3136,
+        784
+      ],
+      "id": "765ef5d4-17ad-468d-90dc-d7107c95755f",
+      "name": "Update Brand Check sheet - duplicated lead",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
     }
   ],
   "connections": {
@@ -920,7 +1920,7 @@
         ],
         [
           {
-            "node": "Skip existing lead",
+            "node": "Update Brand Check sheet - duplicated lead",
             "type": "main",
             "index": 0
           }
@@ -992,11 +1992,44 @@
         ]
       ]
     },
+    "Add New Person to Inbound List (Email)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Email New)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Existing to Inbound List (Phone)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Phone Existing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Create New Person (Phone Path)": {
       "main": [
         [
           {
             "node": "Add New Person to Inbound List (Phone)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add New Person to Inbound List (Phone)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Phone New)",
             "type": "main",
             "index": 0
           }
@@ -1025,6 +2058,17 @@
         ]
       ]
     },
+    "Add Person to Inbound Leads list (Email)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Email Existing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
     "Update Person (Email Path)": {
       "main": [
         [
@@ -1047,164 +2091,244 @@
         ]
       ]
     },
-    "Add Person to Inbound Leads list (Email)": {
-      "0": [
-        [
-          {
-            "node": "Merge Company Search Paths",
-            "type": "0",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Add New Person to Inbound List (Email)": {
-      "0": [
-        [
-          {
-            "node": "Merge Company Search Paths",
-            "type": "1",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Add Existing to Inbound List (Phone)": {
-      "0": [
-        [
-          {
-            "node": "Merge Company Search Paths",
-            "type": "2",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Add New Person to Inbound List (Phone)": {
-      "0": [
-        [
-          {
-            "node": "Merge Company Search Paths",
-            "type": "3",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Merge Company Search Paths": {
-      "0": [
+      "main": [
         [
           {
             "node": "Prepare Company Search",
-            "type": "0",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
     "Prepare Company Search": {
-      "0": [
+      "main": [
         [
           {
-            "node": "Search Company by Website Domain",
-            "type": "0",
-            "index": 0
-          },
-          {
-            "node": "Search Company by Email Domain",
-            "type": "0",
-            "index": 0
-          },
-          {
-            "node": "Search Company by Instagram",
-            "type": "0",
-            "index": 0
-          },
-          {
-            "node": "Search Company by PlaceId",
-            "type": "0",
-            "index": 0
-          },
-          {
-            "node": "Search Company by PlaceName",
-            "type": "0",
+            "node": "Has Website Domain?",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Search Company by Website Domain": {
-      "0": [
+    "Has Website Domain?": {
+      "main": [
         [
           {
-            "node": "Merge Search Results",
-            "type": "0",
+            "node": "Search by Website Domain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has Email Domain?",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Search Company by Email Domain": {
-      "0": [
+    "Search by Website Domain": {
+      "main": [
         [
           {
-            "node": "Merge Search Results",
-            "type": "1",
+            "node": "Found by Website Domain?",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Search Company by Instagram": {
-      "0": [
+    "Found by Website Domain?": {
+      "main": [
         [
           {
             "node": "Merge Search Results",
-            "type": "2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has Email Domain?",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Search Company by PlaceId": {
-      "0": [
+    "Has Email Domain?": {
+      "main": [
         [
           {
-            "node": "Merge Search Results",
-            "type": "3",
+            "node": "Search by Email Domain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has Instagram?",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Search Company by PlaceName": {
-      "0": [
+    "Search by Email Domain": {
+      "main": [
+        [
+          {
+            "node": "Found by Email Domain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found by Email Domain?": {
+      "main": [
         [
           {
             "node": "Merge Search Results",
-            "type": "4",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Has Instagram?",
+            "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Instagram?": {
+      "main": [
+        [
+          {
+            "node": "Search by Instagram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has Place ID?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search by Instagram": {
+      "main": [
+        [
+          {
+            "node": "Found by Instagram?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found by Instagram?": {
+      "main": [
+        [
+          {
+            "node": "Merge Search Results",
+            "type": "main",
+            "index": 2
+          }
+        ],
+        [
+          {
+            "node": "Has Place ID?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Place ID?": {
+      "main": [
+        [
+          {
+            "node": "Search by Place ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search by Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search by Place ID": {
+      "main": [
+        [
+          {
+            "node": "Found by Place ID?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found by Place ID?": {
+      "main": [
+        [
+          {
+            "node": "Merge Search Results",
+            "type": "main",
+            "index": 3
+          }
+        ],
+        [
+          {
+            "node": "Search by Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search by Name": {
+      "main": [
+        [
+          {
+            "node": "Merge Search Results",
+            "type": "main",
+            "index": 4
           }
         ]
       ]
     },
     "Merge Search Results": {
-      "0": [
+      "main": [
         [
           {
-            "node": "Consolidate Company Results",
-            "type": "0",
+            "node": "Extract Company Data",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Consolidate Company Results": {
-      "0": [
+    "Extract Company Data": {
+      "main": [
         [
           {
             "node": "Company Found?",
-            "type": "0",
+            "type": "main",
             "index": 0
           }
         ]
@@ -1229,11 +2353,11 @@
       ]
     },
     "Link Company to Person": {
-      "0": [
+      "main": [
         [
           {
             "node": "Needs Instagram Update?",
-            "type": "0",
+            "type": "main",
             "index": 0
           }
         ]
@@ -1250,7 +2374,7 @@
         ],
         [
           {
-            "node": "End",
+            "node": "Update Brand Check sheet",
             "type": "main",
             "index": 0
           }
@@ -1258,34 +2382,78 @@
       ]
     },
     "Update Company Instagram": {
-      "0": [
+      "main": [
         [
           {
-            "node": "End",
-            "type": "0",
+            "node": "Update Brand Check sheet",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
     "Create New Company": {
-      "0": [
+      "main": [
         [
           {
             "node": "Link New Company to Person",
-            "type": "0",
+            "type": "main",
             "index": 0
           }
         ]
       ]
     },
     "Link New Company to Person": {
-      "0": [
+      "main": [
         [
           {
-            "node": "End",
-            "type": "0",
+            "node": "Update Brand Check sheet",
+            "type": "main",
             "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Email Existing)": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Search Paths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Email New)": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Search Paths",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Phone Existing)": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Search Paths",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Phone New)": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Search Paths",
+            "type": "main",
+            "index": 3
           }
         ]
       ]
@@ -1294,9 +2462,18 @@
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
-    "availableInMCP": false
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2SWvtvGbkteCtlr0",
+    "timeSavedPerExecution": 5
   },
-  "staticData": null,
+  "staticData": {
+    "node:New Record Created": {
+      "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+      "sheetId": 0,
+      "lastIndexChecked": 742
+    }
+  },
   "meta": {
     "templateCredsSetupCompleted": true
   },
@@ -1304,28 +2481,29 @@
     "New Record Created": [
       {
         "json": {
-          "timestamp": "2026-03-09 4:25:17",
-          "placeName": "Kam Par Claypot Bak Kut Teh & Claypot Chicken Rice - 金宝砂煲肉骨茶。砂煲鸡饭",
-          "placeId": "ChIJ80TtsP4R2jERPriDSS8LpeY",
-          "phoneNumber": 6598372486,
-          "cuisine": "Bak Kut Teh, Claypot Rice",
-          "signatureDishes": "Claypot Bak Kut Teh, Claypot Chicken Rice",
-          "website": "https://www.facebook.com/KamParClaypotFood/",
-          "instagramHandle": "@kamparclaypotfood",
-          "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Safari/537.36",
-          "overallScore": "33/100",
-          "searchRankingScore": "0/30",
+          "timestamp": "2026-03-05 10:04:00",
+          "placeName": "三句－海味料理、台式居酒｜信義區熱炒・新鮮海產・深夜食堂・臺式手路菜・聚餐・包廂・現流海鮮・信義區宵夜小酌・信義區聚餐首選・鍋氣熱炒・生啤酒・烤物・烤串・炸物",
+          "placeId": "ChIJD4SOxGyrQjQRwfIdIHMDIrk",
+          "phoneNumber": 886906707081,
+          "cuisine": "台式料理, 海鮮料理",
+          "signatureDishes": "黑鮪魚��膛天肉, 蝦油麵線",
+          "website": "https://三句.tw/",
+          "instagramHandle": "@3xun.seafood",
+          "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36",
+          "overallScore": "48/100",
+          "searchRankingScore": "14/30",
           "reputationScore": "9/30",
           "gmbScore": "20/20",
-          "socialMediaScore": "4/10",
+          "socialMediaScore": "5/10",
           "websiteSEOScore": "0/10",
-          "role": "Restaurant Owner",
-          "country": "Singapore",
-          "email": "jayjayho92@gmail.com",
-          "pdfLink": "https://prod-scorecard.s3.ap-southeast-1.amazonaws.com/scorecards/Kam_Par_Claypot_Bak_Kut_Teh_Claypot_Chicken_Rice_-_ff5d955260eedf81dff00e07147d2b1a_Oddle_Scorecard.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAY5KXPP337VY4MIAF%2F20260309%2Fap-southeast-1%2Fs3%2Faws4_request&X-Amz-Date=20260309T042532Z&X-Amz-Expires=604800&X-Amz-Signature=b8e0c8deff9b1cbbf7825e0788815ff87558f28230071cf24d18ce069e0630d0&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
-          "date": "9-Mar",
-          "week": "9-Mar",
-          "month": "2026 Mar",
+          "role": "行銷經理",
+          "country": "Taiwan",
+          "email": "3XUN@lot.tw",
+          "pdfLink": "https://prod-scorecard.s3.ap-southeast-1.amazonaws.com/scorecards/_a5423244857d492280ce1eedcb6785ff_Oddle_Scorecard.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAY5KXPP337VY4MIAF%2F20260305%2Fap-southeast-1%2Fs3%2Faws4_request&X-Amz-Date=20260305T100716Z&X-Amz-Expires=604800&X-Amz-Signature=c14582bcd3d97b1bd6a2e648ee626fc85de713b0cb9cc532851417c5534dbdbe&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+          "added to Attio's Inbound list?": "",
+          "date": "",
+          "week": "",
+          "month": "",
           "hs target?": "",
           "existing?": "",
           "duplicates?": ""
@@ -1333,9 +2511,9 @@
       }
     ]
   },
-  "versionId": "a86cf477-a373-4836-b1e8-7259e0ecb4a5",
-  "activeVersionId": null,
-  "triggerCount": 0,
+  "versionId": "635441db-6729-4889-982b-f8dddd755670",
+  "activeVersionId": "635441db-6729-4889-982b-f8dddd755670",
+  "triggerCount": 1,
   "shared": [
     {
       "updatedAt": "2026-03-11T10:28:30.004Z",
@@ -1345,6 +2523,2469 @@
       "projectId": "tAHBdayTR1Nb6OKK"
     }
   ],
-  "activeVersion": null,
+  "activeVersion": {
+    "updatedAt": "2026-03-13T09:06:50.249Z",
+    "createdAt": "2026-03-13T09:05:12.855Z",
+    "versionId": "635441db-6729-4889-982b-f8dddd755670",
+    "workflowId": "KLWZBUSnirIYZ5Cw",
+    "nodes": [
+      {
+        "parameters": {
+          "pollTimes": {
+            "item": [
+              {
+                "mode": "everyMinute"
+              }
+            ]
+          },
+          "documentId": {
+            "__rl": true,
+            "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+            "mode": "list",
+            "cachedResultName": "Brand Check Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Master leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit#gid=0"
+          },
+          "event": "rowAdded",
+          "options": {}
+        },
+        "id": "ef6f7aa9-b388-4771-8d6c-db27e53289e7",
+        "name": "New Record Created",
+        "type": "n8n-nodes-base.googleSheetsTrigger",
+        "typeVersion": 1,
+        "position": [
+          2240,
+          608
+        ],
+        "credentials": {
+          "googleSheetsTriggerOAuth2Api": {
+            "id": "pDR6QZ9oC3DsT1h3",
+            "name": "Google Sheets Account 2"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "documentId": {
+            "__rl": true,
+            "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+            "mode": "list",
+            "cachedResultName": "Brand Check Leads"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Master leads"
+          },
+          "options": {}
+        },
+        "id": "317dff46-3ee5-45d9-8d3c-2768ac5930d4",
+        "name": "Read All Sheet Rows",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4,
+        "position": [
+          2448,
+          608
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
+        },
+        "id": "c9d4066e-95d4-4049-995d-62b4f2984a8c",
+        "name": "Deduplicate Check",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2656,
+          608
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-is-new",
+                "leftValue": "={{ $json.isDuplicate }}",
+                "rightValue": false,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "0ba4a9cc-6265-458f-af70-e39690d9b865",
+        "name": "Is New Lead?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2864,
+          608
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-has-email",
+                "leftValue": "={{ $json.email }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "e385775a-dac1-4bf3-a680-d927de64b94c",
+                "leftValue": "={{ $json.email }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "45e72072-e121-4e6d-8860-bf70bd0cfa6c",
+                "leftValue": "={{ $json.phoneNumber }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "24b6691e-0e4c-46b9-80cc-757172e6b675",
+        "name": "Has Email?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3296,
+          592
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-email-found",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "6d491885-b6f4-4a7d-a5ea-d70bc987b1cb",
+        "name": "Person Exists via Email?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3888,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-phone-found",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "5b831e5b-1eb4-4275-9537-668e339fc505",
+        "name": "Person Exists via Phone?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3888,
+          912
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"email_addresses\": [\"{{ $('Deduplicate Check').item.json.email }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "c2c6e3f5-ccad-4a76-b11f-0f3b494b9e36",
+        "name": "Create New Person (Email Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4192,
+          416
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "9cbd3207-ee18-4125-8666-94f01a2071f6",
+        "name": "Add New Person to Inbound List (Email)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4400,
+          416
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Phone').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "fb91bb75-ef26-4eb3-af85-2ecf7fcabbb6",
+        "name": "Add Existing to Inbound List (Phone)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4400,
+          784
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "dac6abf9-0c93-4d20-b368-514ee53f7155",
+        "name": "Create New Person (Phone Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4192,
+          1024
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "83ed0ceb-b182-4173-9f44-45bd857fa8ea",
+        "name": "Add New Person to Inbound List (Phone)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4400,
+          1024
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Deduplicate Check').item.json.email }}\"}}",
+          "options": {}
+        },
+        "id": "72347cd8-ef2c-4ab4-8e6e-19b7882ae5cf",
+        "name": "Search Attio Person by Email",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3664,
+          304
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\"filter\": {\"phone_numbers\": \"+{{ $('Deduplicate Check').item.json.phoneNumber }}\"}}",
+          "options": {}
+        },
+        "id": "b8733a4a-03c4-4619-ac10-228b603e5cf3",
+        "name": "Search Attio Person by Phone",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3680,
+          912
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Email').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"cuisine_type\": \"{{ $('Deduplicate Check').item.json.cuisine }}\",\n      \"country\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"brand_check_score\": \"{{ $('Deduplicate Check').item.json.overallScore }}\",\n      \"comments\": \"Brand check report: {{ $('Deduplicate Check').item.json.pdfLink }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "f80b44b2-26dd-47ed-8645-b19048f1a2e6",
+        "name": "Add Person to Inbound Leads list (Email)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4400,
+          176
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"email_addresses\": [\"{{ $('Deduplicate Check').item.json.email }}\"],\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "8272f1c1-b147-4cf4-baa6-d5d3b34390e7",
+        "name": "Update Person (Email Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4192,
+          176
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Deduplicate Check').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Deduplicate Check').item.json.role }}\",\n      \"person_restaurant_name\": \"{{ $('Deduplicate Check').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Deduplicate Check').item.json.country }}\",\n      \"submission_date\": \"{{ $('Deduplicate Check').item.json.timestamp }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Lead Magnet (Brand Check)\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "18c9537e-6a65-4649-9bad-f7629420f183",
+        "name": "Update Person (Phone Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4192,
+          784
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "numberInputs": 4
+        },
+        "id": "a6ef553c-af42-44ba-bab6-bae45c25e86d",
+        "name": "Merge Company Search Paths",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          5056,
+          544
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const deduplicateData = $('Deduplicate Check').item.json;\nconst website = deduplicateData.website || '';\nconst email = deduplicateData.email || '';\nconst instagramHandle = deduplicateData.instagramHandle || '';\nconst placeId = deduplicateData.placeId || '';\nconst placeName = deduplicateData.placeName || '';\n\nfunction extractDomain(url) {\n  if (!url) return '';\n  try {\n    let domain = url.replace(/^https?:\\/\\//, '').replace(/^www\\./, '');\n    domain = domain.split('/')[0].toLowerCase();\n    return domain;\n  } catch (e) { return ''; }\n}\n\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase();\n}\n\n// Website domain blacklist (social/booking platforms)\nconst websiteBlacklist = ['facebook.com','m.facebook.com', 'instagram.com','tiktok.com', 'foodpanda.sg', 'quandoo.com', 'foodpanda.com','grab.com','sevenrooms.com','linktr.ee','wa.link','getz.co','bit.ly','google.com','canva.com','canva.site','inline.app','oddle.me','ichefpos.com','lin.ee','line.me','order.nidin.shop','jotform.com','None'];\n\n// Email domain blacklist (social/booking + B2C email providers)\nconst emailBlacklist = [\n  // Social/booking platforms\n  'facebook.com', 'instagram.com',\n  // B2C email providers\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net'\n];\n\nfunction isWebsiteBlacklisted(domain) {\n  if (!domain) return true;\n  return websiteBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst websiteDomain = extractDomain(website);\nconst emailDomain = extractEmailDomain(email);\n\n// Get personRecordId from the Set Person ID node (passed via Merge)\nconst personRecordId = $json.personRecordId || '';\n\nreturn [{\n  json: {\n    websiteDomain: isWebsiteBlacklisted(websiteDomain) ? '' : websiteDomain,\n    emailDomain: isEmailBlacklisted(emailDomain) ? '' : emailDomain,\n    instagramHandle: instagramHandle.replace('@', ''),\n    placeId,\n    placeName,\n    country: deduplicateData.country || '',\n    cuisine: deduplicateData.cuisine || '',\n    personRecordId\n  }\n}];"
+        },
+        "id": "25059f0c-963e-4477-90c3-a99e89eec4df",
+        "name": "Prepare Company Search",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          5264,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-website-domain",
+                "leftValue": "={{ $json.websiteDomain }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "e9349fc1-9fe9-4bbb-9d6a-071edbba6061",
+                "leftValue": "={{ $('Prepare Company Search').item.json.websiteDomain }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "id": "b0c5fb07-8a63-4b70-922a-189ce947a6db",
+        "name": "Has Website Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          5488,
+          576
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Prepare Company Search').item.json.websiteDomain }}\"\n      }\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "42982489-4d8f-4bdc-ba24-e5e73c35b2fe",
+        "name": "Search by Website Domain",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5728,
+          416
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-domain",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "a9cea50f-687b-4add-897b-98ea644783a5",
+        "name": "Found by Website Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          5936,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-email-domain",
+                "leftValue": "={{ $('Prepare Company Search').item.json.emailDomain }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "d3a78501-ed39-469c-a5d0-b0676d3adc64",
+                "leftValue": "={{ $('Prepare Company Search').item.json.emailDomain }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "id": "50bb7297-4902-45cb-bad5-e23acd3afb07",
+        "name": "Has Email Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          5952,
+          704
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Prepare Company Search').item.json.emailDomain }}\"\n      }\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "b8735376-bb4e-4544-9762-6124b128e2b6",
+        "name": "Search by Email Domain",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          6192,
+          496
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-email",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "54280740-805c-4314-b5a6-ef472ea58575",
+        "name": "Found by Email Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          6448,
+          656
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-instagram",
+                "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "ee492c8c-96ed-4e9b-aaa4-2e2c1239a7ca",
+                "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              },
+              {
+                "id": "235e1457-b125-4875-be50-e2411c79e66d",
+                "leftValue": "={{ $('Prepare Company Search').item.json.instagramHandle }}",
+                "rightValue": "None",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "19509c6d-82b6-45af-a812-1004d4ac51d7",
+        "name": "Has Instagram?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          6448,
+          896
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"instagram\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.instagramHandle }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "3cefed76-092a-40dc-89d7-28fa6be0a710",
+        "name": "Search by Instagram",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          6736,
+          736
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-ig",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "974ee494-cd0b-40de-8456-d3ce8c63f863",
+        "name": "Found by Instagram?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          6960,
+          736
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-placeid",
+                "leftValue": "={{ $('Prepare Company Search').item.json.placeId }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "7744472c-7052-4cff-89ac-e7226255de5d",
+                "leftValue": "={{ $('Prepare Company Search').item.json.placeId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "id": "d0e9b012-d360-426a-99be-9591414bbe3c",
+        "name": "Has Place ID?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          6960,
+          976
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"place_id\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.placeId }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "8e0b7e00-fbff-4ee5-ba4f-04895c32ab8e",
+        "name": "Search by Place ID",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          7296,
+          816
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-placeid",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "b663e2aa-77a1-40b7-8a92-c1e422a5b521",
+        "name": "Found by Place ID?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          7504,
+          816
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"name\": {\n      \"$eq\": \"{{ $('Prepare Company Search').item.json.placeName }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "4ce16f24-31d4-44c5-bdbe-0594f68bb7d6",
+        "name": "Search by Name",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          7520,
+          1040
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Extract company record ID and prepare data\nconst searchResult = $input.first().json;\nconst preparedData = $('Prepare Company Search').first().json;\n\nlet companyRecordId = '';\nlet foundByMethod = null;\nlet needsInstagramUpdate = false;\n\nif (searchResult.data && searchResult.data.length > 0) {\n  companyRecordId = searchResult.data[0].id.record_id;\n  const company = searchResult.data[0];\n\n  // Helper function to get value from Attio's array format\n  function getAttioValue(fieldArray, subfield = 'value') {\n    if (!fieldArray || fieldArray.length === 0) return null;\n    return fieldArray[0][subfield];\n  }\n\n  // Infer which method found it by checking what matched\n  // Priority order: websiteDomain, emailDomain, instagram, placeId, placeName\n\n  // Check domains (special case - array of domain objects)\n  if (preparedData.websiteDomain && company.values.domains && company.values.domains.length > 0) {\n    const companyDomains = company.values.domains.map(d => d.domain || '').join(',').toLowerCase();\n    if (companyDomains.includes(preparedData.websiteDomain.toLowerCase())) {\n      foundByMethod = 'websiteDomain';\n    }\n  }\n\n  if (!foundByMethod && preparedData.emailDomain && company.values.domains && company.values.domains.length > 0) {\n    const companyDomains = company.values.domains.map(d => d.domain || '').join(',').toLowerCase();\n    if (companyDomains.includes(preparedData.emailDomain.toLowerCase())) {\n      foundByMethod = 'emailDomain';\n    }\n  }\n\n  // Check Instagram\n  if (!foundByMethod && preparedData.instagramHandle) {\n    const companyInstagram = getAttioValue(company.values.instagram);\n    if (companyInstagram && companyInstagram.toLowerCase() === preparedData.instagramHandle.toLowerCase()) {\n      foundByMethod = 'instagram';\n    }\n  }\n\n  // Check Place ID\n  if (!foundByMethod && preparedData.placeId) {\n    const companyPlaceId = getAttioValue(company.values.place_id);\n    if (companyPlaceId && companyPlaceId === preparedData.placeId) {\n      foundByMethod = 'placeId';\n    }\n  }\n\n  // Check Name\n  if (!foundByMethod && preparedData.placeName) {\n    const companyName = getAttioValue(company.values.name);\n    if (companyName && companyName.toLowerCase() === preparedData.placeName.toLowerCase()) {\n      foundByMethod = 'placeName';\n    }\n  }\n\n  // Fallback if we couldn't determine the method\n  if (!foundByMethod) foundByMethod = 'unknown';\n\n  // Check if Instagram needs updating\n  const companyInstagram = getAttioValue(company.values.instagram);\n  needsInstagramUpdate = foundByMethod !== 'instagram' && preparedData.instagramHandle && !companyInstagram;\n}\n\nreturn [{\n  json: {\n    companyRecordId,\n    foundByMethod,\n    needsInstagramUpdate,\n    ...preparedData\n  }\n}];"
+        },
+        "id": "d7ab90cf-f2f6-483e-aae2-b5ec570f229c",
+        "name": "Extract Company Data",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          8144,
+          464
+        ]
+      },
+      {
+        "parameters": {
+          "numberInputs": 5
+        },
+        "id": "5a656e01-5153-4d55-8235-3f624319edaf",
+        "name": "Merge Search Results",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          7920,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-company-found",
+                "leftValue": "={{ $json.companyRecordId }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "cc041a32-9380-4992-89ba-67403ea7041d",
+                "leftValue": "={{ $json.companyRecordId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "id": "efdaada6-917e-474b-ab3a-b8c9f10d68b7",
+        "name": "Company Found?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          8352,
+          464
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $('Extract Company Data').item.json.companyRecordId }}\" }]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "6b3cca36-6489-49c0-87a8-e4cbe6906119",
+        "name": "Link Company to Person",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          8624,
+          304
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-needs-ig",
+                "leftValue": "={{ $('Extract Company Data').item.json.needsInstagramUpdate }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "boolean",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "712e07ea-721b-4a13-8a1c-4d8a5e6c0dd2",
+        "name": "Needs Instagram Update?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          8832,
+          304
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/companies/records/{{ $('Extract Company Data').item.json.companyRecordId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "69c160bb-c0dc-47e5-b730-8d1557f4f5cc",
+        "name": "Update Company Instagram",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          9104,
+          288
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Company Data').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"country\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\",\n      \"place_id\": \"{{ $('Extract Company Data').item.json.placeId }}\",\n      \"cuisine\": \"{{ $('Extract Company Data').item.json.cuisine }}\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "58b24735-f6bb-4189-8cb4-f79049ddee14",
+        "name": "Create New Company",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          8624,
+          608
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "642f2d55-af8a-4a17-997a-ea1bd13b65cb",
+        "name": "Link New Company to Person",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          8832,
+          608
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+        },
+        "id": "279818c4-7786-40c3-8af1-1ce5b0377bea",
+        "name": "Set Person ID (Email Existing)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4624,
+          176
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Email New Path: Person was just created\nconst personRecordId = $('Create New Person (Email Path)').item.json.data.id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+        },
+        "id": "0790eef7-d52a-42e7-a718-b4f7f6dbdf3f",
+        "name": "Set Person ID (Email New)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4624,
+          416
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Phone Existing Path: Person was found by phone search\nconst personRecordId = $('Search Attio Person by Phone').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+        },
+        "id": "f1f3e154-a073-4528-ba11-9f39ae851bd4",
+        "name": "Set Person ID (Phone Existing)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4624,
+          784
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Phone New Path: Person was just created\nconst personRecordId = $('Create New Person (Phone Path)').item.json.data.id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
+        },
+        "id": "7d1a1f24-c585-418d-be0b-e35de3a7f60c",
+        "name": "Set Person ID (Phone New)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4624,
+          1024
+        ]
+      },
+      {
+        "parameters": {
+          "content": "## Add blacklist for domain"
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          5216,
+          352
+        ],
+        "typeVersion": 1,
+        "id": "70d12cba-792f-4b71-9094-0b04035c0c9e",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+            "mode": "list",
+            "cachedResultName": "Brand Check Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Master leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "added to Attio's Inbound list?": "Yes",
+              "phoneNumber": "={{ $('Deduplicate Check').item.json.phoneNumber }}"
+            },
+            "matchingColumns": [
+              "phoneNumber"
+            ],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "placeName",
+                "displayName": "placeName",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "placeId",
+                "displayName": "placeId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "phoneNumber",
+                "displayName": "phoneNumber",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "cuisine",
+                "displayName": "cuisine",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "signatureDishes",
+                "displayName": "signatureDishes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "website",
+                "displayName": "website",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "instagramHandle",
+                "displayName": "instagramHandle",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "userAgent",
+                "displayName": "userAgent",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "overallScore",
+                "displayName": "overallScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "searchRankingScore",
+                "displayName": "searchRankingScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "reputationScore",
+                "displayName": "reputationScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "gmbScore",
+                "displayName": "gmbScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "socialMediaScore",
+                "displayName": "socialMediaScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "websiteSEOScore",
+                "displayName": "websiteSEOScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "role",
+                "displayName": "role",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "pdfLink",
+                "displayName": "pdfLink",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "added to Attio's Inbound list?",
+                "displayName": "added to Attio's Inbound list?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "date",
+                "displayName": "date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "week",
+                "displayName": "week",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "month",
+                "displayName": "month",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "hs target?",
+                "displayName": "hs target?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "existing?",
+                "displayName": "existing?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "duplicates?",
+                "displayName": "duplicates?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          9344,
+          608
+        ],
+        "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
+        "name": "Update Brand Check sheet",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "documentId": {
+            "__rl": true,
+            "value": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
+            "mode": "list",
+            "cachedResultName": "Brand Check Leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "Master leads",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "added to Attio's Inbound list?": "No - Duplicated lead",
+              "placeId": "={{ $('Deduplicate Check').item.json.placeId }}"
+            },
+            "matchingColumns": [
+              "placeId"
+            ],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "placeName",
+                "displayName": "placeName",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "placeId",
+                "displayName": "placeId",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "phoneNumber",
+                "displayName": "phoneNumber",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "cuisine",
+                "displayName": "cuisine",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "signatureDishes",
+                "displayName": "signatureDishes",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "website",
+                "displayName": "website",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "instagramHandle",
+                "displayName": "instagramHandle",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "userAgent",
+                "displayName": "userAgent",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "overallScore",
+                "displayName": "overallScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "searchRankingScore",
+                "displayName": "searchRankingScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "reputationScore",
+                "displayName": "reputationScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "gmbScore",
+                "displayName": "gmbScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "socialMediaScore",
+                "displayName": "socialMediaScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "websiteSEOScore",
+                "displayName": "websiteSEOScore",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "role",
+                "displayName": "role",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "email",
+                "displayName": "email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "pdfLink",
+                "displayName": "pdfLink",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "added to Attio's Inbound list?",
+                "displayName": "added to Attio's Inbound list?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "date",
+                "displayName": "date",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "week",
+                "displayName": "week",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "month",
+                "displayName": "month",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "hs target?",
+                "displayName": "hs target?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "existing?",
+                "displayName": "existing?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "duplicates?",
+                "displayName": "duplicates?",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": true
+              },
+              {
+                "id": "row_number",
+                "displayName": "row_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "number",
+                "canBeUsedToMatch": true,
+                "readOnly": true,
+                "removed": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.7,
+        "position": [
+          3136,
+          784
+        ],
+        "id": "765ef5d4-17ad-468d-90dc-d7107c95755f",
+        "name": "Update Brand Check sheet - duplicated lead",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "New Record Created": {
+        "main": [
+          [
+            {
+              "node": "Read All Sheet Rows",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Read All Sheet Rows": {
+        "main": [
+          [
+            {
+              "node": "Deduplicate Check",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Deduplicate Check": {
+        "main": [
+          [
+            {
+              "node": "Is New Lead?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is New Lead?": {
+        "main": [
+          [
+            {
+              "node": "Has Email?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Brand Check sheet - duplicated lead",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Email?": {
+        "main": [
+          [
+            {
+              "node": "Search Attio Person by Email",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Search Attio Person by Phone",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Person Exists via Email?": {
+        "main": [
+          [
+            {
+              "node": "Update Person (Email Path)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create New Person (Email Path)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Person Exists via Phone?": {
+        "main": [
+          [
+            {
+              "node": "Update Person (Phone Path)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create New Person (Phone Path)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create New Person (Email Path)": {
+        "main": [
+          [
+            {
+              "node": "Add New Person to Inbound List (Email)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add New Person to Inbound List (Email)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Email New)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Existing to Inbound List (Phone)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Phone Existing)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create New Person (Phone Path)": {
+        "main": [
+          [
+            {
+              "node": "Add New Person to Inbound List (Phone)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add New Person to Inbound List (Phone)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Phone New)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Attio Person by Email": {
+        "main": [
+          [
+            {
+              "node": "Person Exists via Email?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Attio Person by Phone": {
+        "main": [
+          [
+            {
+              "node": "Person Exists via Phone?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Person to Inbound Leads list (Email)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Email Existing)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Person (Email Path)": {
+        "main": [
+          [
+            {
+              "node": "Add Person to Inbound Leads list (Email)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Person (Phone Path)": {
+        "main": [
+          [
+            {
+              "node": "Add Existing to Inbound List (Phone)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge Company Search Paths": {
+        "main": [
+          [
+            {
+              "node": "Prepare Company Search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Prepare Company Search": {
+        "main": [
+          [
+            {
+              "node": "Has Website Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Website Domain?": {
+        "main": [
+          [
+            {
+              "node": "Search by Website Domain",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Email Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search by Website Domain": {
+        "main": [
+          [
+            {
+              "node": "Found by Website Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Website Domain?": {
+        "main": [
+          [
+            {
+              "node": "Merge Search Results",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Email Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Email Domain?": {
+        "main": [
+          [
+            {
+              "node": "Search by Email Domain",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Instagram?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search by Email Domain": {
+        "main": [
+          [
+            {
+              "node": "Found by Email Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Email Domain?": {
+        "main": [
+          [
+            {
+              "node": "Merge Search Results",
+              "type": "main",
+              "index": 1
+            }
+          ],
+          [
+            {
+              "node": "Has Instagram?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Instagram?": {
+        "main": [
+          [
+            {
+              "node": "Search by Instagram",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Place ID?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search by Instagram": {
+        "main": [
+          [
+            {
+              "node": "Found by Instagram?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Instagram?": {
+        "main": [
+          [
+            {
+              "node": "Merge Search Results",
+              "type": "main",
+              "index": 2
+            }
+          ],
+          [
+            {
+              "node": "Has Place ID?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Place ID?": {
+        "main": [
+          [
+            {
+              "node": "Search by Place ID",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Search by Name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search by Place ID": {
+        "main": [
+          [
+            {
+              "node": "Found by Place ID?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Place ID?": {
+        "main": [
+          [
+            {
+              "node": "Merge Search Results",
+              "type": "main",
+              "index": 3
+            }
+          ],
+          [
+            {
+              "node": "Search by Name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search by Name": {
+        "main": [
+          [
+            {
+              "node": "Merge Search Results",
+              "type": "main",
+              "index": 4
+            }
+          ]
+        ]
+      },
+      "Merge Search Results": {
+        "main": [
+          [
+            {
+              "node": "Extract Company Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Company Data": {
+        "main": [
+          [
+            {
+              "node": "Company Found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Company Found?": {
+        "main": [
+          [
+            {
+              "node": "Link Company to Person",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create New Company",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Link Company to Person": {
+        "main": [
+          [
+            {
+              "node": "Needs Instagram Update?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Needs Instagram Update?": {
+        "main": [
+          [
+            {
+              "node": "Update Company Instagram",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Brand Check sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Company Instagram": {
+        "main": [
+          [
+            {
+              "node": "Update Brand Check sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create New Company": {
+        "main": [
+          [
+            {
+              "node": "Link New Company to Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Link New Company to Person": {
+        "main": [
+          [
+            {
+              "node": "Update Brand Check sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Email Existing)": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Search Paths",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Email New)": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Search Paths",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Phone Existing)": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Search Paths",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Phone New)": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Search Paths",
+              "type": "main",
+              "index": 3
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version 635441db",
+    "description": "",
+    "autosaved": false
+  },
   "tags": []
 }
