@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-16T06:59:57.959Z",
+  "updatedAt": "2026-03-17T09:28:16.290Z",
   "createdAt": "2026-03-13T08:33:20.486Z",
   "id": "rrKuUd0A09e7Z8Bd",
   "name": "[WhatsApp] SDR Agent - MY [current]",
@@ -673,7 +673,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.5-flash-lite",
+        "modelName": "models/gemini-3.1-flash-lite-preview",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -1902,7 +1902,7 @@
     },
     {
       "parameters": {
-        "modelName": "models/gemini-2.0-flash-lite",
+        "modelName": "models/gemini-3.1-flash-lite-preview",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -2571,8 +2571,8 @@
       }
     ]
   },
-  "versionId": "7b4a9540-490b-4d2a-9d89-be46902f7a5a",
-  "activeVersionId": "7b4a9540-490b-4d2a-9d89-be46902f7a5a",
+  "versionId": "bcf15858-257f-49b1-afb2-b45479ccec84",
+  "activeVersionId": "bcf15858-257f-49b1-afb2-b45479ccec84",
   "triggerCount": 1,
   "shared": [
     {
@@ -2584,9 +2584,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-16T07:00:00.229Z",
-    "createdAt": "2026-03-16T06:59:57.962Z",
-    "versionId": "7b4a9540-490b-4d2a-9d89-be46902f7a5a",
+    "updatedAt": "2026-03-17T09:28:18.851Z",
+    "createdAt": "2026-03-17T09:28:16.296Z",
+    "versionId": "bcf15858-257f-49b1-afb2-b45479ccec84",
     "workflowId": "rrKuUd0A09e7Z8Bd",
     "nodes": [
       {
@@ -3256,7 +3256,7 @@
       },
       {
         "parameters": {
-          "modelName": "models/gemini-2.5-flash-lite",
+          "modelName": "models/gemini-3.1-flash-lite-preview",
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -4485,7 +4485,7 @@
       },
       {
         "parameters": {
-          "modelName": "models/gemini-2.0-flash-lite",
+          "modelName": "models/gemini-3.1-flash-lite-preview",
           "options": {}
         },
         "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
@@ -5048,7 +5048,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 7b4a9540",
+    "name": "Version bcf15858",
     "description": "",
     "autosaved": false
   },
