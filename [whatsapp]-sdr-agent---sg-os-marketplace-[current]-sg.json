@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-18T09:05:04.176Z",
+  "updatedAt": "2026-03-19T09:47:13.248Z",
   "createdAt": "2026-03-10T02:30:44.332Z",
   "id": "WamnPrGluo92mwT7",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [current]",
@@ -703,26 +703,6 @@
       ],
       "name": "Check if Bot Message",
       "id": "b710a5dd-12df-4eef-8cd1-695c0e75aad7"
-    },
-    {
-      "parameters": {
-        "modelName": "models/gemini-3-flash-preview",
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        1056,
-        -16
-      ],
-      "name": "Google Gemini LLM",
-      "id": "99d15933-ac3d-4a79-993b-aff3fa8a3c3f",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "RYsSfOkTTr5PB58p",
-          "name": "Oddle's Google Gemini(PaLM) API account"
-        }
-      }
     },
     {
       "parameters": {
@@ -1880,7 +1860,33 @@
       "credentials": {
         "openAiApi": {
           "id": "U11ZFugtdDzwhsyC",
-          "name": "OpenAi Account"
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "378b7cc5-c3e3-4df2-b073-87a85e3e786c",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "U11ZFugtdDzwhsyC",
+          "name": "OpenAI Account"
         }
       }
     }
@@ -2104,17 +2110,6 @@
           {
             "node": "Switch",
             "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Google Gemini LLM": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "Check if Bot Message",
-            "type": "ai_languageModel",
             "index": 0
           }
         ]
@@ -2415,6 +2410,17 @@
           }
         ]
       ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Check if Bot Message",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2524,8 +2530,8 @@
       }
     ]
   },
-  "versionId": "9fcf111c-c0ce-4b92-b366-2d22ca3556d2",
-  "activeVersionId": "9fcf111c-c0ce-4b92-b366-2d22ca3556d2",
+  "versionId": "519b84ad-376a-4824-9d33-328577c92a36",
+  "activeVersionId": "519b84ad-376a-4824-9d33-328577c92a36",
   "triggerCount": 1,
   "shared": [
     {
@@ -2537,9 +2543,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-18T09:05:07.656Z",
-    "createdAt": "2026-03-18T09:05:04.179Z",
-    "versionId": "9fcf111c-c0ce-4b92-b366-2d22ca3556d2",
+    "updatedAt": "2026-03-19T09:47:15.015Z",
+    "createdAt": "2026-03-19T09:47:13.252Z",
+    "versionId": "519b84ad-376a-4824-9d33-328577c92a36",
     "workflowId": "WamnPrGluo92mwT7",
     "nodes": [
       {
@@ -3239,26 +3245,6 @@
         ],
         "name": "Check if Bot Message",
         "id": "b710a5dd-12df-4eef-8cd1-695c0e75aad7"
-      },
-      {
-        "parameters": {
-          "modelName": "models/gemini-3-flash-preview",
-          "options": {}
-        },
-        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-        "typeVersion": 1,
-        "position": [
-          1056,
-          -16
-        ],
-        "name": "Google Gemini LLM",
-        "id": "99d15933-ac3d-4a79-993b-aff3fa8a3c3f",
-        "credentials": {
-          "googlePalmApi": {
-            "id": "RYsSfOkTTr5PB58p",
-            "name": "Oddle's Google Gemini(PaLM) API account"
-          }
-        }
       },
       {
         "parameters": {
@@ -4416,7 +4402,33 @@
         "credentials": {
           "openAiApi": {
             "id": "U11ZFugtdDzwhsyC",
-            "name": "OpenAi Account"
+            "name": "OpenAI Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4o-mini",
+            "mode": "list",
+            "cachedResultName": "gpt-4o-mini"
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          1024,
+          0
+        ],
+        "id": "378b7cc5-c3e3-4df2-b073-87a85e3e786c",
+        "name": "OpenAI Chat Model1",
+        "credentials": {
+          "openAiApi": {
+            "id": "U11ZFugtdDzwhsyC",
+            "name": "OpenAI Account"
           }
         }
       }
@@ -4640,17 +4652,6 @@
             {
               "node": "Switch",
               "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Google Gemini LLM": {
-        "ai_languageModel": [
-          [
-            {
-              "node": "Check if Bot Message",
-              "type": "ai_languageModel",
               "index": 0
             }
           ]
@@ -4951,10 +4952,21 @@
             }
           ]
         ]
+      },
+      "OpenAI Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Check if Bot Message",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 9fcf111c",
+    "name": "Version 519b84ad",
     "description": "",
     "autosaved": false
   },
