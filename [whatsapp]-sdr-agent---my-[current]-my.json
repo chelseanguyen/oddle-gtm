@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-20T11:00:17.613Z",
+  "updatedAt": "2026-03-23T08:18:49.025Z",
   "createdAt": "2026-03-13T08:33:20.486Z",
   "id": "rrKuUd0A09e7Z8Bd",
   "name": "[WhatsApp] SDR Agent - MY [current]",
@@ -1638,7 +1638,7 @@
         240
       ],
       "typeVersion": 3.2,
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -2675,8 +2675,8 @@
       }
     ]
   },
-  "versionId": "90d4dde2-a3de-4e9d-8b61-4c631b5e03d0",
-  "activeVersionId": "90d4dde2-a3de-4e9d-8b61-4c631b5e03d0",
+  "versionId": "48ca56d6-d021-4cc1-956c-23ea69a9c257",
+  "activeVersionId": "48ca56d6-d021-4cc1-956c-23ea69a9c257",
   "triggerCount": 1,
   "shared": [
     {
@@ -2688,9 +2688,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-20T11:00:19.571Z",
-    "createdAt": "2026-03-20T11:00:17.620Z",
-    "versionId": "90d4dde2-a3de-4e9d-8b61-4c631b5e03d0",
+    "updatedAt": "2026-03-23T08:18:51.308Z",
+    "createdAt": "2026-03-23T08:18:49.031Z",
+    "versionId": "48ca56d6-d021-4cc1-956c-23ea69a9c257",
     "workflowId": "rrKuUd0A09e7Z8Bd",
     "nodes": [
       {
@@ -4325,7 +4325,7 @@
           240
         ],
         "typeVersion": 3.2,
-        "alwaysOutputData": true
+        "alwaysOutputData": false
       },
       {
         "parameters": {
@@ -5256,7 +5256,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 90d4dde2",
+    "name": "Version 48ca56d6",
     "description": "",
     "autosaved": false
   },
