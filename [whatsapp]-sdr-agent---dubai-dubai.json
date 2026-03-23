@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-20T11:00:02.084Z",
+  "updatedAt": "2026-03-23T07:03:00.632Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -1666,7 +1666,7 @@
         240
       ],
       "typeVersion": 3.2,
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -2001,11 +2001,11 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - Send fixed message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected - Send fixed message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Status:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Auto-Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Suggested Fixed Response:*\\n```Do you accept delivery orders, especially for group gatherings and corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"bot_approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve_bot\",\n          \"value\": \"{{ $('Get Conversation ID (Bot)').item.json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject_bot\",\n          \"value\": \"{{ $('Get Conversation ID (Bot)').item.json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings & corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "id": "22fbfa87-312f-4ba2-8bce-3a8f66a9fe3c",
-      "name": "Send to Slack for Approval (Template)",
+      "name": "Send to Slack for Bot Approval",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
@@ -2589,7 +2589,7 @@
       "main": [
         [
           {
-            "node": "Send to Slack for Approval (Template)",
+            "node": "Send to Slack for Bot Approval",
             "type": "main",
             "index": 0
           }
@@ -2704,8 +2704,8 @@
       }
     ]
   },
-  "versionId": "f8cef1b7-2e11-4586-b561-7373096aaca8",
-  "activeVersionId": "f8cef1b7-2e11-4586-b561-7373096aaca8",
+  "versionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
+  "activeVersionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
   "triggerCount": 1,
   "shared": [
     {
@@ -2717,9 +2717,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-20T11:00:05.414Z",
-    "createdAt": "2026-03-20T11:00:02.091Z",
-    "versionId": "f8cef1b7-2e11-4586-b561-7373096aaca8",
+    "updatedAt": "2026-03-23T07:03:00.636Z",
+    "createdAt": "2026-03-23T07:03:00.636Z",
+    "versionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -4382,7 +4382,7 @@
           240
         ],
         "typeVersion": 3.2,
-        "alwaysOutputData": true
+        "alwaysOutputData": false
       },
       {
         "parameters": {
@@ -4717,11 +4717,11 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - Send fixed message\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected - Send fixed message\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Status:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Auto-Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Suggested Fixed Response:*\\n```Do you accept delivery orders, especially for group gatherings and corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"bot_approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve_bot\",\n          \"value\": \"{{ $('Get Conversation ID (Bot)').item.json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject_bot\",\n          \"value\": \"{{ $('Get Conversation ID (Bot)').item.json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings & corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "id": "22fbfa87-312f-4ba2-8bce-3a8f66a9fe3c",
-        "name": "Send to Slack for Approval (Template)",
+        "name": "Send to Slack for Bot Approval",
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
@@ -5305,7 +5305,7 @@
         "main": [
           [
             {
-              "node": "Send to Slack for Approval (Template)",
+              "node": "Send to Slack for Bot Approval",
               "type": "main",
               "index": 0
             }
@@ -5314,8 +5314,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version f8cef1b7",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": [
