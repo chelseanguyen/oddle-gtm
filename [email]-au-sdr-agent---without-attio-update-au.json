@@ -1,0 +1,708 @@
+{
+  "updatedAt": "2026-03-24T07:38:08.146Z",
+  "createdAt": "2026-03-24T07:38:08.146Z",
+  "id": "eCEb8x4D9MbueKHI",
+  "name": "[Email] AU SDR Agent - Without Attio update",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.lemlist.com/api/inbox/{{ $('Reply Received').item.json.body.contactId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "lemlistApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1760,
+        -416
+      ],
+      "name": "Get Conversation History",
+      "id": "f9f4904a-0006-4dd4-af9c-3e3f91f174c9",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  let text = html.replace(/<[^>]*>/g, ' ');\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  text = text.replace(/\\s+/g, ' ').trim();\n  return text;\n}\n\n// Helper function to format timestamp\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\n// Get the conversation data from the input\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\n// 1. EXTRACT LEAD-SPECIFIC DATA\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply && latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim();\n                         // Removed .substring(0, 1000) to keep full text\n}\n\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\n// 2. PROCESS ALL MESSAGES FOR THE THREAD\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    // MODIFIED: Removed .substring(0, 500) to show the full message\n    message: stripHtml(item.message),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\n// Sort messages Newest First\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));\n\n// 3. FORMAT CONVERSATION THREAD\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === 0;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\n// 4. CREATE STRUCTURED OBJECT\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[0]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        -416
+      ],
+      "name": "Parse Conversation History",
+      "id": "15d71ae8-752f-4778-a3bf-fb1129e1548a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "slack_channel",
+              "name": "slackChannelId",
+              "value": "C0A3N12LT5Z",
+              "type": "string"
+            },
+            {
+              "id": "webhook_path",
+              "name": "webhookPath",
+              "value": "slack-reply-approval",
+              "type": "string"
+            },
+            {
+              "id": "lemlist_base_url",
+              "name": "lemlistBaseUrl",
+              "value": "https://app.lemlist.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        -1984,
+        -416
+      ],
+      "name": "Workflow Configuration",
+      "id": "1b81a912-7359-46a1-9c24-4d5932f36efd"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"New prospect reply needs approval\",\n    \"blocks\": [\n        {\n            \"type\": \"header\",\n            \"text\": {\n                \"type\": \"plain_text\",\n                \"text\": \":bell: New Prospect Reply\",\n                \"emoji\": true\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"fields\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.body.leadCompanyName }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.body.leadEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.body.fromEmail }}\"\n                },\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.body.name }}\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                 \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Reply Received').item.json.body.text || '';\n    let truncated = rawText.length > 300 \n      ? rawText.substring(0, 300) + '...\\n\\n[Message truncated - view full reply in Lemlist]' \n      : rawText;\n    // JSON.stringify handles \\n, \\r, \", and \\ automatically\n    return JSON.stringify(truncated).slice(1, -1);\n  })()\n}}```\"\n            }\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"section\",\n            \"text\": {\n                \"type\": \"mrkdwn\",\n                \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $json.output.content || ''; \n    // JSON.stringify ensures all newlines and quotes are escaped for JSON safety\n    // .slice(1, -1) removes the extra quotes added by stringify\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n            }\n        },\n        {\n            \"type\": \"context\",\n            \"elements\": [\n                {\n                    \"type\": \"mrkdwn\",\n                    \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}|View full conversation in Lemlist>\"\n                }\n            ]\n        },\n        {\n            \"type\": \"divider\"\n        },\n        {\n            \"type\": \"actions\",\n            \"block_id\": \"approval_actions\",\n            \"elements\": [\n                {\n                    \"type\": \"button\",\n                    \"text\": {\n                        \"type\": \"plain_text\",\n                        \"text\": \":white_check_mark: Approve & Send\",\n                        \"emoji\": true\n                    },\n                    \"style\": \"primary\",\n                    \"action_id\": \"approve\",\n                    \"value\": \"{{ $('Reply Received').item.json.body.messageId }}\"\n                },\n                {\n                    \"type\": \"button\",\n                    \"text\": {\n                        \"type\": \"plain_text\",\n                        \"text\": \"✏ Reject & Edit\",\n                        \"emoji\": true\n                    },\n                    \"style\": \"danger\",\n                    \"action_id\": \"reject\",\n                    \"url\": \"https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}\"\n                }\n            ]\n        }\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -16,
+        -416
+      ],
+      "id": "ffd41eb1-9317-48d4-8fa3-1df1710a32be",
+      "name": "Send to Slack for Approval",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Additional Agent to assist Sophie post appt fixed\n- Create Lead Profile, send to Attio & Slack\n- Hand off to AE: Send email to prospect & introduce AE with LP\n- Update Attio (CRM agent)",
+        "height": 128,
+        "width": 496,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        -720
+      ],
+      "typeVersion": 1,
+      "id": "e9837ba9-a39e-401d-9743-e984233b628b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### To add: Manager Agent\n1) Look at conversation history\n2) Identify what needs to be done from the latest conversation\n- Generate a response -> Email agent\n- Create a Lead Profile -> LP agent\n- Update Attio -> CRM agent (not sure about this)",
+        "height": 192,
+        "width": 384,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2256,
+        -800
+      ],
+      "typeVersion": 1,
+      "id": "c0b4d12a-5e9e-4019-abf3-84820260dd53",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Email from: {{ $json.email_from }}\n- Company: {{ $json.company }}\n- Subject: {{ $json.subject }}\n- Lead's's latest reply: {{ $json.lead_message }}\n- Conversation History: {{ $json.conversation_history }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team.\n\n**Response Guidelines & Formatting:**\n- Length: Under 100 words. Maximum 200 words.\n- Tone: Professional, friendly, and consultative. Simple everyday words only, avoid formal phrases like \"may I,\" \"I'd be happy to,\" or \"regarding.\"\n- Filler phrases: Do not use filler affirmations like \"That makes sense,\" \"Absolutely,\" \"Great question,\" or similar. If acknowledgment is needed, one word max: \"Understood.\" or \"Noted.\" — or skip it entirely and get straight to the point.\n- Mirror: If the lead's response is short and direct, keep your reply equally lean. Match the density of the Response Handling Knowledge Base examples.\n- Language: Plain business language. Outcomes over features. No jargon like \"guest lifecycle platform,\" \"automated re-engagement,\" or \"branded sales channel.\" Think \"helps you know who your regulars are and bring them back\" not \"automated CRM re-engagement tools.\"\n- Format: No bold text. No em-dashes, use commas or periods instead. Hyphens only for lists. No formal sign-offs other than the signature block. Structure: Always open with the salutation on its own line (e.g., \"Hi Hayley,\"), followed by a blank line before the body. The closing line must be on its own separate paragraph, with a blank line before the signature block.\n- Scheduling link: Never include it while still handling an objection.\n- Note: Be aware that the lead's message might contain a quote or reply from a previous message.\n- Output: Return in Markdown format.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-3 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/au/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/au/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n- Focus on on what Oddle does for restaurants: own 100% of their customer data, automatically follow up with past diners, and turn first-time visitors into regulars.\n\n\n**Oddle Core USPs (use when KB match is below 80%):**\n- 100% customer data ownership: Unlike marketplaces, all guest data belongs to the restaurant\n- Built-in CRM with automated targeted broadcasts to re-engage past diners\n- Lifecycle layer: converts first-time marketplace guests into direct-booking regulars\n- Automation runs without manual effort from the restaurant team\n- Founder Access rate for early AU partners, guaranteed to be the most cost-effective option in the market\n\n**Step 1: Contextual Analysis & Knowledge Base Mapping**\n- Identity: Find the SDR's first name in the Conversation History.\n- Salutation: Use the lead's name from their signature. If unavailable, use \"Hi [Company Name] team.\"\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Instead, build the response directly from Oddle's Core USPs. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strengths against that gap.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response. Use it only in the salutation if the prospect's name is missing.\n\n**Step 2: Scenario Logic (Select One)**\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**ICP Redirect**\n- If the prospect's reply reveals a fundamental business model mismatch with reservations — such as a counter-service or walk-in only venue (kiosk, cafe) — do not close off. Instead, pivot to Oddle Shop as an opportunity worth exploring.\n- Frame it as: even without reservations, there's still an opportunity to grow revenue by opening an online ordering channel, capture guest data, and grow repeat business.\n- End with a soft, forward-leaning CTA inviting them to a quick conversation to explore.\n- Do not mention pricing, USPs, or scheduling links in this scenario.\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. You must attempt ONE rebuttal using the KB or Oddle Core USPs depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Oddle's Core USPs. Identify the gap the prospect's current setup does not address and position Oddle as the layer that solves it.\n- Pricing objections specifically: Do not discuss or reveal any pricing. Acknowledge the concern briefly, then angle it as: we're offering a Founder Access rate for early AU partners and it's guaranteed to be the most cost-effective in the market, so it's worth a quick call.\n- Second Objection / Double Decline: If the prospect objects a second time after your first rebuttal, do not attempt another rebuttal. Close the loop warmly with an open invite for future opportunities. Acknowledge their position, wish them well, and leave the door open without pushing further.\n- Unsubscribe / Remove-me Requests: When a prospect asks to be removed from a mailing list, stop communications, or cancel subscriptions, acknowledge vaguely without making a hard promise. Use \"We've updated our mailing list accordingly\" rather than \"We will no longer contact you.\" Always end with a soft open door: \"If you're ever open to exploring how Oddle can help, feel free to reach out anytime.\"\n\t- Exception: If the tone is hostile or includes a legal threat, close cleanly with no open door.\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Questions / Information Request:**\n- Answer questions clearly using the Response Handling Knowledge Base or Website.\n- On pricing: Never mention specific pricing figures. Instead, position it as: we're offering a Founder Access rate for early AU partners, and it's guaranteed to be the most cost-effective option in the market. Direct them to a call to find out more.\n\t- Example: \"We're offering a Founder Access rate for early AU partners, and we guarantee it's the most cost-effective in the market. Worth a quick call to walk you through it.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Unlisted Objections or Unrecognized Scenarios:**\n- If a prospect raises an objection, scenario, or question that does not match any logic in this prompt or the KB, do not make up data, invent features, or fabricate claims.\n- Handle it gracefully using general business reasoning. Acknowledge the concern in one sentence, then pivot back to the value of a quick conversation where it can be properly addressed.\n- Example: \"Fair point, and honestly the best way I can give you a proper answer is over a quick call. Worth 15 mins?\"\n- Never guess at specifics (pricing, integrations, features, timelines) that aren't confirmed in your knowledge sources.\n\n**Needs to Check with or Talk to Their Boss:**\n- Do not wait for them to loop back. Offer to reach out directly.\n- Ask for the boss's name and email address so you can contact them directly.\n- Example: \"No worries, happy to reach out to them directly. Can you share their name and email?\"\n\n**Context-Rich Reply (Prospect Shares Their Setup):**\n- When the prospect explains their current system, pricing model, or workflow in detail, treat this as a discovery opportunity. Do not map to a generic objection script unless KB match is 80% or above.\n- Acknowledge what they have set up correctly, briefly validate their logic.\n- Identify the gap their current setup does not address, using Oddle's Core USPs as the lens.\n- Common gap angles to consider: customer data ownership, post-visit re-engagement automation, CRM and broadcast capabilities, reducing dependency on third-party marketplaces for repeat visits.\n- Frame Oddle as the layer that sits alongside or on top of their current setup, not a replacement.\n- End with a soft CTA toward a discovery call.\n\n**Scenario: Local Social Proof (Australia References)**\n- If the lead asks about current Australian users or local presence, mention exactly three names from the following list: The Penny Drop Cafe, Thai Ute Restaurant, Lumen People, Catalina Kitchen Cafe, Bar & Restaurant, Arcadia Liquors, Mister Minh.\n- Use ONLY if the prospect explicitly asks about Australian users, local presence, or who else is using the system.\n- Context: Briefly mention that these are some of the local partners we work with in the AU market.\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's email address.\n- If it's the wrong brand/contact: Thank them, say we will update records.\n\n**Email Signature:**\nFollow the format below, using the SDR's first name found in the Conversation History:\n\nCheers,\n[SDR's first name]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -656,
+        -416
+      ],
+      "name": "Email Agent",
+      "id": "1042279a-b1df-4b2a-941c-050f9b3e59a6",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Process prospect's reply & retrieve conversation history for context\n\n",
+        "height": 420,
+        "width": 1072
+      },
+      "id": "a565d4a1-0dca-4fad-958c-4220d2e6d7e1",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2416,
+        -576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        144
+      ],
+      "id": "693000b8-4d22-4768-9198-269638f46c29",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_guide",
+          "mode": "list",
+          "cachedResultName": "response_handling_guide"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -32
+      ],
+      "id": "fcfdef4b-e28b-43ca-b270-2598c68a4364",
+      "name": "Response Handling Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"content\": \"Hi Yong Xiang,\\n\\nThanks for the reply. I understand you're happy with your current Sevenrooms grandfathered plan.\\n\\nHowever, let's consider if you're truly maximizing your investment, here's what Oddle Reserve can offer:\\n\\n- A$249/month per brand, which can be more cost-effective if you have multiple outlets.\\n- Simpler alternative with a focus on core reservation workflows.\\n- Founder Access at A$65/month locked in forever.\"\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        -208
+      ],
+      "id": "a3a6e099-9831-474c-a5b1-b99882c4c635",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate response based on guideline & response handling knowledge base\nResponse handling sheet: https://docs.google.com/spreadsheets/d/1XJjPFKlKXynehqTQv4K_kmRSi0fRnqqwBB_xdngQFSg/edit?gid=0#gid=0",
+        "height": 960,
+        "width": 992,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        -560
+      ],
+      "typeVersion": 1,
+      "id": "b66096c7-7e84-4c92-ba80-a347714cab35",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42648864-a669-4190-ac38-217a44e8a4c5",
+              "name": "email_from",
+              "value": "={{ $('Parse Conversation History').item.json.leadEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "d3c1e1b5-6bee-4c7a-9741-e943014b064f",
+              "name": "company",
+              "value": "={{ $('Parse Conversation History').item.json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "419ee37f-3fb5-4ac5-84a9-1d28ee68d113",
+              "name": "subject",
+              "value": "={{ $('Parse Conversation History').item.json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "51996ffa-b5d3-46e5-8e0b-c6f9374fb40b",
+              "name": "lead_message",
+              "value": "={{ $('Parse Conversation History').item.json.leadMessage }}",
+              "type": "string"
+            },
+            {
+              "id": "0ba486e0-44fc-40c5-a50e-f718265a40e2",
+              "name": "conversation_history",
+              "value": "={{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        -416
+      ],
+      "id": "ab5fc0d7-20de-4a03-946a-029f6bf5b0ac",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "54988447-f1bd-40a2-9010-5dc2cd2ca530",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contains comprehensive product knowledge about Oddle, Oddle Reservation and Oddle Shop, including what the platform does, key features, and value propositions. Use this to answer prospect questions about Oddle's products and capabilities.",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -656,
+        96
+      ],
+      "id": "1149e36c-334d-46b1-b01a-0c59ea705d3c",
+      "name": "Product Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        256
+      ],
+      "id": "4f19a028-1721-4cb5-9728-7f9906974edb",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -2176,
+        -416
+      ],
+      "id": "887b2234-a0df-4914-8bf4-6f599b2d36e6",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "64099c90-f6b9-4c58-8250-49f65b7764d8",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2368,
+        -416
+      ],
+      "id": "717c95e5-f440-4f75-958b-2bf522941840",
+      "name": "Reply Received",
+      "webhookId": "64099c90-f6b9-4c58-8250-49f65b7764d8"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        -240
+      ],
+      "id": "928a0a57-8e22-471a-83f6-df6e4e794c31",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "U11ZFugtdDzwhsyC",
+          "name": "OpenAI Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Get Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Parse Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Map fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Slack for Approval": {
+      "main": [
+        []
+      ]
+    },
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Response Handling Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Handling Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Product Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Received": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": {
+    "node:Reply Received": {
+      "webhookId": "hoo_D2XyjPHC3jgJNeAkB"
+    },
+    "node:Reply Received1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Reply Received": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "content-type": "application/json",
+            "accept": "*/*",
+            "accept-language": "*",
+            "sec-fetch-mode": "cors",
+            "user-agent": "node",
+            "content-length": "7326",
+            "x-cloud-trace-context": "8d6fe3f46fc8ab42d38ab313d23be8f3/11647081277110839940",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-8d6fe3f46fc8ab42d38ab313d23be8f3-a1a2beb6704b6a84-00",
+            "x-forwarded-for": "141.94.255.65",
+            "forwarded": "for=\"141.94.255.65\";proto=https",
+            "accept-encoding": "br, gzip, deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "_id": "act_4Saxzf2HWZMAcKABx",
+            "type": "emailsReplied",
+            "emailId": "eml_oQMQH2YWNdfLu6rLa",
+            "messageId": "<KsvwO000000000000000000000000000000000000000000000TCCU9S00b96OSbdWRsCzYvpttt0iOw@sfdc.net>",
+            "createdBy": "usr_qowSk6Hg9irk3PjbH",
+            "createdAt": "2026-03-23T13:46:41.000Z",
+            "fromEmail": "partners@ritual.co",
+            "isFirst": true,
+            "stopped": true,
+            "subject": "[ ref:!00D1I02KsoU.!500JQ0xDYMu:ref ]",
+            "messagePreview": "Hi there,",
+            "bot": false,
+            "teamId": "tea_gYwPePZxuhFb6QraW",
+            "leadId": "lea_vtjDN9zdNYYu4mHnZ",
+            "campaignId": "cam_tm2zuJcMLhqn4FSRJ",
+            "sequenceId": "seq_4hQTBX4gXA7iKR2Pt",
+            "sequenceStep": 2,
+            "emailTemplateId": "etp_FSgvDwaS6CRfBjWEE",
+            "sendUserId": "usr_qowSk6Hg9irk3PjbH",
+            "totalSequenceStep": 2,
+            "name": "[AU] No Reservation - With OS B2B (Mar '26)",
+            "sendUserName": "RJ Kevin",
+            "sendUserEmail": "rj-kevin@theoddle-company.org",
+            "sendUserMailboxId": "usm_2BySgWrA8Kwyv7afM",
+            "sendUserMailboxProviderId": "rj-kevin@theoddle-company.org",
+            "leadEmail": "partners@ritual.co",
+            "leadCompanyName": "Iku Wholefood",
+            "contactId": "ctc_PoZEx3uCPSfwfcc3H",
+            "relatedSentAt": "2026-03-10T05:13:29.359Z",
+            "metaData": {
+              "teamId": "tea_gYwPePZxuhFb6QraW",
+              "campaignId": "cam_tm2zuJcMLhqn4FSRJ",
+              "leadId": "lea_vtjDN9zdNYYu4mHnZ",
+              "type": "emailsReplied",
+              "createdBy": "usr_qowSk6Hg9irk3PjbH",
+              "s3ready": false,
+              "taskId": "tsk_k92rdDXL5MATM9FgS"
+            },
+            "campaignName": "[AU] No Reservation - With OS B2B (Mar '26)",
+            "html": "<html>\n<head>\n\t<title></title>\n</head>\n<body style=\"height: auto; min-height: auto;\"><span style=\"color:#000000;\"><span style=\"font-size:16px;\"><span style=\"font-family:Book Antiqua,Times New Roman,Times,serif;\">Hi there,&nbsp;</span></span></span><br />\n<br />\n<style type=\"text/css\"><!--td {border: 1px solid #cccccc;}br {mso-data-placement:same-cell;}-->\n</style>\nThanks so much for reaching out.<br />\n<br />\nMy sincerest apologies here but it appears that you have gotten our support email mixed up with another company&rsquo;s. We are Ritual.co, the takeout food pre-ordering service.<br />\n<br />\nI hope you are able to find the right support team for your issue.<br />\n<br />\nHave a wonderful day!<br />\n<br />\nBest,<br />\nLory<br clear=\"none\" />\n<span style=\"color:#000000;\"><span style=\"font-size:16px;\"><span style=\"font-family:Book Antiqua,Times New Roman,Times,serif;\">Ritual Partner Support</span></span></span>\n<p><span style=\"font-size:16px;\"><span style=\"font-family:Book Antiqua,Times New Roman,Times,serif;\"><span style=\"color:#000000;\"><i>--&nbsp;</i><br />\n<img alt=\"Screen_Shot_20200408_at_123636_PM\" src=\"https://ritual.file.force.com/file-asset-public/Screen_Shot_20200408_at_123636_PM44?oid=00D1I000002KsoU\" style=\"max-width: 446.302px; width: 277px; height: 38px;\" title=\"Screen_Shot_20200408_at_123636_PM\" /><br />\n<b>Contact Us</b>:&nbsp;</span><a href=\"https://partner.ritual.co/support\" shape=\"rect\" target=\"_blank\"><span style=\"color:#000000;\">https://partner.ritual.co/support</span></a><span style=\"color:#000000;\">&nbsp;&nbsp;&nbsp;<br clear=\"none\" />\n<b>Partner Help Center</b>:&nbsp;</span><a href=\"https://partnersupport.ritual.co/hc/en-us\" shape=\"rect\" target=\"_blank\"><span style=\"color:#000000;\">https://partnersupport.ritual.co/hc/en-us</span></a><span style=\"color:#000000;\">&nbsp;for more tips and tricks!&nbsp;</span></span></span></p>\n\n<div id=\"\" style=\"left: 8px; top: 190.5px;\">&nbsp;</div>\n\n<div id=\"\" style=\"left: 8px; top: 190.5px;\">&nbsp;</div>\n\n<div id=\"\" style=\"left: 8px; top: 190.5px;\">&nbsp;</div>\n\n<div id=\"\" style=\"left: 8px; top: 190.5px;\">&nbsp;</div>\n<img alt=\"\" src=\"https://ritual.my.salesforce.com/servlet/servlet.ImageServer?oid=00D1I000002KsoU&esid=018JQ00000dxolc&from=ext\"><br><br>ref:!00D1I02KsoU.!500JQ0xDYMu:ref</body>\n</html>\n<title></title>\n<br clear=\"none\" />\n<br clear=\"none\" />\n<br clear=\"none\" />\n--------------- Original Message ---------------<br clear=\"none\" />\n<b>From:</b> RJ Kevin [rj-kevin@theoddle-company.org]<br clear=\"none\" />\n<b>Sent:</b> 3/22/2026 5:38 PM<br clear=\"none\" />\n<b>To:</b> partners@ritual.co<br clear=\"none\" />\n<b>Subject:</b> Founder Rate for Iku Wholefood: Locked in for life<br clear=\"none\" />\n&nbsp;\n<div style=\"min-width: 360px\">&nbsp;</div>\n\n<div dir=\"ltr\">\n<div dir=\"ltr\">\n<div>\n<p dir=\"ltr\" id=\"isPasted\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Hi Iku Wholefood team,</p>\n\n<p id=\"isPasted\" style=\"margin: 0px; box-sizing: border-box;\">I wanted to flag a limited <strong style=\"font-weight: 700; box-sizing: border-box;\">Founder Rate</strong> we&#39;re offering to a small group of early AU partners moving off the physical book.</p>\n\n<p style=\"margin: 0px; box-sizing: border-box;\">&nbsp;</p>\n\n<p style=\"margin: 0px; box-sizing: border-box;\">This is the best value we&#39;ll ever offer,<strong style=\"font-weight: 700; box-sizing: border-box;\">&nbsp;locked in for life</strong> with no price hikes down the track. It captures bookings 24/7 and sends automatic reminders so guests actually show up, and a direct web-store for pickup.</p>\n\n<p style=\"margin: 0px; box-sizing: border-box;\">&nbsp;</p>\n\n<p style=\"margin: 0px; box-sizing: border-box;\">Worth a quick look at what it means for Iku Wholefood?</p>\n\n<p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">&nbsp;</p>\n\n<p dir=\"ltr\" style=\"line-height: 1.38; margin: 12pt 0px; box-sizing: border-box;\">Best,<br clear=\"none\" style=\"box-sizing: border-box;\" />\nRJ Kevin<br clear=\"none\" id=\"isPasted\" style=\"box-sizing: border-box;\" />\nGeneral Manager at Oddle</p>\n</div>\n\n<div class=\"gmail_extra\">\n<div class=\"gmail_signature\">\n<div dir=\"ltr\">\n<div>\n<div dir=\"ltr\">&nbsp;</div>\n</div>\n</div>\n</div>\n</div>\n</div>\n<img alt=\"logo\" height=\"1\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_k92rdDXL5MATM9FgS\" width=\"1\" /></div>",
+            "text": "Hi there,\n\nThanks so much for reaching out.\n\nMy sincerest apologies here but it appears that you have gotten our support email mixed up with another company’s. We are Ritual.co, the takeout food pre-ordering service.\n\nI hope you are able to find the right support team for your issue.\n\nHave a wonderful day!\n\nBest,\nLory\nRitual Partner Support\n\n--\n\nContact Us: https://partner.ritual.co/support\nPartner Help Center: https://partnersupport.ritual.co/hc/en-us for more tips and tricks!\n\n\n\n\n\n--------------- Original Message ---------------\nFrom: RJ Kevin [rj-kevin@theoddle-company.org]\nSent: 3/22/2026 5:38 PM\nTo: partners@ritual.co\nSubject: Founder Rate for Iku Wholefood: Locked in for life\n\nHi Iku Wholefood team,\n\nI wanted to flag a limited Founder Rate we're offering to a small group of early AU partners moving off the physical book.\n\n\nThis is the best value we'll ever offer, locked in for life with no price hikes down the track. It captures bookings 24/7 and sends automatic reminders so guests actually show up, and a direct web-store for pickup.\n\n\nWorth a quick look at what it means for Iku Wholefood?\n\n\nBest,\nRJ Kevin\nGeneral Manager at Oddle\nref:!00D1I02KsoU.!500JQ0xDYMu:ref",
+            "email": "partners@ritual.co",
+            "companyName": "Iku Wholefood",
+            "Target group": "No Reservation - With OS B2B",
+            "emailTemplateName": "Blank"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook/lemlist-email-campaign",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "5e62e934-8d89-4b27-9e0a-2b6a592c863f",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T07:38:08.146Z",
+      "createdAt": "2026-03-24T07:38:08.146Z",
+      "role": "workflow:owner",
+      "workflowId": "eCEb8x4D9MbueKHI",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": [
+    {
+      "updatedAt": "2026-02-10T02:52:51.422Z",
+      "createdAt": "2026-02-10T02:52:51.422Z",
+      "id": "4lS27QDaN4KgD7K0",
+      "name": "au"
+    }
+  ]
+}
