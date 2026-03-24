@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T07:03:00.632Z",
+  "updatedAt": "2026-03-24T09:03:33.144Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -610,7 +610,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.payload.body.text }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.payload.body.text }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -627,20 +627,6 @@
           "name": "Slack's WhatsApp Agent Alex"
         }
       }
-    },
-    {
-      "parameters": {
-        "amount": 60
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        688,
-        1056
-      ],
-      "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
-      "name": "Wait 60s1",
-      "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
     },
     {
       "parameters": {
@@ -1468,7 +1454,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n\n\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1955,37 +1941,6 @@
     },
     {
       "parameters": {
-        "method": "PUT",
-        "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "=json",
-        "bodyParameters": {
-          "parameters": [
-            {}
-          ]
-        },
-        "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        3072,
-        -192
-      ],
-      "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
-      "name": "Update Outreach Status",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key_Header"
-        }
-      }
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://slack.com/api/chat.postMessage",
         "authentication": "genericCredentialType",
@@ -2001,7 +1956,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings & corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings and corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "id": "22fbfa87-312f-4ba2-8bce-3a8f66a9fe3c",
@@ -2029,6 +1984,52 @@
       ],
       "id": "213afcd1-21ff-4ee8-8750-bda4bec3ea48",
       "name": "Skip"
+    },
+    {
+      "parameters": {
+        "amount": 2,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        1056
+      ],
+      "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
+      "name": "Wait 2 mins",
+      "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "=json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3072,
+        -192
+      ],
+      "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
+      "name": "Update Attio Outreach Status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
     }
   ],
   "connections": {
@@ -2146,7 +2147,7 @@
       "main": [
         [
           {
-            "node": "Wait 60s1",
+            "node": "Wait 2 mins",
             "type": "main",
             "index": 0
           }
@@ -2209,17 +2210,6 @@
         [
           {
             "node": "Redirect Message Types",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Wait 60s1": {
-      "main": [
-        [
-          {
-            "node": "Read Buffer Timestamp",
             "type": "main",
             "index": 0
           }
@@ -2571,7 +2561,7 @@
       "main": [
         [
           {
-            "node": "Update Outreach Status",
+            "node": "Update Attio Outreach Status",
             "type": "main",
             "index": 0
           }
@@ -2590,6 +2580,17 @@
         [
           {
             "node": "Send to Slack for Bot Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 2 mins": {
+      "main": [
+        [
+          {
+            "node": "Read Buffer Timestamp",
             "type": "main",
             "index": 0
           }
@@ -2628,14 +2629,14 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "messagebird-request-id": "c93db71f-c7d1-4d7a-a710-8b99bfea2f52",
-            "messagebird-request-timestamp": "1773224783",
             "content-type": "application/json; charset=utf-8",
+            "messagebird-request-id": "369d6c0a-1ae8-4443-906b-9a7c91de0744",
+            "messagebird-request-timestamp": "1773998943",
             "user-agent": "Messagebird/Requests develop:8c9cc536",
-            "content-length": "2011",
-            "x-cloud-trace-context": "3e7c3aff7158952e1788b3b115301504/7127284892878643669",
+            "content-length": "920",
+            "x-cloud-trace-context": "4880055a9e0b596396bad67036a9580e/3083282312423746587",
             "x-forwarded-proto": "https",
-            "traceparent": "00-3e7c3aff7158952e1788b3b115301504-62e933d91d0a21d5-00",
+            "traceparent": "00-4880055a9e0b596396bad67036a9580e-2aca04ed5e432c1b-00",
             "x-forwarded-for": "13.127.212.189",
             "forwarded": "for=\"13.127.212.189\";proto=https",
             "accept-encoding": "gzip"
@@ -2646,15 +2647,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "191e0649-8c5c-4d08-80a2-0eb18bdc5a59",
+              "id": "303f3283-67e0-4b43-a043-924912747896",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "f787649e-dad4-43fa-93de-bc73bd3067b0",
+                  "id": "26caf139-fa71-4775-af7c-b94960c2f333",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+97188332655",
+                  "identifierValue": "+97148377222",
                   "annotations": {
-                    "name": "twinklebellebelle"
+                    "name": "Zenon Restaurant"
                   }
                 }
               },
@@ -2665,47 +2666,56 @@
                 }
               },
               "body": {
-                "type": "image",
-                "image": {
-                  "text": "A new chapter unfolds for Chimichanga at Chimi’s Especial. Our new space brings the same vibrant flavours and relaxed energy, now expressed through a broader Latin perspective. On every plate and in every pour, the Americas come together.\n\nWe are delighted to invite you to our Grand Opening and Ribbon Cutting Ceremony on Thursday, 26 March at 6:00pm at 70 Collyer Quay, #01-01 Customs House.\n\nJoin us for an evening of Latin flavours, reimagined the Chimi’s way, alongside cocktails and waterfront views.\n\nWe would be honoured to have you join us as we celebrate this special milestone.\n\nExperience casual Latin, the Chimi’s way.                \n                                                                                                                                                                                                  \nRSVP at chimisgrandopening.eventbrite.sg by 25 March, 12pm.",
-                  "images": [
-                    {
-                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/191e0649-8c5c-4d08-80a2-0eb18bdc5a59/media/9c34e150-02c2-4d65-a177-c08f26d1089c"
-                    }
-                  ]
+                "type": "text",
+                "text": {
+                  "text": "We do not have a delivery service in Zenon."
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1773224777",
-                  "user_locale": "cmn",
-                  "whatsapp.media.type": "image"
+                  "timestamp": "1773998942",
+                  "user_locale": "ar-AE"
                 }
               },
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU4ODMzMjY1NRUCABIYFDNBNjA0NDk5RUJDOURCQTYxNzlEAA=="
+                  "platformReference": "wamid.HBgLOTcxNDgzNzcyMjIVAgASGBYzRUIwODE3MkRGNEE3MzgyNkQwMDU0AA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-03-11T10:26:23.545Z",
-              "createdAt": "2026-03-11T10:26:23.458Z",
-              "updatedAt": "2026-03-11T10:26:23.545Z",
+              "lastStatusAt": "2026-03-20T09:29:03.874Z",
+              "createdAt": "2026-03-20T09:29:03.809Z",
+              "updatedAt": "2026-03-20T09:29:03.874Z",
               "batchId": null
             }
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook/sg-wa-sdr-agent",
+          "webhookUrl": "https://workflow.oddle.center/webhook/dubai-wa-sdr-agent",
           "executionMode": "production"
+        }
+      }
+    ],
+    "Merge Messages": [
+      {
+        "json": {
+          "phone_number": "+971564203732",
+          "channel_id": "22c5243b-3d44-4590-82d7-534d77642dbd",
+          "contact_id": "1b4dc3f4-75a7-4b0a-818a-e56426052879",
+          "merged_text": "Thank you we will get back to you for any inquiry",
+          "message_type": "text",
+          "message_count": 1
+        },
+        "pairedItem": {
+          "item": 0
         }
       }
     ]
   },
-  "versionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
-  "activeVersionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
+  "versionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
+  "activeVersionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
   "triggerCount": 1,
   "shared": [
     {
@@ -2717,9 +2727,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-23T07:03:00.636Z",
-    "createdAt": "2026-03-23T07:03:00.636Z",
-    "versionId": "dcfdf931-3e06-43c8-a4a7-caf844933c74",
+    "updatedAt": "2026-03-24T09:02:30.346Z",
+    "createdAt": "2026-03-24T09:02:27.078Z",
+    "versionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -3326,7 +3336,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.payload.body.text }}`\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.payload.body.text }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -3343,20 +3353,6 @@
             "name": "Slack's WhatsApp Agent Alex"
           }
         }
-      },
-      {
-        "parameters": {
-          "amount": 60
-        },
-        "type": "n8n-nodes-base.wait",
-        "typeVersion": 1.1,
-        "position": [
-          688,
-          1056
-        ],
-        "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
-        "name": "Wait 60s1",
-        "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
       },
       {
         "parameters": {
@@ -4184,7 +4180,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n\n\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -4671,37 +4667,6 @@
       },
       {
         "parameters": {
-          "method": "PUT",
-          "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "=json",
-          "bodyParameters": {
-            "parameters": [
-              {}
-            ]
-          },
-          "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.3,
-        "position": [
-          3072,
-          -192
-        ],
-        "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
-        "name": "Update Outreach Status",
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "9CO17PzdcubAn70Q",
-            "name": "Attio API Key_Header"
-          }
-        }
-      },
-      {
-        "parameters": {
           "method": "POST",
           "url": "https://slack.com/api/chat.postMessage",
           "authentication": "genericCredentialType",
@@ -4717,7 +4682,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings & corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AMDKB7LUT\",\n  \"text\": \"Auto-reply detected - fixed message ready\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":robot_face: Auto-Reply Detected\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\nBot/auto-reply detected\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Merge Messages').item.json.merged_text || ''; return JSON.stringify(rawText).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```Do you accept delivery orders, especially for group gatherings and corporates?```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $json.results[0].id }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "id": "22fbfa87-312f-4ba2-8bce-3a8f66a9fe3c",
@@ -4745,6 +4710,52 @@
         ],
         "id": "213afcd1-21ff-4ee8-8750-bda4bec3ea48",
         "name": "Skip"
+      },
+      {
+        "parameters": {
+          "amount": 2,
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          688,
+          1056
+        ],
+        "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
+        "name": "Wait 2 mins",
+        "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "=json",
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3072,
+          -192
+        ],
+        "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
+        "name": "Update Attio Outreach Status",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
       }
     ],
     "connections": {
@@ -4862,7 +4873,7 @@
         "main": [
           [
             {
-              "node": "Wait 60s1",
+              "node": "Wait 2 mins",
               "type": "main",
               "index": 0
             }
@@ -4925,17 +4936,6 @@
           [
             {
               "node": "Redirect Message Types",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Wait 60s1": {
-        "main": [
-          [
-            {
-              "node": "Read Buffer Timestamp",
               "type": "main",
               "index": 0
             }
@@ -5287,7 +5287,7 @@
         "main": [
           [
             {
-              "node": "Update Outreach Status",
+              "node": "Update Attio Outreach Status",
               "type": "main",
               "index": 0
             }
@@ -5311,11 +5311,22 @@
             }
           ]
         ]
+      },
+      "Wait 2 mins": {
+        "main": [
+          [
+            {
+              "node": "Read Buffer Timestamp",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": null,
-    "description": null,
+    "name": "Version ecffad60",
+    "description": "",
     "autosaved": false
   },
   "tags": [
