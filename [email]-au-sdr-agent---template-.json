@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-02-13T02:37:15.485Z",
+  "updatedAt": "2026-03-24T07:45:06.473Z",
   "createdAt": "2026-01-02T06:07:57.708Z",
   "id": "Q3ayZFswJ7nIu0we",
   "name": "[Email] AU SDR Agent - Template",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -1110,7 +1110,7 @@
       }
     ]
   },
-  "versionId": "5b16b9b6-9ce2-4632-8bb2-3739471dd36c",
+  "versionId": "6aeaa979-8af4-4824-b7b5-355cf79e3596",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
