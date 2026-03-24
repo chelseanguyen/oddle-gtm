@@ -1,0 +1,1808 @@
+{
+  "updatedAt": "2026-03-24T08:19:03.794Z",
+  "createdAt": "2026-03-23T10:25:54.378Z",
+  "id": "nkkFQLQhhhlUQPCR",
+  "name": "[Email] AU SDR Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://api.lemlist.com/api/inbox/{{ $('Reply Received').item.json.body.contactId }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "lemlistApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        -1760,
+        -416
+      ],
+      "name": "Get Conversation History",
+      "id": "87be4064-e0a9-40d7-9adf-d3216e314d03",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  let text = html.replace(/<[^>]*>/g, ' ');\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  text = text.replace(/\\s+/g, ' ').trim();\n  return text;\n}\n\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply && latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim();\n}\n\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    message: stripHtml(item.message),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));\n\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === 0;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[0]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1536,
+        -416
+      ],
+      "name": "Parse Conversation History",
+      "id": "d72f2f95-cdec-4d83-9e2f-998a6b588f60"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "slack_channel",
+              "name": "slackChannelId",
+              "value": "C0A3N12LT5Z",
+              "type": "string"
+            },
+            {
+              "id": "webhook_path",
+              "name": "webhookPath",
+              "value": "slack-reply-approval",
+              "type": "string"
+            },
+            {
+              "id": "lemlist_base_url",
+              "name": "lemlistBaseUrl",
+              "value": "https://app.lemlist.com",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.3,
+      "position": [
+        -1984,
+        -416
+      ],
+      "name": "Workflow Configuration",
+      "id": "e961759c-3b09-4aea-b884-b99bb3bc8a02"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"New prospect reply needs approval\",\n    \"blocks\": [\n        {\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \":bell: New Prospect Reply\", \"emoji\": true}},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"fields\": [{\"type\": \"mrkdwn\", \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.body.leadCompanyName }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.body.leadEmail }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.body.fromEmail }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.body.name }}\"}]},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Reply Received').item.json.body.text || ''; let truncated = rawText.length > 300 ? rawText.substring(0, 300) + '...' : rawText; return JSON.stringify(truncated).slice(1, -1); })() }}```\"}},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Agent Generated Response:*\\n```{{ (function() { let agentText = $json.output.content || ''; return JSON.stringify(agentText).slice(1, -1); })() }}```\"}},\n        {\"type\": \"context\", \"elements\": [{\"type\": \"mrkdwn\", \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}|View full conversation in Lemlist>\"}]},\n        {\"type\": \"divider\"},\n        {\"type\": \"actions\", \"block_id\": \"approval_actions\", \"elements\": [{\"type\": \"button\", \"text\": {\"type\": \"plain_text\", \"text\": \":white_check_mark: Approve & Send\", \"emoji\": true}, \"style\": \"primary\", \"action_id\": \"approve\", \"value\": \"{{ $('Reply Received').item.json.body.messageId }}\"}, {\"type\": \"button\", \"text\": {\"type\": \"plain_text\", \"text\": \"Reject & Edit\", \"emoji\": true}, \"style\": \"danger\", \"action_id\": \"reject\", \"url\": \"https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}\"}]}\n    ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -16,
+        -416
+      ],
+      "id": "12d5e4e9-58fd-4668-9902-07cbc566bca0",
+      "name": "Send to Slack for Approval",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Additional Agent to assist Sophie post appt fixed\n- Create Lead Profile, send to Attio & Slack\n- Hand off to AE: Send email to prospect & introduce AE with LP",
+        "height": 128,
+        "width": 496,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        -720
+      ],
+      "typeVersion": 1,
+      "id": "f1de37a0-023e-4541-83d0-f33f1d0a4966",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "### To add: Manager Agent\n1) Look at conversation history\n2) Identify what needs to be done from the latest conversation\n- Generate a response -> Email agent\n- Create a Lead Profile -> LP agent\n- Update Attio -> CRM agent (not sure about this)",
+        "height": 192,
+        "width": 384,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2256,
+        -800
+      ],
+      "typeVersion": 1,
+      "id": "a4965a54-a9de-4e64-9a1d-c5a87ad0931d",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Email from: {{ $json.email_from }}\n- Company: {{ $json.company }}\n- Subject: {{ $json.subject }}\n- Lead's's latest reply: {{ $json.lead_message }}\n- Conversation History: {{ $json.conversation_history }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team.\n\n**Response Guidelines & Formatting:**\n- Length: Under 100 words. Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Filler phrases: Do not use filler affirmations.\n- Mirror: If the lead's response is short and direct, keep your reply equally lean.\n- Language: Plain business language. Outcomes over features.\n- Format: No bold text. No em-dashes.\n- Scheduling link: Never include it while still handling an objection.\n- Output: Return in Markdown format.\n\n**Email Signature:**\nCheers,\n[SDR's first name]"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.6,
+      "position": [
+        -656,
+        -416
+      ],
+      "name": "Email Agent",
+      "id": "dcbb4582-5f86-4d12-b974-61b049cfc73d",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "content": "## Process prospect's reply & retrieve conversation history for context",
+        "height": 420,
+        "width": 1072
+      },
+      "id": "4f50d8d8-8841-4fac-806e-6645dc5a946e",
+      "name": "Sticky Note15",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2416,
+        -576
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -832,
+        144
+      ],
+      "id": "4801550f-59b2-4fef-9ad9-249f6fd0f9d2",
+      "name": "Embeddings Google Gemini2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_guide",
+          "mode": "list",
+          "cachedResultName": "response_handling_guide"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -832,
+        -32
+      ],
+      "id": "9e8518f0-3cf2-47ac-8516-1977e8411ca1",
+      "name": "Response Handling Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\"content\": \"Hi Yong Xiang, Thanks for the reply.\"}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        -208
+      ],
+      "id": "f1a9ed65-6c47-4699-b71b-3cdff21c6485",
+      "name": "Structured Output Parser1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate response based on guideline & response handling knowledge base",
+        "height": 960,
+        "width": 992,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1184,
+        -560
+      ],
+      "typeVersion": 1,
+      "id": "298fb3c2-3895-43ed-9265-23271a043581",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "42648864-a669-4190-ac38-217a44e8a4c5",
+              "name": "email_from",
+              "value": "={{ $('Parse Conversation History').item.json.leadEmail }}",
+              "type": "string"
+            },
+            {
+              "id": "d3c1e1b5-6bee-4c7a-9741-e943014b064f",
+              "name": "company",
+              "value": "={{ $('Parse Conversation History').item.json.companyName }}",
+              "type": "string"
+            },
+            {
+              "id": "419ee37f-3fb5-4ac5-84a9-1d28ee68d113",
+              "name": "subject",
+              "value": "={{ $('Parse Conversation History').item.json.subject }}",
+              "type": "string"
+            },
+            {
+              "id": "51996ffa-b5d3-46e5-8e0b-c6f9374fb40b",
+              "name": "lead_message",
+              "value": "={{ $('Parse Conversation History').item.json.leadMessage }}",
+              "type": "string"
+            },
+            {
+              "id": "0ba486e0-44fc-40c5-a50e-f718265a40e2",
+              "name": "conversation_history",
+              "value": "={{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1088,
+        -416
+      ],
+      "id": "e295f398-5aec-442f-960d-5ab3e9332d82",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -512,
+        -48
+      ],
+      "id": "b11bb73c-8211-461c-8417-82b61826d7ad",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contains comprehensive product knowledge about Oddle, Oddle Reservation and Oddle Shop.",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -656,
+        96
+      ],
+      "id": "6fd57834-7c11-491b-ad64-37c8cec8361e",
+      "name": "Product Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        256
+      ],
+      "id": "34e995de-723a-4037-8ca2-29e8099b9223",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -2176,
+        -416
+      ],
+      "id": "fe32984a-f03c-4d07-91cf-4d8fb8c8bd99",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lemlist-email-campaign",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -2368,
+        -416
+      ],
+      "id": "c3330aee-8ba9-461c-b257-0a69cd21b751",
+      "name": "Reply Received",
+      "webhookId": "d0007cc4-2986-497c-889b-0248e778f89f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/people/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Reply Received').item.json.body.leadEmail }}\"}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2576,
+        64
+      ],
+      "id": "attio-find-person",
+      "name": "Find Person in Attio",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.attio.com/v2/objects/companies/records/{{ $json.data[0].values.company[0].target_record_id }}/entries",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1872,
+        64
+      ],
+      "id": "attio-get-company-entries",
+      "name": "Get Company List Entries",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data[0].entry_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1424,
+        64
+      ],
+      "id": "attio-update-list-entry",
+      "name": "Update Attio List Entry",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Update Attio entryin AU Attio list\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
+        "height": 328,
+        "width": 1500,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -2736,
+        -48
+      ],
+      "typeVersion": 1,
+      "id": "sticky-attio-flow",
+      "name": "Sticky Note Attio"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "person-exists",
+              "leftValue": "={{ $json.data[0] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2368,
+        64
+      ],
+      "id": "if-person-found",
+      "name": "Person Found?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "company-linked",
+              "leftValue": "={{ $json.data[0].values.company[0] }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2128,
+        64
+      ],
+      "id": "if-company-linked",
+      "name": "Company Linked?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "entry-exists",
+              "leftValue": "={{ $json.data.filter(entry => entry.list_api_slug === 'au_or_outreach_2026')[0] }}",
+              "rightValue": "au_or_outreach_2026",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1664,
+        64
+      ],
+      "id": "if-entry-exists",
+      "name": "List Entry Exists?"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -800,
+        -240
+      ],
+      "id": "5bec8564-a02d-427e-8a46-79a7860e2ba1",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "U11ZFugtdDzwhsyC",
+          "name": "OpenAI Account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Get Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Parse Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Map fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Get Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Slack for Approval": {
+      "main": [
+        []
+      ]
+    },
+    "Email Agent": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini2": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Response Handling Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Handling Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Structured Output Parser1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Product Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Webhook": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Find Person in Attio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Person in Attio": {
+      "main": [
+        [
+          {
+            "node": "Person Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Person Found?": {
+      "main": [
+        [
+          {
+            "node": "Company Linked?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Linked?": {
+      "main": [
+        [
+          {
+            "node": "Get Company List Entries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Company List Entries": {
+      "main": [
+        [
+          {
+            "node": "List Entry Exists?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Entry Exists?": {
+      "main": [
+        [
+          {
+            "node": "Update Attio List Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reply Received": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Email Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": {
+    "node:Reply Received": {
+      "webhookId": "hoo_D2XyjPHC3jgJNeAkB"
+    },
+    "node:Reply Received1": {}
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Reply Received": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "content-type": "application/json",
+            "accept": "*/*",
+            "accept-language": "*",
+            "sec-fetch-mode": "cors",
+            "user-agent": "node",
+            "content-length": "5448",
+            "x-cloud-trace-context": "24ec792fb3d31f69355b3dbdbd44d0d3/10310367594964653267",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-24ec792fb3d31f69355b3dbdbd44d0d3-8f15c8b3719114d3-00",
+            "x-forwarded-for": "141.94.255.65",
+            "forwarded": "for=\"141.94.255.65\";proto=https",
+            "accept-encoding": "br, gzip, deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "_id": "act_QKS7YFdaL4nzeQuPK",
+            "type": "emailsReplied",
+            "emailId": "eml_Yw75FgyEoX2RT2N9f",
+            "messageId": "<CAGuwgJXgZr1+Jb_KJpA0taiF3FEK4MOskvBJkQ2RsAVP_KywcA@mail.gmail.com>",
+            "createdBy": "usr_gYdTGt9D9RHqcwssi",
+            "createdAt": "2026-03-24T06:15:09.000Z",
+            "fromEmail": "hello@goodgilbert.com",
+            "isFirst": true,
+            "stopped": true,
+            "subject": "Re: do you own your guest data at Good Gilbert?",
+            "messagePreview": "Please take us off your mailing list",
+            "bot": false,
+            "teamId": "tea_gYwPePZxuhFb6QraW",
+            "leadId": "lea_oh73tR9Wh5sGxY8Bp",
+            "campaignId": "cam_FMR9AtdNg4QPaw2Ky",
+            "sequenceId": "seq_D8NhWunvP8MSk6AAw",
+            "sequenceStep": 3,
+            "emailTemplateId": "etp_bfkuE4pJ5We5HwF5w",
+            "sendUserId": "usr_gYdTGt9D9RHqcwssi",
+            "totalSequenceStep": 3,
+            "name": "[AU] Reservation Marketplace - B2B (Feb 2026)",
+            "sendUserName": "Chloei Marithe Garcia",
+            "sendUserEmail": "chloei-g@theoddlecompany.net",
+            "sendUserMailboxId": "usm_t5e4bWfafEdragGxj",
+            "sendUserMailboxProviderId": "chloei-g@theoddlecompany.net",
+            "leadEmail": "hello@goodgilbert.com",
+            "leadCompanyName": "Good Gilbert",
+            "contactId": "ctc_N4STZsDvgWfj8SYxi",
+            "relatedSentAt": "2026-02-25T02:19:38.496Z",
+            "metaData": {
+              "teamId": "tea_gYwPePZxuhFb6QraW",
+              "campaignId": "cam_FMR9AtdNg4QPaw2Ky",
+              "leadId": "lea_oh73tR9Wh5sGxY8Bp",
+              "type": "emailsReplied",
+              "createdBy": "usr_gYdTGt9D9RHqcwssi",
+              "s3ready": false,
+              "taskId": "tsk_FfuskxhqD2476596z"
+            },
+            "campaignName": "[AU] Reservation Marketplace - B2B (Feb 2026)",
+            "html": "<div dir=\"ltr\">Please take us off your mailing list</div><br><div class=\"gmail_quote gmail_quote_container\"><div dir=\"ltr\" class=\"gmail_attr\">On Tue, Mar 24, 2026 at 2:46 PM Chloei Marithe Garcia &lt;<a href=\"mailto:chloei-g@theoddlecompany.net\">chloei-g@theoddlecompany.net</a>&gt; wrote:<br></div><blockquote class=\"gmail_quote\" style=\"margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex\"><div style=\"min-width:360px\"></div><div dir=\"ltr\"><div dir=\"ltr\">\n    <div><p id=\"m_-3945922037282882043isPasted\" style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">Hi Good Gilbert team,</p><p id=\"m_-3945922037282882043isPasted\" style=\"margin:0px;box-sizing:border-box\">One quick question: do you currently own 100% of the email data for guests booking through your reservation platform?</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Most owners find they&#39;re &quot;renting&quot; their own guests. Oddle gives you full ownership so you can fill quiet Tuesdays without paying a fee to reach them.</p><p style=\"margin:0px;box-sizing:border-box\"><br style=\"box-sizing:border-box\"></p><p style=\"margin:0px;box-sizing:border-box\">Want me to show you how we automate this?</p><p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\"><br style=\"box-sizing:border-box\"></p><p style=\"line-height:1.38;margin:12pt 0px;box-sizing:border-box\" dir=\"ltr\">Regards,<br style=\"box-sizing:border-box\" id=\"m_-3945922037282882043isPasted\">Chloei Marithe Garcia<br style=\"box-sizing:border-box\"> at Oddle</p></div>\n    <div class=\"gmail_extra\">\n      <div class=\"gmail_signature\"><div dir=\"ltr\"><div><div dir=\"ltr\"></div></div></div></div>\n      \n    </div>\n    </div>\n<span summary=\"/api/reply/data-ll-tsk_FfuskxhqD2476596z\"></span>\n<img alt=\"logo\" src=\"https://b2btrack.oddle.me/api/track/open/usr_tN2v4CzXRtSkvwSkg/tsk_FfuskxhqD2476596z\" height=\"1\" width=\"1\"></div><br></blockquote></div><div><br clear=\"all\"></div><div><br></div><span class=\"gmail_signature_prefix\">-- </span><br><div dir=\"ltr\" class=\"gmail_signature\"><div dir=\"ltr\"><div><span style=\"color:rgb(34,34,34)\">It’s all Good, Gilbert. <br></span><div style=\"color:rgb(34,34,34)\"><br><br></div></div><div style=\"color:rgb(34,34,34)\"><img width=\"96\" height=\"96\" src=\"https://ci3.googleusercontent.com/mail-sig/AIorK4x2XJFkXbNOIXKB_kAWEJWJUaYP2YEXCbEcvftguyEbR_c9xn1tXkcY_hZLltU4-UNpNlOlPfY\"><br><div>0434 130 081</div><div>135b + c Goodwood Rd,</div><div>Goodwood SA 5034</div><img width=\"95\" height=\"96\" src=\"https://ci3.googleusercontent.com/mail-sig/AIorK4wPIsU4mp4wyPl6DQ_0idXoPU-E9T-4n3i7oW5zDr_3fj4QPREjriCaOV-6IoY6ty9nvKswyo4\"><img width=\"95\" height=\"96\" src=\"https://ci3.googleusercontent.com/mail-sig/AIorK4wep2aTbBFOyXoAT0Z7GATIgbpTbV7Jfi6YVFyospfCSC9JnY8R1tfu6VJpiHfBgPs7z6WSVko\"><br></div><div style=\"color:rgb(34,34,34)\"><img width=\"200\" height=\"30\" src=\"https://ci3.googleusercontent.com/mail-sig/AIorK4wWAMtRkENqXHNkVK_tjvf6GV7I-956w0m4R_bgLxD0k4ch6yGP2hLKeYiefZSwjou7eCua35M\"><br><br></div></div></div>\n",
+            "text": "Please take us off your mailing list\n\nOn Tue, Mar 24, 2026 at 2:46 PM Chloei Marithe Garcia <\nchloei-g@theoddlecompany.net> wrote:\n\n> Hi Good Gilbert team,\n>\n> One quick question: do you currently own 100% of the email data for guests\n> booking through your reservation platform?\n>\n>\n> Most owners find they're \"renting\" their own guests. Oddle gives you full\n> ownership so you can fill quiet Tuesdays without paying a fee to reach them.\n>\n>\n> Want me to show you how we automate this?\n>\n>\n> Regards,\n> Chloei Marithe Garcia\n> at Oddle\n> [image: logo]\n>\n>\n\n-- \nIt’s all Good, Gilbert.\n\n\n\n0434 130 081\n135b + c Goodwood Rd,\nGoodwood SA 5034\n",
+            "companyName": "Good Gilbert",
+            "email": "hello@goodgilbert.com",
+            "Target group": "Reservation Marketplace",
+            "emailTemplateName": "Blank"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook/lemlist-email-campaign",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "1da0ffba-00c1-48c9-a834-dc16ddd9d28d",
+  "activeVersionId": "1da0ffba-00c1-48c9-a834-dc16ddd9d28d",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-23T10:25:54.378Z",
+      "createdAt": "2026-03-23T10:25:54.378Z",
+      "role": "workflow:owner",
+      "workflowId": "nkkFQLQhhhlUQPCR",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T08:19:05.451Z",
+    "createdAt": "2026-03-24T08:19:03.797Z",
+    "versionId": "1da0ffba-00c1-48c9-a834-dc16ddd9d28d",
+    "workflowId": "nkkFQLQhhhlUQPCR",
+    "nodes": [
+      {
+        "parameters": {
+          "url": "=https://api.lemlist.com/api/inbox/{{ $('Reply Received').item.json.body.contactId }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "lemlistApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          -1760,
+          -416
+        ],
+        "name": "Get Conversation History",
+        "id": "87be4064-e0a9-40d7-9adf-d3216e314d03",
+        "credentials": {
+          "lemlistApi": {
+            "id": "6dgMHleAsx5bfyF9",
+            "name": "Lemlist account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse and format Lemlist conversation history for AI agent\n\n// Helper function to strip HTML tags and decode HTML entities\nfunction stripHtml(html) {\n  if (!html) return '';\n  let text = html.replace(/<[^>]*>/g, ' ');\n  text = text\n    .replace(/&nbsp;/g, ' ')\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>')\n    .replace(/&quot;/g, '\"')\n    .replace(/&#39;/g, \"'\")\n    .replace(/&#x27;/g, \"'\")\n    .replace(/&apos;/g, \"'\")\n    .replace(/&#39;s/g, \"'s\");\n  text = text.replace(/\\s+/g, ' ').trim();\n  return text;\n}\n\nfunction formatTimestamp(isoDate) {\n  const date = new Date(isoDate);\n  const year = date.getFullYear();\n  const month = String(date.getMonth() + 1).padStart(2, '0');\n  const day = String(date.getDate()).padStart(2, '0');\n  const hours = String(date.getHours()).padStart(2, '0');\n  const minutes = String(date.getMinutes()).padStart(2, '0');\n  return `${year}-${month}-${day} ${hours}:${minutes}`;\n}\n\nconst inputData = $input.all();\nlet rawMessages = [];\n\nif (Array.isArray(inputData) && inputData.length > 0) {\n  const firstItem = inputData[0].json;\n  if (firstItem?.data && Array.isArray(firstItem.data)) {\n    rawMessages = firstItem.data;\n  } else if (Array.isArray(firstItem)) {\n    rawMessages = firstItem;\n  }\n}\n\nconst latestLeadReply = rawMessages.find(msg => msg.type === 'emailsReplied');\nconst anyMessageWithEmail = rawMessages.find(msg => msg.leadEmail);\n\nlet leadMessage = '';\nlet leadEmail = anyMessageWithEmail ? anyMessageWithEmail.leadEmail : null;\nlet companyName = null;\n\nif (latestLeadReply && latestLeadReply.message) {\n    let cleaned = stripHtml(latestLeadReply.message);\n    leadMessage = cleaned.split(/On\\s.*wrote:/i)[0]\n                         .split(/From:/i)[0]\n                         .split(/---/)[0]\n                         .trim();\n}\n\nif (leadEmail && leadEmail.includes('@')) {\n  const domain = leadEmail.split('@')[1].split('.')[0];\n  companyName = domain.charAt(0).toUpperCase() + domain.slice(1);\n}\n\nconst processedMessages = rawMessages.map(item => {\n  const isProspect = item.type === 'emailsReplied';\n  const role = isProspect ? 'Prospect' : 'SDR';\n  const senderName = isProspect \n    ? (item.fromEmail ? item.fromEmail.split('@')[0] : 'Prospect') \n    : (item.sendUserName || 'SDR');\n  \n  return {\n    timestamp: item.createdAt,\n    formattedTime: formatTimestamp(item.createdAt),\n    role: role,\n    sender: senderName,\n    message: stripHtml(item.message),\n    type: item.type,\n    subject: item.subject || ''\n  };\n});\n\nconst chronologicalMessages = [...processedMessages].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));\n\nconst conversationThread = chronologicalMessages.map((msg, index) => {\n  const isLatest = index === 0;\n  const prefix = isLatest ? '[LATEST] ' : '';\n  return `${prefix}[${msg.formattedTime}] ${msg.role} (${msg.sender}): ${msg.message}`;\n}).join('\\n\\n');\n\nconst structuredConversation = {\n  totalMessages: chronologicalMessages.length,\n  messages: chronologicalMessages,\n  summary: {\n    prospectMessageCount: chronologicalMessages.filter(m => m.role === 'Prospect').length,\n    sdrMessageCount: chronologicalMessages.filter(m => m.role === 'SDR').length,\n    latestRole: chronologicalMessages[0]?.role || 'Unknown'\n  }\n};\n\nreturn {\n  json: {\n    leadMessage: leadMessage,\n    leadEmail: leadEmail,\n    companyName: companyName,\n    parsedConversation: structuredConversation,\n    conversationThreadFormatted: conversationThread,\n    contactId: rawMessages[0]?.contactId || null,\n    subject: rawMessages[0]?.subject || ''\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -1536,
+          -416
+        ],
+        "name": "Parse Conversation History",
+        "id": "d72f2f95-cdec-4d83-9e2f-998a6b588f60"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "slack_channel",
+                "name": "slackChannelId",
+                "value": "C0A3N12LT5Z",
+                "type": "string"
+              },
+              {
+                "id": "webhook_path",
+                "name": "webhookPath",
+                "value": "slack-reply-approval",
+                "type": "string"
+              },
+              {
+                "id": "lemlist_base_url",
+                "name": "lemlistBaseUrl",
+                "value": "https://app.lemlist.com",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.3,
+        "position": [
+          -1984,
+          -416
+        ],
+        "name": "Workflow Configuration",
+        "id": "e961759c-3b09-4aea-b884-b99bb3bc8a02"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"channel\": \"C0AB3U5B1D4\",\n    \"text\": \"New prospect reply needs approval\",\n    \"blocks\": [\n        {\"type\": \"header\", \"text\": {\"type\": \"plain_text\", \"text\": \":bell: New Prospect Reply\", \"emoji\": true}},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"fields\": [{\"type\": \"mrkdwn\", \"text\": \"*Company:*\\n{{ $('Reply Received').item.json.body.leadCompanyName }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Lead Email:*\\n{{ $('Reply Received').item.json.body.leadEmail }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Reply-from Email:*\\n{{ $('Reply Received').item.json.body.fromEmail }}\"}, {\"type\": \"mrkdwn\", \"text\": \"*Outreach Campaign:*\\n{{ $('Reply Received').item.json.body.name }}\"}]},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let rawText = $('Reply Received').item.json.body.text || ''; let truncated = rawText.length > 300 ? rawText.substring(0, 300) + '...' : rawText; return JSON.stringify(truncated).slice(1, -1); })() }}```\"}},\n        {\"type\": \"divider\"},\n        {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Agent Generated Response:*\\n```{{ (function() { let agentText = $json.output.content || ''; return JSON.stringify(agentText).slice(1, -1); })() }}```\"}},\n        {\"type\": \"context\", \"elements\": [{\"type\": \"mrkdwn\", \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}|View full conversation in Lemlist>\"}]},\n        {\"type\": \"divider\"},\n        {\"type\": \"actions\", \"block_id\": \"approval_actions\", \"elements\": [{\"type\": \"button\", \"text\": {\"type\": \"plain_text\", \"text\": \":white_check_mark: Approve & Send\", \"emoji\": true}, \"style\": \"primary\", \"action_id\": \"approve\", \"value\": \"{{ $('Reply Received').item.json.body.messageId }}\"}, {\"type\": \"button\", \"text\": {\"type\": \"plain_text\", \"text\": \"Reject & Edit\", \"emoji\": true}, \"style\": \"danger\", \"action_id\": \"reject\", \"url\": \"https://app.lemlist.com/teams/{{ $('Reply Received').item.json.body.metaData.teamId }}/inbox/list/myConversations/contacts/{{ $('Reply Received').item.json.body.contactId }}\"}]}\n    ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -16,
+          -416
+        ],
+        "id": "12d5e4e9-58fd-4668-9902-07cbc566bca0",
+        "name": "Send to Slack for Approval",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Additional Agent to assist Sophie post appt fixed\n- Create Lead Profile, send to Attio & Slack\n- Hand off to AE: Send email to prospect & introduce AE with LP",
+          "height": 128,
+          "width": 496,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1184,
+          -720
+        ],
+        "typeVersion": 1,
+        "id": "f1de37a0-023e-4541-83d0-f33f1d0a4966",
+        "name": "Sticky Note"
+      },
+      {
+        "parameters": {
+          "content": "### To add: Manager Agent\n1) Look at conversation history\n2) Identify what needs to be done from the latest conversation\n- Generate a response -> Email agent\n- Create a Lead Profile -> LP agent\n- Update Attio -> CRM agent (not sure about this)",
+          "height": 192,
+          "width": 384,
+          "color": 3
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -2256,
+          -800
+        ],
+        "typeVersion": 1,
+        "id": "a4965a54-a9de-4e64-9a1d-c5a87ad0931d",
+        "name": "Sticky Note3"
+      },
+      {
+        "parameters": {
+          "promptType": "define",
+          "text": "=- Email from: {{ $json.email_from }}\n- Company: {{ $json.company }}\n- Subject: {{ $json.subject }}\n- Lead's's latest reply: {{ $json.lead_message }}\n- Conversation History: {{ $json.conversation_history }}",
+          "hasOutputParser": true,
+          "options": {
+            "systemMessage": "=**Role:**\nYou are an expert Sales Development Representative (SDR). Your goal is to manage incoming replies from outbound email prospects, address their queries/objections using approved knowledge, and ultimately secure a discovery call with our team.\n\n**Response Guidelines & Formatting:**\n- Length: Under 100 words. Maximum 200 words.\n- Tone: Professional, friendly, and consultative.\n- Filler phrases: Do not use filler affirmations.\n- Mirror: If the lead's response is short and direct, keep your reply equally lean.\n- Language: Plain business language. Outcomes over features.\n- Format: No bold text. No em-dashes.\n- Scheduling link: Never include it while still handling an objection.\n- Output: Return in Markdown format.\n\n**Email Signature:**\nCheers,\n[SDR's first name]"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.agent",
+        "typeVersion": 1.6,
+        "position": [
+          -656,
+          -416
+        ],
+        "name": "Email Agent",
+        "id": "dcbb4582-5f86-4d12-b974-61b049cfc73d",
+        "alwaysOutputData": true,
+        "onError": "continueRegularOutput"
+      },
+      {
+        "parameters": {
+          "content": "## Process prospect's reply & retrieve conversation history for context",
+          "height": 420,
+          "width": 1072
+        },
+        "id": "4f50d8d8-8841-4fac-806e-6645dc5a946e",
+        "name": "Sticky Note15",
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -2416,
+          -576
+        ],
+        "typeVersion": 1
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-embedding-001"
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          -832,
+          144
+        ],
+        "id": "4801550f-59b2-4fef-9ad9-249f6fd0f9d2",
+        "name": "Embeddings Google Gemini2",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+          "tableName": {
+            "__rl": true,
+            "value": "response_handling_guide",
+            "mode": "list",
+            "cachedResultName": "response_handling_guide"
+          },
+          "topK": 5,
+          "options": {
+            "queryName": "match_documents"
+          }
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          -832,
+          -32
+        ],
+        "id": "9e8518f0-3cf2-47ac-8516-1977e8411ca1",
+        "name": "Response Handling Knowledge Base",
+        "credentials": {
+          "supabaseApi": {
+            "id": "aJzMx5t2Q4kcZ8EL",
+            "name": "Supabase Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsonSchemaExample": "{\"content\": \"Hi Yong Xiang, Thanks for the reply.\"}",
+          "autoFix": true
+        },
+        "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+        "typeVersion": 1.3,
+        "position": [
+          -480,
+          -208
+        ],
+        "id": "f1a9ed65-6c47-4699-b71b-3cdff21c6485",
+        "name": "Structured Output Parser1"
+      },
+      {
+        "parameters": {
+          "content": "## Generate response based on guideline & response handling knowledge base",
+          "height": 960,
+          "width": 992,
+          "color": 4
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -1184,
+          -560
+        ],
+        "typeVersion": 1,
+        "id": "298fb3c2-3895-43ed-9265-23271a043581",
+        "name": "Sticky Note1"
+      },
+      {
+        "parameters": {
+          "assignments": {
+            "assignments": [
+              {
+                "id": "42648864-a669-4190-ac38-217a44e8a4c5",
+                "name": "email_from",
+                "value": "={{ $('Parse Conversation History').item.json.leadEmail }}",
+                "type": "string"
+              },
+              {
+                "id": "d3c1e1b5-6bee-4c7a-9741-e943014b064f",
+                "name": "company",
+                "value": "={{ $('Parse Conversation History').item.json.companyName }}",
+                "type": "string"
+              },
+              {
+                "id": "419ee37f-3fb5-4ac5-84a9-1d28ee68d113",
+                "name": "subject",
+                "value": "={{ $('Parse Conversation History').item.json.subject }}",
+                "type": "string"
+              },
+              {
+                "id": "51996ffa-b5d3-46e5-8e0b-c6f9374fb40b",
+                "name": "lead_message",
+                "value": "={{ $('Parse Conversation History').item.json.leadMessage }}",
+                "type": "string"
+              },
+              {
+                "id": "0ba486e0-44fc-40c5-a50e-f718265a40e2",
+                "name": "conversation_history",
+                "value": "={{ $('Parse Conversation History').item.json.conversationThreadFormatted }}",
+                "type": "string"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.set",
+        "typeVersion": 3.4,
+        "position": [
+          -1088,
+          -416
+        ],
+        "id": "e295f398-5aec-442f-960d-5ab3e9332d82",
+        "name": "Map fields"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          -512,
+          -48
+        ],
+        "id": "b11bb73c-8211-461c-8417-82b61826d7ad",
+        "name": "Google Gemini Chat Model",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "mode": "retrieve-as-tool",
+          "toolDescription": "Contains comprehensive product knowledge about Oddle, Oddle Reservation and Oddle Shop.",
+          "tableName": {
+            "__rl": true,
+            "value": "oddle_eshop_knowledge_base",
+            "mode": "list",
+            "cachedResultName": "oddle_eshop_knowledge_base"
+          },
+          "topK": 5,
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+        "typeVersion": 1.3,
+        "position": [
+          -656,
+          96
+        ],
+        "id": "6fd57834-7c11-491b-ad64-37c8cec8361e",
+        "name": "Product Knowledge Base",
+        "credentials": {
+          "supabaseApi": {
+            "id": "aJzMx5t2Q4kcZ8EL",
+            "name": "Supabase Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "modelName": "models/gemini-embedding-001"
+        },
+        "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          -656,
+          256
+        ],
+        "id": "34e995de-723a-4037-8ca2-29e8099b9223",
+        "name": "Embeddings Google Gemini",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "OK",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.5,
+        "position": [
+          -2176,
+          -416
+        ],
+        "id": "fe32984a-f03c-4d07-91cf-4d8fb8c8bd99",
+        "name": "Respond to Webhook"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "lemlist-email-campaign",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -2368,
+          -416
+        ],
+        "id": "c3330aee-8ba9-461c-b257-0a69cd21b751",
+        "name": "Reply Received",
+        "webhookId": "d0007cc4-2986-497c-889b-0248e778f89f"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Reply Received').item.json.body.leadEmail }}\"}}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -2576,
+          64
+        ],
+        "id": "attio-find-person",
+        "name": "Find Person in Attio",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://api.attio.com/v2/objects/companies/records/{{ $json.data[0].values.company[0].target_record_id }}/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1872,
+          64
+        ],
+        "id": "attio-get-company-entries",
+        "name": "Get Company List Entries",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data[0].entry_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "{\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          -1424,
+          64
+        ],
+        "id": "attio-update-list-entry",
+        "name": "Update Attio List Entry",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "## Update Attio entryin AU Attio list\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
+          "height": 328,
+          "width": 1500,
+          "color": 6
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "position": [
+          -2736,
+          -48
+        ],
+        "typeVersion": 1,
+        "id": "sticky-attio-flow",
+        "name": "Sticky Note Attio"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "person-exists",
+                "leftValue": "={{ $json.data[0] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -2368,
+          64
+        ],
+        "id": "if-person-found",
+        "name": "Person Found?"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "company-linked",
+                "leftValue": "={{ $json.data[0].values.company[0] }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "object",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -2128,
+          64
+        ],
+        "id": "if-company-linked",
+        "name": "Company Linked?"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 2,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "entry-exists",
+                "leftValue": "={{ $json.data.filter(entry => entry.list_api_slug === 'au_or_outreach_2026')[0] }}",
+                "rightValue": "au_or_outreach_2026",
+                "operator": {
+                  "type": "object",
+                  "operation": "exists",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.2,
+        "position": [
+          -1664,
+          64
+        ],
+        "id": "if-entry-exists",
+        "name": "List Entry Exists?"
+      },
+      {
+        "parameters": {
+          "model": {
+            "__rl": true,
+            "value": "gpt-4.1",
+            "mode": "list",
+            "cachedResultName": "gpt-4.1"
+          },
+          "builtInTools": {},
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+        "typeVersion": 1.3,
+        "position": [
+          -800,
+          -240
+        ],
+        "id": "5bec8564-a02d-427e-8a46-79a7860e2ba1",
+        "name": "OpenAI Chat Model",
+        "credentials": {
+          "openAiApi": {
+            "id": "U11ZFugtdDzwhsyC",
+            "name": "OpenAI Account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Get Conversation History": {
+        "main": [
+          [
+            {
+              "node": "Parse Conversation History",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Conversation History": {
+        "main": [
+          [
+            {
+              "node": "Map fields",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Workflow Configuration": {
+        "main": [
+          [
+            {
+              "node": "Get Conversation History",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send to Slack for Approval": {
+        "main": [
+          []
+        ]
+      },
+      "Email Agent": {
+        "main": [
+          [
+            {
+              "node": "Send to Slack for Approval",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini2": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Response Handling Knowledge Base",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Response Handling Knowledge Base": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Structured Output Parser1": {
+        "ai_outputParser": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_outputParser",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Map fields": {
+        "main": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Google Gemini Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Structured Output Parser1",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Product Knowledge Base": {
+        "ai_tool": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_tool",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Embeddings Google Gemini": {
+        "ai_embedding": [
+          [
+            {
+              "node": "Product Knowledge Base",
+              "type": "ai_embedding",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Webhook": {
+        "main": [
+          [
+            {
+              "node": "Workflow Configuration",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Find Person in Attio",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Find Person in Attio": {
+        "main": [
+          [
+            {
+              "node": "Person Found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Person Found?": {
+        "main": [
+          [
+            {
+              "node": "Company Linked?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Company Linked?": {
+        "main": [
+          [
+            {
+              "node": "Get Company List Entries",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Company List Entries": {
+        "main": [
+          [
+            {
+              "node": "List Entry Exists?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "List Entry Exists?": {
+        "main": [
+          [
+            {
+              "node": "Update Attio List Entry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Reply Received": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "OpenAI Chat Model": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Email Agent",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version 1da0ffba",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": [
+    {
+      "updatedAt": "2026-02-10T02:52:51.422Z",
+      "createdAt": "2026-02-10T02:52:51.422Z",
+      "id": "4lS27QDaN4KgD7K0",
+      "name": "au"
+    }
+  ]
+}
