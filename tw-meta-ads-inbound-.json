@@ -1,0 +1,2226 @@
+{
+  "updatedAt": "2026-03-24T04:27:24.264Z",
+  "createdAt": "2026-03-24T04:10:13.574Z",
+  "id": "Rp1RP9g98Q3IswFw",
+  "name": "TW Meta Ads Inbound",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tw-meta-ads-inbound",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Meta Ads Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        320,
+        480
+      ],
+      "webhookId": "tw-meta-ads-inbound"
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
+      },
+      "id": "extract-lead-data",
+      "name": "Extract Lead Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        544,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/people/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Extract Lead Data').item.json.email }}\"}}",
+        "options": {}
+      },
+      "id": "search-person-email",
+      "name": "Search Attio Person by Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        768,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-email-found",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "person-exists-email",
+      "name": "Person Exists via Email?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        992,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Extract Lead Data').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "update-person-email",
+      "name": "Update Person (Email Path)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1232,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Email').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "add-to-list-email-existing",
+      "name": "Add Person to Inbound List (Email)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1440,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+      },
+      "id": "set-person-id-email-existing",
+      "name": "Set Person ID (Email Existing)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1664,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/people/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"filter\": {\"phone_numbers\": \"{{ $('Extract Lead Data').item.json.phoneNumber }}\"}}",
+        "options": {}
+      },
+      "id": "search-person-phone",
+      "name": "Search Attio Person by Phone",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1232,
+        640
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-phone-found",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "person-exists-phone",
+      "name": "Person Exists via Phone?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        640
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Lead Data').item.json.fullName }}\",\n      \"email_addresses\": [\"{{ $('Extract Lead Data').item.json.email }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "update-person-phone",
+      "name": "Update Person (Phone Path)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Phone').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "add-to-list-phone-existing",
+      "name": "Add Person to Inbound List (Phone)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Phone Existing Path: Person was found by phone search\nconst personRecordId = $('Search Attio Person by Phone').item.json.data[0].id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+      },
+      "id": "set-person-id-phone-existing",
+      "name": "Set Person ID (Phone Existing)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2128,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/people/records",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Lead Data').item.json.fullName }}\",\n      \"phone_numbers\": [\"{{ $('Extract Lead Data').item.json.phoneNumber }}\"],\n      \"email_addresses\": [\"{{ $('Extract Lead Data').item.json.email }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "create-person-phone",
+      "name": "Create New Person",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1680,
+        800
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "add-to-list-new",
+      "name": "Add New Person to Inbound List",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1904,
+        800
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// New Person Path: Person was just created\nconst personRecordId = $('Create New Person').item.json.data.id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+      },
+      "id": "set-person-id-new",
+      "name": "Set Person ID (New)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2128,
+        800
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "merge-person-paths",
+      "name": "Merge Person Paths",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2352,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "should-search-company",
+              "leftValue": "={{ $json.shouldSearchCompany }}",
+              "rightValue": true,
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "should-search-company",
+      "name": "Should Search Company?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-email-domain",
+              "leftValue": "={{ $json.emailDomain }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-domain-check",
+      "name": "Has Email Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2784,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/companies/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Merge Person Paths').item.json.emailDomain }}\"\n      }\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "search-company-domain",
+      "name": "Search Company by Domain",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3024,
+        320
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-domain",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "found-by-domain",
+      "name": "Found by Domain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3248,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "has-restaurant-name",
+              "leftValue": "={{ $('Merge Person Paths').item.json.restaurantName }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "has-restaurant-name-after-domain",
+      "name": "Has Restaurant Name?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3472,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/companies/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"filter\": {\n    \"name\": {\n      \"$eq\": \"{{ $('Merge Person Paths').item.json.restaurantName }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "search-company-name",
+      "name": "Search Company by Name",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3712,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "company-found-name",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "found-by-name",
+      "name": "Found by Name?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        3920,
+        480
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "merge-company-found",
+      "name": "Merge Company Found",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        4144,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract company record ID from search result\nconst searchResult = $input.first().json;\nconst personData = $('Merge Person Paths').first().json;\n\nlet companyRecordId = '';\nif (searchResult.data && searchResult.data.length > 0) {\n  companyRecordId = searchResult.data[0].id.record_id;\n}\n\nreturn [{\n  json: {\n    companyRecordId,\n    personRecordId: personData.personRecordId,\n    restaurantName: personData.restaurantName,\n    emailDomain: personData.emailDomain,\n    country: personData.country\n  }\n}];"
+      },
+      "id": "extract-company-data",
+      "name": "Extract Company Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        4368,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-company-found",
+              "leftValue": "={{ $json.companyRecordId }}",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "company-found-check",
+      "name": "Company Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4592,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.personRecordId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.companyRecordId }}\" }]\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "link-company-to-person",
+      "name": "Link Company to Person",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4832,
+        160
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/companies/records",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"country\": \"Taiwan\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "create-new-company",
+      "name": "Create New Company",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        4832,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
+        "options": {}
+      },
+      "id": "link-new-company-to-person",
+      "name": "Link New Company to Person",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5040,
+        480
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Meta Ads Webhook": {
+      "main": [
+        [
+          {
+            "node": "Extract Lead Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Lead Data": {
+      "main": [
+        [
+          {
+            "node": "Search Attio Person by Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Attio Person by Email": {
+      "main": [
+        [
+          {
+            "node": "Person Exists via Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Person Exists via Email?": {
+      "main": [
+        [
+          {
+            "node": "Update Person (Email Path)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Attio Person by Phone",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Person (Email Path)": {
+      "main": [
+        [
+          {
+            "node": "Add Person to Inbound List (Email)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Person to Inbound List (Email)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Email Existing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Email Existing)": {
+      "main": [
+        [
+          {
+            "node": "Merge Person Paths",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Attio Person by Phone": {
+      "main": [
+        [
+          {
+            "node": "Person Exists via Phone?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Person Exists via Phone?": {
+      "main": [
+        [
+          {
+            "node": "Update Person (Phone Path)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Person (Phone Path)": {
+      "main": [
+        [
+          {
+            "node": "Add Person to Inbound List (Phone)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Person to Inbound List (Phone)": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (Phone Existing)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Person ID (Phone Existing)": {
+      "main": [
+        [
+          {
+            "node": "Merge Person Paths",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Create New Person": {
+      "main": [
+        [
+          {
+            "node": "Add New Person to Inbound List",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add New Person to Inbound List": {
+      "main": [
+        [
+          {
+            "node": "Set Person ID (New)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Person ID (New)": {
+      "main": [
+        [
+          {
+            "node": "Merge Person Paths",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge Person Paths": {
+      "main": [
+        [
+          {
+            "node": "Should Search Company?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Should Search Company?": {
+      "main": [
+        [
+          {
+            "node": "Has Email Domain?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Has Email Domain?": {
+      "main": [
+        [
+          {
+            "node": "Search Company by Domain",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Search Company by Name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Company by Domain": {
+      "main": [
+        [
+          {
+            "node": "Found by Domain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found by Domain?": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Found",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Has Restaurant Name?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Restaurant Name?": {
+      "main": [
+        [
+          {
+            "node": "Search Company by Name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Extract Company Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search Company by Name": {
+      "main": [
+        [
+          {
+            "node": "Found by Name?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Found by Name?": {
+      "main": [
+        [
+          {
+            "node": "Merge Company Found",
+            "type": "main",
+            "index": 1
+          }
+        ],
+        [
+          {
+            "node": "Extract Company Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Company Found": {
+      "main": [
+        [
+          {
+            "node": "Extract Company Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Company Data": {
+      "main": [
+        [
+          {
+            "node": "Company Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Company Found?": {
+      "main": [
+        [
+          {
+            "node": "Link Company to Person",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create New Company",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create New Company": {
+      "main": [
+        [
+          {
+            "node": "Link New Company to Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2SWvtvGbkteCtlr0",
+    "timeSavedPerExecution": 5
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Meta Ads Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "content-type": "application/json; charset=utf-8",
+            "user-agent": "Zapier",
+            "accept": "*/*",
+            "content-length": "1593",
+            "x-cloud-trace-context": "f6ab9143704757610a767d39ab1ea759/17270915603617910304;o=1",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-f6ab9143704757610a767d39ab1ea759-efae9e3c7b658e20-01",
+            "x-forwarded-for": "44.214.195.75",
+            "forwarded": "for=\"44.214.195.75\";proto=https",
+            "accept-encoding": "gzip,deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "ad_id": "120248743837740537",
+            "ad_name": "OL_川妹子",
+            "adgroup_id": "120248743837740537",
+            "adset_id": "120248743837750537",
+            "adset_name": "OL_interest-餐廳老闆 + Oddle visitor_雙北、台中、新竹",
+            "campaign_id": "120248743837760537",
+            "campaign_name": "2026 Mar-B2B_contact(Meta leads) - All product-新粉專 - OR+OL",
+            "campaign_name_B2B_contact": "Meta leads",
+            "created_time": "2026-03-23T13:45:03+0000",
+            "custom_disclaimer_responses": "",
+            "email": "sabrina@ivymaison.com",
+            "Email": "sabrina@ivymaison.com",
+            "event_field": "leadgen",
+            "form_id": "1773005097405941",
+            "form_name": "TW B2B Inbound Leads 表單 - 2026 Mar update",
+            "Full name": "全通路電商女皇-葳姐",
+            "full_name": "全通路電商女皇-葳姐",
+            "id": "1972298053716696",
+            "leadgen_id": "1972298053716696",
+            "page_id": "533140446548134",
+            "page_name": "Oddle 餐飲科技 - 訂位系統、線上訂餐網站",
+            "partner_name": "",
+            "Phone number": "+886986308108",
+            "phone_number": "+886986308108",
+            "platform": "ig",
+            "raw": {
+              "email": "sabrina@ivymaison.com",
+              "Email": "sabrina@ivymaison.com",
+              "Full name": "全通路電商女皇-葳姐",
+              "full_name": "全通路電商女皇-葳姐",
+              "Phone number": "+886986308108",
+              "phone_number": "+886986308108",
+              "對oddle哪種產品感興趣": "顧客忠誠計畫",
+              "對Oddle哪種產品感興趣": "顧客忠誠計畫",
+              "您經營的餐廳/品牌名稱": "Ivymaison 美胸",
+              "請問您的職位": "運營經理"
+            },
+            "retailer_item_id": "",
+            "vehicle": "",
+            "對oddle哪種產品感興趣": "顧客忠誠計畫",
+            "對Oddle哪種產品感興趣": "顧客忠誠計畫",
+            "您經營的餐廳/品牌名稱": "Ivymaison 美胸",
+            "請問您的職位": "運營經理"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook-test/tw-meta-ads-inbound",
+          "executionMode": "test"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
+  "activeVersionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T04:10:13.574Z",
+      "createdAt": "2026-03-24T04:10:13.574Z",
+      "role": "workflow:owner",
+      "workflowId": "Rp1RP9g98Q3IswFw",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T04:27:11.482Z",
+    "createdAt": "2026-03-24T04:22:28.119Z",
+    "versionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
+    "workflowId": "Rp1RP9g98Q3IswFw",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "tw-meta-ads-inbound",
+          "options": {}
+        },
+        "id": "webhook-trigger",
+        "name": "Meta Ads Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          320,
+          480
+        ],
+        "webhookId": "tw-meta-ads-inbound"
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
+        },
+        "id": "extract-lead-data",
+        "name": "Extract Lead Data",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          544,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\"filter\": {\"email_addresses\": \"{{ $('Extract Lead Data').item.json.email }}\"}}",
+          "options": {}
+        },
+        "id": "search-person-email",
+        "name": "Search Attio Person by Email",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          768,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-email-found",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "person-exists-email",
+        "name": "Person Exists via Email?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          992,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"phone_numbers\": [\"{{ $('Extract Lead Data').item.json.phoneNumber }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "update-person-email",
+        "name": "Update Person (Email Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1232,
+          320
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Email').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "add-to-list-email-existing",
+        "name": "Add Person to Inbound List (Email)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1440,
+          320
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+        },
+        "id": "set-person-id-email-existing",
+        "name": "Set Person ID (Email Existing)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          1664,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\"filter\": {\"phone_numbers\": \"{{ $('Extract Lead Data').item.json.phoneNumber }}\"}}",
+          "options": {}
+        },
+        "id": "search-person-phone",
+        "name": "Search Attio Person by Phone",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1232,
+          640
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-phone-found",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "person-exists-phone",
+        "name": "Person Exists via Phone?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1440,
+          640
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.data[0].id.record_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Lead Data').item.json.fullName }}\",\n      \"email_addresses\": [\"{{ $('Extract Lead Data').item.json.email }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "update-person-phone",
+        "name": "Update Person (Phone Path)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1680,
+          560
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $('Search Attio Person by Phone').item.json.data[0].id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "add-to-list-phone-existing",
+        "name": "Add Person to Inbound List (Phone)",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1904,
+          560
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Phone Existing Path: Person was found by phone search\nconst personRecordId = $('Search Attio Person by Phone').item.json.data[0].id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+        },
+        "id": "set-person-id-phone-existing",
+        "name": "Set Person ID (Phone Existing)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2128,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/people/records",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Lead Data').item.json.fullName }}\",\n      \"phone_numbers\": [\"{{ $('Extract Lead Data').item.json.phoneNumber }}\"],\n      \"email_addresses\": [\"{{ $('Extract Lead Data').item.json.email }}\"],\n      \"job_title\": \"{{ $('Extract Lead Data').item.json.jobTitle }}\",\n      \"person_restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"submission_date\": \"{{ $('Extract Lead Data').item.json.submissionDate }}\",\n      \"inbound_qualification_status\": \"To Qualify\",\n      \"marketing_conversion_channel\": \"Meta\",\n      \"source_marketing_channel\": \"Meta Ad\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "create-person-phone",
+        "name": "Create New Person",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1680,
+          800
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/lists/864c26d9-7a92-4cfd-aaa9-86787ba925f8/entries",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"parent_record_id\": \"{{ $json.data.id.record_id }}\",\n    \"parent_object\": \"people\",\n    \"entry_values\": {\n      \"restaurant_name\": \"{{ $('Extract Lead Data').item.json.restaurantName }}\",\n      \"country\": \"Taiwan\",\n      \"comments\": \"Product interested: {{ $('Extract Lead Data').item.json.productInterested }}. Campaign: {{ $('Extract Lead Data').item.json.campaignName }}{{ $('Extract Lead Data').item.json.lineId ? '. Line ID: ' + $('Extract Lead Data').item.json.lineId : '' }}\",\n      \"qualification_stage\": \"To Qualify\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "add-to-list-new",
+        "name": "Add New Person to Inbound List",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          1904,
+          800
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// New Person Path: Person was just created\nconst personRecordId = $('Create New Person').item.json.data.id.record_id;\nconst leadData = $('Extract Lead Data').item.json;\n\nreturn [{\n  json: {\n    personRecordId,\n    ...leadData\n  }\n}];"
+        },
+        "id": "set-person-id-new",
+        "name": "Set Person ID (New)",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2128,
+          800
+        ]
+      },
+      {
+        "parameters": {
+          "numberInputs": 3
+        },
+        "id": "merge-person-paths",
+        "name": "Merge Person Paths",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          2352,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "should-search-company",
+                "leftValue": "={{ $json.shouldSearchCompany }}",
+                "rightValue": true,
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "should-search-company",
+        "name": "Should Search Company?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2560,
+          560
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-email-domain",
+                "leftValue": "={{ $json.emailDomain }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "has-domain-check",
+        "name": "Has Email Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          2784,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"domains\": {\n      \"root_domain\": {\n        \"$eq\": \"{{ $('Merge Person Paths').item.json.emailDomain }}\"\n      }\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "search-company-domain",
+        "name": "Search Company by Domain",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3024,
+          320
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-domain",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "found-by-domain",
+        "name": "Found by Domain?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3248,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "has-restaurant-name",
+                "leftValue": "={{ $('Merge Person Paths').item.json.restaurantName }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "has-restaurant-name-after-domain",
+        "name": "Has Restaurant Name?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3472,
+          480
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records/query",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"filter\": {\n    \"name\": {\n      \"$eq\": \"{{ $('Merge Person Paths').item.json.restaurantName }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "search-company-name",
+        "name": "Search Company by Name",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          3712,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "company-found-name",
+                "leftValue": "={{ $json.data.length }}",
+                "rightValue": 0,
+                "operator": {
+                  "type": "number",
+                  "operation": "gt"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "found-by-name",
+        "name": "Found by Name?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          3920,
+          480
+        ]
+      },
+      {
+        "parameters": {},
+        "id": "merge-company-found",
+        "name": "Merge Company Found",
+        "type": "n8n-nodes-base.merge",
+        "typeVersion": 3,
+        "position": [
+          4144,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "// Extract company record ID from search result\nconst searchResult = $input.first().json;\nconst personData = $('Merge Person Paths').first().json;\n\nlet companyRecordId = '';\nif (searchResult.data && searchResult.data.length > 0) {\n  companyRecordId = searchResult.data[0].id.record_id;\n}\n\nreturn [{\n  json: {\n    companyRecordId,\n    personRecordId: personData.personRecordId,\n    restaurantName: personData.restaurantName,\n    emailDomain: personData.emailDomain,\n    country: personData.country\n  }\n}];"
+        },
+        "id": "extract-company-data",
+        "name": "Extract Company Data",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          4368,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "cond-company-found",
+                "leftValue": "={{ $json.companyRecordId }}",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "company-found-check",
+        "name": "Company Found?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          4592,
+          320
+        ]
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $json.personRecordId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.companyRecordId }}\" }]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "link-company-to-person",
+        "name": "Link Company to Person",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4832,
+          160
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.attio.com/v2/objects/companies/records",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $json.restaurantName }}\",\n      \"primary_location\": \"Taiwan\",\n      \"country\": \"Taiwan\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "create-new-company",
+        "name": "Create New Company",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          4832,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "PATCH",
+          "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
+          "options": {}
+        },
+        "id": "link-new-company-to-person",
+        "name": "Link New Company to Person",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5040,
+          480
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Meta Ads Webhook": {
+        "main": [
+          [
+            {
+              "node": "Extract Lead Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Lead Data": {
+        "main": [
+          [
+            {
+              "node": "Search Attio Person by Email",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Attio Person by Email": {
+        "main": [
+          [
+            {
+              "node": "Person Exists via Email?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Person Exists via Email?": {
+        "main": [
+          [
+            {
+              "node": "Update Person (Email Path)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Search Attio Person by Phone",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Person (Email Path)": {
+        "main": [
+          [
+            {
+              "node": "Add Person to Inbound List (Email)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Person to Inbound List (Email)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Email Existing)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Email Existing)": {
+        "main": [
+          [
+            {
+              "node": "Merge Person Paths",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Attio Person by Phone": {
+        "main": [
+          [
+            {
+              "node": "Person Exists via Phone?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Person Exists via Phone?": {
+        "main": [
+          [
+            {
+              "node": "Update Person (Phone Path)",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create New Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Person (Phone Path)": {
+        "main": [
+          [
+            {
+              "node": "Add Person to Inbound List (Phone)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add Person to Inbound List (Phone)": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (Phone Existing)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Person ID (Phone Existing)": {
+        "main": [
+          [
+            {
+              "node": "Merge Person Paths",
+              "type": "main",
+              "index": 1
+            }
+          ]
+        ]
+      },
+      "Create New Person": {
+        "main": [
+          [
+            {
+              "node": "Add New Person to Inbound List",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add New Person to Inbound List": {
+        "main": [
+          [
+            {
+              "node": "Set Person ID (New)",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Set Person ID (New)": {
+        "main": [
+          [
+            {
+              "node": "Merge Person Paths",
+              "type": "main",
+              "index": 2
+            }
+          ]
+        ]
+      },
+      "Merge Person Paths": {
+        "main": [
+          [
+            {
+              "node": "Should Search Company?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Should Search Company?": {
+        "main": [
+          [
+            {
+              "node": "Has Email Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      },
+      "Has Email Domain?": {
+        "main": [
+          [
+            {
+              "node": "Search Company by Domain",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Search Company by Name",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Company by Domain": {
+        "main": [
+          [
+            {
+              "node": "Found by Domain?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Domain?": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Found",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Has Restaurant Name?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Restaurant Name?": {
+        "main": [
+          [
+            {
+              "node": "Search Company by Name",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Extract Company Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Search Company by Name": {
+        "main": [
+          [
+            {
+              "node": "Found by Name?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Found by Name?": {
+        "main": [
+          [
+            {
+              "node": "Merge Company Found",
+              "type": "main",
+              "index": 1
+            }
+          ],
+          [
+            {
+              "node": "Extract Company Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Merge Company Found": {
+        "main": [
+          [
+            {
+              "node": "Extract Company Data",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Company Data": {
+        "main": [
+          [
+            {
+              "node": "Company Found?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Company Found?": {
+        "main": [
+          [
+            {
+              "node": "Link Company to Person",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create New Company",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create New Company": {
+        "main": [
+          [
+            {
+              "node": "Link New Company to Person",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version a8ea3a08",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
