@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-23T08:19:20.727Z",
+  "updatedAt": "2026-03-25T07:12:36.786Z",
   "createdAt": "2026-03-10T02:30:44.332Z",
   "id": "WamnPrGluo92mwT7",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [current]",
@@ -1142,9 +1142,9 @@
             },
             {
               "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-              "name": "message_caption",
+              "name": "image_caption",
               "type": "string",
-              "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
             },
             {
               "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -1282,7 +1282,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1319,6 +1319,12 @@
               "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
               "name": "message_type",
               "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
+              "type": "string"
+            },
+            {
+              "id": "8ab9715e-d8d9-47f4-ada0-63ce067e021e",
+              "name": "image_caption",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
               "type": "string"
             }
           ]
@@ -1431,7 +1437,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -2552,16 +2558,16 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "messagebird-request-id": "c93db71f-c7d1-4d7a-a710-8b99bfea2f52",
-            "messagebird-request-timestamp": "1773224783",
+            "messagebird-request-timestamp": "1774420649",
             "content-type": "application/json; charset=utf-8",
+            "messagebird-request-id": "fc4e8835-5f12-46cb-af32-f51336a7e92e",
             "user-agent": "Messagebird/Requests develop:8c9cc536",
-            "content-length": "2011",
-            "x-cloud-trace-context": "3e7c3aff7158952e1788b3b115301504/7127284892878643669",
+            "content-length": "1566",
+            "x-cloud-trace-context": "03a44ec25b2c94467f4b0cb83227d6ee/9789280089104634825",
             "x-forwarded-proto": "https",
-            "traceparent": "00-3e7c3aff7158952e1788b3b115301504-62e933d91d0a21d5-00",
-            "x-forwarded-for": "13.127.212.189",
-            "forwarded": "for=\"13.127.212.189\";proto=https",
+            "traceparent": "00-03a44ec25b2c94467f4b0cb83227d6ee-87da82600de2d3c9-00",
+            "x-forwarded-for": "15.206.201.69",
+            "forwarded": "for=\"15.206.201.69\";proto=https",
             "accept-encoding": "gzip"
           },
           "params": {},
@@ -2570,15 +2576,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "191e0649-8c5c-4d08-80a2-0eb18bdc5a59",
+              "id": "1760a161-30dc-4a83-b470-5b026173ac8a",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "f787649e-dad4-43fa-93de-bc73bd3067b0",
+                  "id": "cba93d37-f5aa-4278-a249-4384a3f26142",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+6588332655",
+                  "identifierValue": "+6590673489",
                   "annotations": {
-                    "name": "twinklebellebelle"
+                    "name": "Juju ko"
                   }
                 }
               },
@@ -2591,17 +2597,17 @@
               "body": {
                 "type": "image",
                 "image": {
-                  "text": "A new chapter unfolds for Chimichanga at Chimi’s Especial. Our new space brings the same vibrant flavours and relaxed energy, now expressed through a broader Latin perspective. On every plate and in every pour, the Americas come together.\n\nWe are delighted to invite you to our Grand Opening and Ribbon Cutting Ceremony on Thursday, 26 March at 6:00pm at 70 Collyer Quay, #01-01 Customs House.\n\nJoin us for an evening of Latin flavours, reimagined the Chimi’s way, alongside cocktails and waterfront views.\n\nWe would be honoured to have you join us as we celebrate this special milestone.\n\nExperience casual Latin, the Chimi’s way.                \n                                                                                                                                                                                                  \nRSVP at chimisgrandopening.eventbrite.sg by 25 March, 12pm.",
+                  "text": "🎉 Special Treat Just for You! 🎉\n\nBUY 1 GET 1 FREE\n\nInvite a friend, loved one, or family member to savor the delightful taste of our famous Donburi. This week, enjoy our exclusive BUY ONE GET ONE FREE promotion! 🥢🥢\n\n⏰ Available for whole day dine-in before 31/3/2026.\n\nDon’t miss out — bring a friend and enjoy double the happiness today! 💥\n\n#Reedem Screen shoot show counter this “Promo”\nJurong East Westgate #B2-K4 608532\nSee you soon! 😊😊",
                   "images": [
                     {
-                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/191e0649-8c5c-4d08-80a2-0eb18bdc5a59/media/9c34e150-02c2-4d65-a177-c08f26d1089c"
+                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/1760a161-30dc-4a83-b470-5b026173ac8a/media/2a5bf73f-9fb2-423b-af64-758b95155067"
                     }
                   ]
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1773224777",
+                  "timestamp": "1774420643",
                   "user_locale": "cmn",
                   "whatsapp.media.type": "image"
                 }
@@ -2609,16 +2615,16 @@
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU4ODMzMjY1NRUCABIYFDNBNjA0NDk5RUJDOURCQTYxNzlEAA=="
+                  "platformReference": "wamid.HBgKNjU5MDY3MzQ4ORUCABIYFDJBMjgyNTJFQjUzMTExM0Q4MzRCAA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-03-11T10:26:23.545Z",
-              "createdAt": "2026-03-11T10:26:23.458Z",
-              "updatedAt": "2026-03-11T10:26:23.545Z",
+              "lastStatusAt": "2026-03-25T06:37:29.116Z",
+              "createdAt": "2026-03-25T06:37:29.021Z",
+              "updatedAt": "2026-03-25T06:37:29.116Z",
               "batchId": null
             }
           },
@@ -2628,8 +2634,8 @@
       }
     ]
   },
-  "versionId": "e1303e14-200b-4c8c-8b0b-f3b43f1db05d",
-  "activeVersionId": "e1303e14-200b-4c8c-8b0b-f3b43f1db05d",
+  "versionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
+  "activeVersionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
   "triggerCount": 1,
   "shared": [
     {
@@ -2641,9 +2647,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-23T08:19:22.863Z",
-    "createdAt": "2026-03-23T08:19:20.732Z",
-    "versionId": "e1303e14-200b-4c8c-8b0b-f3b43f1db05d",
+    "updatedAt": "2026-03-25T07:12:50.378Z",
+    "createdAt": "2026-03-25T07:12:36.789Z",
+    "versionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
     "workflowId": "WamnPrGluo92mwT7",
     "nodes": [
       {
@@ -3782,9 +3788,9 @@
               },
               {
                 "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-                "name": "message_caption",
+                "name": "image_caption",
                 "type": "string",
-                "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
               },
               {
                 "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -3922,7 +3928,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+          "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -3959,6 +3965,12 @@
                 "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
                 "name": "message_type",
                 "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
+                "type": "string"
+              },
+              {
+                "id": "8ab9715e-d8d9-47f4-ada0-63ce067e021e",
+                "name": "image_caption",
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
                 "type": "string"
               }
             ]
@@ -4071,7 +4083,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -5162,7 +5174,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version e1303e14",
+    "name": "Version 20b81c70",
     "description": "",
     "autosaved": false
   },
