@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-24T09:03:33.144Z",
+  "updatedAt": "2026-03-25T07:14:04.278Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -1164,12 +1164,6 @@
               "value": "={{ $json.text }}"
             },
             {
-              "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-              "name": "message_caption",
-              "type": "string",
-              "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
-            },
-            {
               "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
               "name": "channel_id",
               "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}",
@@ -1255,7 +1249,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2640,
+        2656,
         288
       ],
       "id": "d2e8908a-f685-434d-a68b-c48df6ea2455",
@@ -1290,7 +1284,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2848,
+        2864,
         288
       ],
       "id": "cf670201-3542-4ac9-afa8-cfc4a83ccd13",
@@ -1305,12 +1299,12 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3040,
+        3056,
         288
       ],
       "name": "Parse Chat History",
@@ -1343,6 +1337,12 @@
               "name": "message_type",
               "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
               "type": "string"
+            },
+            {
+              "id": "3a6b605b-f034-437c-a1c6-dc7eb082e3af",
+              "name": "image_caption",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+              "type": "string"
             }
           ]
         },
@@ -1351,7 +1351,7 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.4,
       "position": [
-        3232,
+        3248,
         288
       ],
       "id": "f64f1d45-22be-48de-8233-f5376c857e32",
@@ -1908,39 +1908,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "version": 3,
-            "leftValue": "",
-            "caseSensitive": true,
-            "typeValidation": "strict"
-          },
-          "conditions": [
-            {
-              "id": "3a29af30-f14f-4fc1-842d-a862f25c2c77",
-              "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        2816,
-        -96
-      ],
-      "id": "1186d514-a7d7-4fec-91e7-d0c78f3bd047",
-      "name": "If"
-    },
-    {
-      "parameters": {
         "method": "POST",
         "url": "https://slack.com/api/chat.postMessage",
         "authentication": "genericCredentialType",
@@ -1975,52 +1942,21 @@
       }
     },
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [
-        3072,
-        0
-      ],
-      "id": "213afcd1-21ff-4ee8-8750-bda4bec3ea48",
-      "name": "Skip"
-    },
-    {
-      "parameters": {
-        "amount": 2,
-        "unit": "minutes"
-      },
-      "type": "n8n-nodes-base.wait",
-      "typeVersion": 1.1,
-      "position": [
-        688,
-        1056
-      ],
-      "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
-      "name": "Wait 2 mins",
-      "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
-    },
-    {
       "parameters": {
         "method": "PUT",
-        "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "url": "=https://api.attio.com/v2/lists/my_outreach_2026_2/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
-        "specifyBody": "=json",
-        "bodyParameters": {
-          "parameters": [
-            {}
-          ]
-        },
+        "specifyBody": "json",
         "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3072,
-        -192
+        2992,
+        -16
       ],
       "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
       "name": "Update Attio Outreach Status",
@@ -2030,6 +1966,55 @@
           "name": "Attio API Key_Header"
         }
       }
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        1056
+      ],
+      "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
+      "name": "Wait 1 min",
+      "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0296220-ef00-4d98-881e-9eb5f920983e",
+              "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2736,
+        -16
+      ],
+      "id": "8f464b77-f974-4e88-81ec-0468fae09ad0",
+      "name": "Attio Entry ID available"
     }
   ],
   "connections": {
@@ -2147,7 +2132,7 @@
       "main": [
         [
           {
-            "node": "Wait 2 mins",
+            "node": "Wait 1 min",
             "type": "main",
             "index": 0
           }
@@ -2354,7 +2339,7 @@
             "index": 0
           },
           {
-            "node": "If",
+            "node": "Attio Entry ID available",
             "type": "main",
             "index": 0
           }
@@ -2557,24 +2542,6 @@
         ]
       ]
     },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Update Attio Outreach Status",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Skip",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Get Conversation ID (Bot)": {
       "main": [
         [
@@ -2586,11 +2553,22 @@
         ]
       ]
     },
-    "Wait 2 mins": {
+    "Wait 1 min": {
       "main": [
         [
           {
             "node": "Read Buffer Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attio Entry ID available": {
+      "main": [
+        [
+          {
+            "node": "Update Attio Outreach Status",
             "type": "main",
             "index": 0
           }
@@ -2629,14 +2607,14 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
+            "messagebird-request-timestamp": "1774397439",
             "content-type": "application/json; charset=utf-8",
-            "messagebird-request-id": "369d6c0a-1ae8-4443-906b-9a7c91de0744",
-            "messagebird-request-timestamp": "1773998943",
+            "messagebird-request-id": "310b024a-af08-4d57-bb83-7239d1476a52",
             "user-agent": "Messagebird/Requests develop:8c9cc536",
-            "content-length": "920",
-            "x-cloud-trace-context": "4880055a9e0b596396bad67036a9580e/3083282312423746587",
+            "content-length": "904",
+            "x-cloud-trace-context": "9631c0007596396bbf6ed109b9f8f5df/14885790950824346897;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-4880055a9e0b596396bad67036a9580e-2aca04ed5e432c1b-00",
+            "traceparent": "00-9631c0007596396bbf6ed109b9f8f5df-ce94f400609c0511-01",
             "x-forwarded-for": "13.127.212.189",
             "forwarded": "for=\"13.127.212.189\";proto=https",
             "accept-encoding": "gzip"
@@ -2647,15 +2625,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "303f3283-67e0-4b43-a043-924912747896",
+              "id": "cae6e47b-3cfd-461c-8b9a-c605f1491fca",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "26caf139-fa71-4775-af7c-b94960c2f333",
+                  "id": "f1d4f625-0f22-4ad3-90fa-245cbd2c8ca8",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+97148377222",
+                  "identifierValue": "+971569924672",
                   "annotations": {
-                    "name": "Zenon Restaurant"
+                    "name": "ROAST SPECIALITY COFFEE"
                   }
                 }
               },
@@ -2668,28 +2646,28 @@
               "body": {
                 "type": "text",
                 "text": {
-                  "text": "We do not have a delivery service in Zenon."
+                  "text": "Yes sir"
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1773998942",
+                  "timestamp": "1774397436",
                   "user_locale": "ar-AE"
                 }
               },
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgLOTcxNDgzNzcyMjIVAgASGBYzRUIwODE3MkRGNEE3MzgyNkQwMDU0AA=="
+                  "platformReference": "wamid.HBgMOTcxNTY5OTI0NjcyFQIAEhggQTU1MDlBRDNCQTY5NzE0NDI1MDRCMDE3Nzg1MTE5RUMA"
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-03-20T09:29:03.874Z",
-              "createdAt": "2026-03-20T09:29:03.809Z",
-              "updatedAt": "2026-03-20T09:29:03.874Z",
+              "lastStatusAt": "2026-03-25T00:10:39.664Z",
+              "createdAt": "2026-03-25T00:10:39.466Z",
+              "updatedAt": "2026-03-25T00:10:39.664Z",
               "batchId": null
             }
           },
@@ -2698,15 +2676,54 @@
         }
       }
     ],
-    "Merge Messages": [
+    "Get company name": [
       {
         "json": {
-          "phone_number": "+971564203732",
-          "channel_id": "22c5243b-3d44-4590-82d7-534d77642dbd",
-          "contact_id": "1b4dc3f4-75a7-4b0a-818a-e56426052879",
-          "merged_text": "Thank you we will get back to you for any inquiry",
-          "message_type": "text",
-          "message_count": 1
+          "id": "26caf139-fa71-4775-af7c-b94960c2f333",
+          "computedDisplayName": "Zenon Restaurant",
+          "featuredIdentifiers": [
+            {
+              "key": "phonenumber",
+              "value": "+97148377222"
+            }
+          ],
+          "identifierCount": 1,
+          "attributes": {
+            "company": "Zenon",
+            "displayName": "Zenon Restaurant",
+            "initialReference": "4611584d-e818-442d-a0aa-d8b63252f2a9",
+            "initialSource": "import",
+            "phonenumber": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForRcsMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForRcsTransactional": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForSmsMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForSmsTransactional": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForWhatsAppMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForWhatsAppTransactional": [
+              "+97148377222"
+            ],
+            "reservationPlatform": "Sevenrooms",
+            "subscribedWhatsApp": true,
+            "timezone": "Asia/Dubai"
+          },
+          "listIds": [
+            "fc0685b3-de5f-4945-ae28-8dc532186b66"
+          ],
+          "isAnonymous": false,
+          "createdAt": "2026-03-20T03:51:37.542Z",
+          "updatedAt": "2026-03-20T09:03:46.705Z"
         },
         "pairedItem": {
           "item": 0
@@ -2714,8 +2731,8 @@
       }
     ]
   },
-  "versionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
-  "activeVersionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
+  "versionId": "14518f77-90fc-44e8-b8de-06953300329e",
+  "activeVersionId": "14518f77-90fc-44e8-b8de-06953300329e",
   "triggerCount": 1,
   "shared": [
     {
@@ -2727,9 +2744,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-24T09:02:30.346Z",
-    "createdAt": "2026-03-24T09:02:27.078Z",
-    "versionId": "ecffad60-dca4-4329-8553-7365b227bf7c",
+    "updatedAt": "2026-03-25T07:14:06.167Z",
+    "createdAt": "2026-03-25T07:14:04.291Z",
+    "versionId": "14518f77-90fc-44e8-b8de-06953300329e",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -3890,12 +3907,6 @@
                 "value": "={{ $json.text }}"
               },
               {
-                "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-                "name": "message_caption",
-                "type": "string",
-                "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
-              },
-              {
                 "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
                 "name": "channel_id",
                 "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}",
@@ -3981,7 +3992,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2640,
+          2656,
           288
         ],
         "id": "d2e8908a-f685-434d-a68b-c48df6ea2455",
@@ -4016,7 +4027,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          2848,
+          2864,
           288
         ],
         "id": "cf670201-3542-4ac9-afa8-cfc4a83ccd13",
@@ -4031,12 +4042,12 @@
       },
       {
         "parameters": {
-          "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+          "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          3040,
+          3056,
           288
         ],
         "name": "Parse Chat History",
@@ -4069,6 +4080,12 @@
                 "name": "message_type",
                 "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
                 "type": "string"
+              },
+              {
+                "id": "3a6b605b-f034-437c-a1c6-dc7eb082e3af",
+                "name": "image_caption",
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+                "type": "string"
               }
             ]
           },
@@ -4077,7 +4094,7 @@
         "type": "n8n-nodes-base.set",
         "typeVersion": 3.4,
         "position": [
-          3232,
+          3248,
           288
         ],
         "id": "f64f1d45-22be-48de-8233-f5376c857e32",
@@ -4634,39 +4651,6 @@
       },
       {
         "parameters": {
-          "conditions": {
-            "options": {
-              "version": 3,
-              "leftValue": "",
-              "caseSensitive": true,
-              "typeValidation": "strict"
-            },
-            "conditions": [
-              {
-                "id": "3a29af30-f14f-4fc1-842d-a862f25c2c77",
-                "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
-                "rightValue": "",
-                "operator": {
-                  "type": "string",
-                  "operation": "notEmpty"
-                }
-              }
-            ],
-            "combinator": "and"
-          },
-          "options": {}
-        },
-        "type": "n8n-nodes-base.if",
-        "typeVersion": 2.3,
-        "position": [
-          2816,
-          -96
-        ],
-        "id": "1186d514-a7d7-4fec-91e7-d0c78f3bd047",
-        "name": "If"
-      },
-      {
-        "parameters": {
           "method": "POST",
           "url": "https://slack.com/api/chat.postMessage",
           "authentication": "genericCredentialType",
@@ -4701,52 +4685,21 @@
         }
       },
       {
-        "parameters": {},
-        "type": "n8n-nodes-base.noOp",
-        "typeVersion": 1,
-        "position": [
-          3072,
-          0
-        ],
-        "id": "213afcd1-21ff-4ee8-8750-bda4bec3ea48",
-        "name": "Skip"
-      },
-      {
-        "parameters": {
-          "amount": 2,
-          "unit": "minutes"
-        },
-        "type": "n8n-nodes-base.wait",
-        "typeVersion": 1.1,
-        "position": [
-          688,
-          1056
-        ],
-        "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
-        "name": "Wait 2 mins",
-        "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
-      },
-      {
         "parameters": {
           "method": "PUT",
-          "url": "=https://api.attio.com/v2/2b198ee9-a368-4c7b-8288-bed69db062e5/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "url": "=https://api.attio.com/v2/lists/my_outreach_2026_2/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
-          "specifyBody": "=json",
-          "bodyParameters": {
-            "parameters": [
-              {}
-            ]
-          },
+          "specifyBody": "json",
           "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3072,
-          -192
+          2992,
+          -16
         ],
         "id": "74009c6f-d908-4549-a33c-1d0bd4187d0b",
         "name": "Update Attio Outreach Status",
@@ -4756,6 +4709,55 @@
             "name": "Attio API Key_Header"
           }
         }
+      },
+      {
+        "parameters": {
+          "amount": 1,
+          "unit": "minutes"
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          688,
+          1056
+        ],
+        "id": "abd2759f-70cc-4581-ac3c-b06572c7351a",
+        "name": "Wait 1 min",
+        "webhookId": "bd797a09-8499-4006-a5dd-d6ec0e148dfe"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "c0296220-ef00-4d98-881e-9eb5f920983e",
+                "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2736,
+          -16
+        ],
+        "id": "8f464b77-f974-4e88-81ec-0468fae09ad0",
+        "name": "Attio Entry ID available"
       }
     ],
     "connections": {
@@ -4873,7 +4875,7 @@
         "main": [
           [
             {
-              "node": "Wait 2 mins",
+              "node": "Wait 1 min",
               "type": "main",
               "index": 0
             }
@@ -5080,7 +5082,7 @@
               "index": 0
             },
             {
-              "node": "If",
+              "node": "Attio Entry ID available",
               "type": "main",
               "index": 0
             }
@@ -5283,24 +5285,6 @@
           ]
         ]
       },
-      "If": {
-        "main": [
-          [
-            {
-              "node": "Update Attio Outreach Status",
-              "type": "main",
-              "index": 0
-            }
-          ],
-          [
-            {
-              "node": "Skip",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Get Conversation ID (Bot)": {
         "main": [
           [
@@ -5312,7 +5296,7 @@
           ]
         ]
       },
-      "Wait 2 mins": {
+      "Wait 1 min": {
         "main": [
           [
             {
@@ -5322,10 +5306,21 @@
             }
           ]
         ]
+      },
+      "Attio Entry ID available": {
+        "main": [
+          [
+            {
+              "node": "Update Attio Outreach Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version ecffad60",
+    "name": "Version 14518f77",
     "description": "",
     "autosaved": false
   },
