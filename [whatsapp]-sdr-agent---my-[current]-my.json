@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-24T08:59:55.061Z",
+  "updatedAt": "2026-03-25T07:13:14.641Z",
   "createdAt": "2026-03-13T08:33:20.486Z",
   "id": "rrKuUd0A09e7Z8Bd",
   "name": "[WhatsApp] SDR Agent - MY [current]",
@@ -1151,9 +1151,9 @@
             },
             {
               "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-              "name": "message_caption",
+              "name": "image_caption",
               "type": "string",
-              "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
             },
             {
               "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -1291,7 +1291,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1328,6 +1328,12 @@
               "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
               "name": "message_type",
               "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
+              "type": "string"
+            },
+            {
+              "id": "fc03f6dd-1e3d-410e-97e7-96356303655f",
+              "name": "image_caption",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
               "type": "string"
             }
           ]
@@ -1973,7 +1979,7 @@
     {
       "parameters": {
         "method": "PUT",
-        "url": "=https://api.attio.com/v2/2419c96a-33ac-4db4-be45-512a4502fe08/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "url": "=https://api.attio.com/v2/lists/my_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -2669,8 +2675,8 @@
       }
     ]
   },
-  "versionId": "cedf6b22-21b2-4f46-a827-b79f1f29a157",
-  "activeVersionId": "cedf6b22-21b2-4f46-a827-b79f1f29a157",
+  "versionId": "5e18faf6-37e8-4277-a0ad-d55f28267c26",
+  "activeVersionId": "5e18faf6-37e8-4277-a0ad-d55f28267c26",
   "triggerCount": 1,
   "shared": [
     {
@@ -2682,9 +2688,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-24T09:00:56.777Z",
-    "createdAt": "2026-03-24T08:59:55.063Z",
-    "versionId": "cedf6b22-21b2-4f46-a827-b79f1f29a157",
+    "updatedAt": "2026-03-25T07:13:16.483Z",
+    "createdAt": "2026-03-25T07:13:14.643Z",
+    "versionId": "5e18faf6-37e8-4277-a0ad-d55f28267c26",
     "workflowId": "rrKuUd0A09e7Z8Bd",
     "nodes": [
       {
@@ -3832,9 +3838,9 @@
               },
               {
                 "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-                "name": "message_caption",
+                "name": "image_caption",
                 "type": "string",
-                "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
               },
               {
                 "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -3972,7 +3978,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+          "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -4009,6 +4015,12 @@
                 "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
                 "name": "message_type",
                 "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
+                "type": "string"
+              },
+              {
+                "id": "fc03f6dd-1e3d-410e-97e7-96356303655f",
+                "name": "image_caption",
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
                 "type": "string"
               }
             ]
@@ -4654,7 +4666,7 @@
       {
         "parameters": {
           "method": "PUT",
-          "url": "=https://api.attio.com/v2/2419c96a-33ac-4db4-be45-512a4502fe08/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "url": "=https://api.attio.com/v2/lists/my_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
@@ -5250,7 +5262,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version cedf6b22",
+    "name": "Version 5e18faf6",
     "description": "",
     "autosaved": false
   },
