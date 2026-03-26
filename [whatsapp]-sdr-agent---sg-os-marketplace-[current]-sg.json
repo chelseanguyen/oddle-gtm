@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-19T09:47:13.248Z",
+  "updatedAt": "2026-03-26T06:54:36.336Z",
   "createdAt": "2026-03-10T02:30:44.332Z",
   "id": "WamnPrGluo92mwT7",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [current]",
@@ -692,7 +692,7 @@
         "text": "={{ $('Merge Messages').item.json.merged_text }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+          "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -1142,9 +1142,9 @@
             },
             {
               "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-              "name": "message_caption",
+              "name": "image_caption",
               "type": "string",
-              "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
             },
             {
               "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -1282,7 +1282,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+        "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -1320,6 +1320,12 @@
               "name": "message_type",
               "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
               "type": "string"
+            },
+            {
+              "id": "8ab9715e-d8d9-47f4-ada0-63ce067e021e",
+              "name": "image_caption",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+              "type": "string"
             }
           ]
         },
@@ -1340,7 +1346,7 @@
         "text": "=- Prospect's latest messages: {{ $json.latest_messages }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Input Parsing**\n- Prospect's latest messages contains the most recent 1-3 messages you must respond to.\n- Chat history contains up to 10 messages from the prospect only, in chronological order (oldest to newest). It does not include your previous replies. Use it to understand the prospect's journey, track what they've already said or asked, and avoid addressing things out of context.\n- Always read the full chat history before drafting. Your response must be relevant to the entire conversation thread, not just the latest message in isolation.\n\n**Step 2: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 3: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Last-Minute / On-Demand Orders**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 4: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it. Never pad a response with context already covered earlier in the conversation.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. Use contractions naturally (it's, you're, we're, that's, don't). No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Language Register: Write like a knowledgeable human, not a tech pitch. Avoid jargon like \"guest lifecycle platform,\" \"automated re-engagement,\" or \"branded sales channel.\" Use plain business language that a restaurant owner would naturally understand. Explain what the product does in terms of business outcomes, not technical mechanics.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Response Guidelines & Formatting:**\n- Length: Under 40 words. Hard cap at 100. Never pad with context already covered.\n- Tone: Casual, direct, human — like texting a contact, not writing an email. Contractions are fine. Simple everyday words only, avoid formal phrases like \"may I,\" \"I'd be happy to,\" or \"regarding.\" No fillers (\"That's great!\", \"Hope you're well\"). If acknowledgment is needed, one word max: \"Understood.\" or \"Ok.\" — or skip it.\n- Mirror: Match the prospect's length and energy. Short from them, short from you.\n- One Screen: Two short paragraphs max. If it needs a third, cut something.\n- Language: Plain business language. Outcomes over features. No jargon.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Format: No bold text. No em-dashes, use commas or periods instead. Hyphens only for lists. No formal sign-offs. End with the link or a question.\n- Scheduling link: Never include it while still handling an objection.\n- Output: Return in Markdown format.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Input Parsing**\n- Prospect's latest messages contains the most recent 1-3 messages you must respond to.\n- Chat history contains up to 10 messages from the prospect only, in chronological order (oldest to newest). It does not include your previous replies. Use it to understand the prospect's journey, track what they've already said or asked, and avoid addressing things out of context.\n- Always read the full chat history before drafting. Your response must be relevant to the entire conversation thread, not just the latest message in isolation.\n\n**Step 2: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n**Step 3: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- On pricing: Never mention specific pricing figures. Instead, position it as: we're offering a very competitive rate for Singapore partners, and it's guaranteed to be the most cost-effective option in the market. Direct them to a call to find out more.\n\t- Example: \"We're offering a very competitive rate for Singapore partners, and we guarantee it's the most cost-effective in the market. Best to hop on a quick call so we can walk you through it.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Pricing objections specifically: Do not discuss or reveal any pricing. Acknowledge the concern briefly, then angle it as: we're offering a very competitive rate for Singapore partners and it's guaranteed to be the most cost-effective in the market, so it's worth a quick chat.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Unlisted Objections or Unrecognized Scenarios:**\n- If a prospect raises an objection, scenario, or question that does not match any logic in this prompt or the KB, do not make up data, invent features, or fabricate claims.\n- Handle it gracefully using general business reasoning. Acknowledge the concern in one sentence, then pivot back to the value of a quick conversation where it can be properly addressed.\n- Example: \"Fair point, and honestly the best way I can give you a proper answer is over a quick call. Worth 15 mins?\"\n- Never guess at specifics (pricing, integrations, features, timelines) that aren't confirmed in your knowledge sources.\n\n**Needs to Check with or Talk to Their Boss:**\n- Do not wait for them to loop back. Offer to reach out directly.\n- Ask for the boss's name and phone number so you can contact them directly.\n- Example: \"No worries, happy to reach out to them directly. Can you share their name and number?\"\n\n**Last-Minute / On-Demand Orders:**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\""
         }
       },
       "id": "96182d95-3434-43ae-add5-37f0dd13bd6b",
@@ -1431,7 +1437,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -1629,7 +1635,7 @@
         240
       ],
       "typeVersion": 3.2,
-      "alwaysOutputData": true
+      "alwaysOutputData": false
     },
     {
       "parameters": {
@@ -1889,6 +1895,81 @@
           "name": "OpenAI Account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 3,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "3a29af30-f14f-4fc1-842d-a862f25c2c77",
+              "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2800,
+        -80
+      ],
+      "id": "8d217647-348e-4814-b67e-2d723e8b91b2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.attio.com/v2/9a0f4754-89aa-42b5-a6c5-166d67360ea3/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "=json",
+        "bodyParameters": {
+          "parameters": [
+            {}
+          ]
+        },
+        "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3056,
+        -176
+      ],
+      "id": "77141fd8-0846-4f88-a5a5-bdddd7a26358",
+      "name": "Update Outreach Status",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        3056,
+        16
+      ],
+      "id": "76d6f183-ee47-4cec-96d6-92c0cb754ded",
+      "name": "Skip"
     }
   ],
   "connections": {
@@ -2222,6 +2303,11 @@
             "node": "Get conversation ID",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -2421,6 +2507,24 @@
           }
         ]
       ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update Outreach Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2454,16 +2558,16 @@
         "json": {
           "headers": {
             "host": "workflow.oddle.center",
-            "messagebird-request-id": "c93db71f-c7d1-4d7a-a710-8b99bfea2f52",
-            "messagebird-request-timestamp": "1773224783",
+            "messagebird-request-timestamp": "1774420649",
             "content-type": "application/json; charset=utf-8",
+            "messagebird-request-id": "fc4e8835-5f12-46cb-af32-f51336a7e92e",
             "user-agent": "Messagebird/Requests develop:8c9cc536",
-            "content-length": "2011",
-            "x-cloud-trace-context": "3e7c3aff7158952e1788b3b115301504/7127284892878643669",
+            "content-length": "1566",
+            "x-cloud-trace-context": "03a44ec25b2c94467f4b0cb83227d6ee/9789280089104634825",
             "x-forwarded-proto": "https",
-            "traceparent": "00-3e7c3aff7158952e1788b3b115301504-62e933d91d0a21d5-00",
-            "x-forwarded-for": "13.127.212.189",
-            "forwarded": "for=\"13.127.212.189\";proto=https",
+            "traceparent": "00-03a44ec25b2c94467f4b0cb83227d6ee-87da82600de2d3c9-00",
+            "x-forwarded-for": "15.206.201.69",
+            "forwarded": "for=\"15.206.201.69\";proto=https",
             "accept-encoding": "gzip"
           },
           "params": {},
@@ -2472,15 +2576,15 @@
             "service": "channels",
             "event": "whatsapp.inbound",
             "payload": {
-              "id": "191e0649-8c5c-4d08-80a2-0eb18bdc5a59",
+              "id": "1760a161-30dc-4a83-b470-5b026173ac8a",
               "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
               "sender": {
                 "contact": {
-                  "id": "f787649e-dad4-43fa-93de-bc73bd3067b0",
+                  "id": "cba93d37-f5aa-4278-a249-4384a3f26142",
                   "identifierKey": "phonenumber",
-                  "identifierValue": "+6588332655",
+                  "identifierValue": "+6590673489",
                   "annotations": {
-                    "name": "twinklebellebelle"
+                    "name": "Juju ko"
                   }
                 }
               },
@@ -2493,17 +2597,17 @@
               "body": {
                 "type": "image",
                 "image": {
-                  "text": "A new chapter unfolds for Chimichanga at Chimi’s Especial. Our new space brings the same vibrant flavours and relaxed energy, now expressed through a broader Latin perspective. On every plate and in every pour, the Americas come together.\n\nWe are delighted to invite you to our Grand Opening and Ribbon Cutting Ceremony on Thursday, 26 March at 6:00pm at 70 Collyer Quay, #01-01 Customs House.\n\nJoin us for an evening of Latin flavours, reimagined the Chimi’s way, alongside cocktails and waterfront views.\n\nWe would be honoured to have you join us as we celebrate this special milestone.\n\nExperience casual Latin, the Chimi’s way.                \n                                                                                                                                                                                                  \nRSVP at chimisgrandopening.eventbrite.sg by 25 March, 12pm.",
+                  "text": "🎉 Special Treat Just for You! 🎉\n\nBUY 1 GET 1 FREE\n\nInvite a friend, loved one, or family member to savor the delightful taste of our famous Donburi. This week, enjoy our exclusive BUY ONE GET ONE FREE promotion! 🥢🥢\n\n⏰ Available for whole day dine-in before 31/3/2026.\n\nDon’t miss out — bring a friend and enjoy double the happiness today! 💥\n\n#Reedem Screen shoot show counter this “Promo”\nJurong East Westgate #B2-K4 608532\nSee you soon! 😊😊",
                   "images": [
                     {
-                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/191e0649-8c5c-4d08-80a2-0eb18bdc5a59/media/9c34e150-02c2-4d65-a177-c08f26d1089c"
+                      "mediaUrl": "https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/1760a161-30dc-4a83-b470-5b026173ac8a/media/2a5bf73f-9fb2-423b-af64-758b95155067"
                     }
                   ]
                 }
               },
               "meta": {
                 "extraInformation": {
-                  "timestamp": "1773224777",
+                  "timestamp": "1774420643",
                   "user_locale": "cmn",
                   "whatsapp.media.type": "image"
                 }
@@ -2511,16 +2615,16 @@
               "reference": "",
               "parts": [
                 {
-                  "platformReference": "wamid.HBgKNjU4ODMzMjY1NRUCABIYFDNBNjA0NDk5RUJDOURCQTYxNzlEAA=="
+                  "platformReference": "wamid.HBgKNjU5MDY3MzQ4ORUCABIYFDJBMjgyNTJFQjUzMTExM0Q4MzRCAA=="
                 }
               ],
               "status": "delivered",
               "reason": "",
               "direction": "incoming",
               "chargeableUnits": 1,
-              "lastStatusAt": "2026-03-11T10:26:23.545Z",
-              "createdAt": "2026-03-11T10:26:23.458Z",
-              "updatedAt": "2026-03-11T10:26:23.545Z",
+              "lastStatusAt": "2026-03-25T06:37:29.116Z",
+              "createdAt": "2026-03-25T06:37:29.021Z",
+              "updatedAt": "2026-03-25T06:37:29.116Z",
               "batchId": null
             }
           },
@@ -2530,8 +2634,8 @@
       }
     ]
   },
-  "versionId": "519b84ad-376a-4824-9d33-328577c92a36",
-  "activeVersionId": "519b84ad-376a-4824-9d33-328577c92a36",
+  "versionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
+  "activeVersionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
   "triggerCount": 1,
   "shared": [
     {
@@ -2543,9 +2647,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-19T09:47:15.015Z",
-    "createdAt": "2026-03-19T09:47:13.252Z",
-    "versionId": "519b84ad-376a-4824-9d33-328577c92a36",
+    "updatedAt": "2026-03-26T06:54:39.559Z",
+    "createdAt": "2026-03-26T06:54:36.343Z",
+    "versionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
     "workflowId": "WamnPrGluo92mwT7",
     "nodes": [
       {
@@ -3234,7 +3338,7 @@
           "text": "={{ $('Merge Messages').item.json.merged_text }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are a message classifier for a WhatsApp message.\n\nTask: Analyze the incoming message and determine if it was sent by a human or an automated bot/system.\n\nClassification Criteria:\n- auto_bot: Identify as this if the message contains standard automated patterns such as \"Thank you for contacting us,\" \"We will get back to you shortly,\" \"Select an option from the menu,\" or if it is a rigid, repetitive system notification.\n\n- human: Identify as this if the message contains natural language, slang, typos, specific questions, or conversational intent that varies from a script.\n\nConstraint: Your output must ONLY be a valid JSON object. Do not include any other text, greetings, or explanations.\n\nOutput Format: { \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation of why within 100 characters limit\" }"
+            "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
           }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
@@ -3684,9 +3788,9 @@
               },
               {
                 "id": "da4b602a-28ca-4b0d-a747-c3d3698c3731",
-                "name": "message_caption",
+                "name": "image_caption",
                 "type": "string",
-                "value": "={{ $('Redirect Message Types').item.json.body.messages[0].video?.caption || $('Redirect Message Types').item.json.body.messages[0].image?.caption || $('Redirect Message Types').item.json.body.messages[0].audio?.caption || \"\" }}"
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}"
               },
               {
                 "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
@@ -3824,7 +3928,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const items = $input.all();\nconst output = [];\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n  const sortedMessages = [...messages].sort((a, b) => \n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', day: 'numeric', month: 'short' }) + ' ' + msgDate.toLocaleString('en-SG', { timeZone: 'Asia/Singapore', hour: '2-digit', minute: '2-digit', hour12: false });\n    const body = msg.body?.text?.text || \"[Media/Other]\";\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body; \n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n  output.push({\n    leadMessage: latestLeadMessage,\n    conversationId: sortedMessages[0].conversationId,\n    conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n    latestMessages: latestMessages,\n    responseTimeMinutes: responseTimeMinutes,\n    summary: {\n      totalMessages: sortedMessages.length,\n      latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n    }\n  });\n});\nreturn output;"
+          "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -3862,6 +3966,12 @@
                 "name": "message_type",
                 "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
                 "type": "string"
+              },
+              {
+                "id": "8ab9715e-d8d9-47f4-ada0-63ce067e021e",
+                "name": "image_caption",
+                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+                "type": "string"
               }
             ]
           },
@@ -3882,7 +3992,7 @@
           "text": "=- Prospect's latest messages: {{ $json.latest_messages }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Input Parsing**\n- Prospect's latest messages contains the most recent 1-3 messages you must respond to.\n- Chat history contains up to 10 messages from the prospect only, in chronological order (oldest to newest). It does not include your previous replies. Use it to understand the prospect's journey, track what they've already said or asked, and avoid addressing things out of context.\n- Always read the full chat history before drafting. Your response must be relevant to the entire conversation thread, not just the latest message in isolation.\n\n**Step 2: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n\n**Step 3: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead,\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore.\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Last-Minute / On-Demand Orders**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\"\n\n\n**Step 4: Response Guidelines & Formatting**\n- Length: Be ruthlessly concise. Aim for under 50 words. Hard cap at 100 words. If you can say it in 10, do it. Never pad a response with context already covered earlier in the conversation.\n- Tone: Casual, direct, human. Write like a real person texting, not a corporate chatbot. Use contractions naturally (it's, you're, we're, that's, don't). No enthusiasm fillers (e.g., skip \"That is great to hear!\", \"I hope you're having a good week,\" or \"Looking forward to our chat.\").\n- The \"One Screen\" Rule: The entire reply must fit on one phone screen without a \"read more\" break. Two short paragraphs maximum. If your draft feels like it needs a third paragraph, cut it.\n- The \"Mirror\" Rule: Match the length and energy of the prospect's message. Short reply from them, short reply from you. Warm and casual from them, warm and casual from you.\n- Language Register: Write like a knowledgeable human, not a tech pitch. Avoid jargon like \"guest lifecycle platform,\" \"automated re-engagement,\" or \"branded sales channel.\" Use plain business language that a restaurant owner would naturally understand. Explain what the product does in terms of business outcomes, not technical mechanics.\n- Ending: Never use \"Looking forward to...\" or formal sign-offs. End with the link or the question.\n- Visuals: Do not bold any text. Replace em-dashes (—) with commas or periods.\n- Brevity: Use a simple hyphen (-) for list items if needed. No other symbols.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Do not send the scheduling link when the lead is still hesitant or when you're still handling the objection.\n- Markdown: Return the message in Markdown format."
+            "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Response Guidelines & Formatting:**\n- Length: Under 40 words. Hard cap at 100. Never pad with context already covered.\n- Tone: Casual, direct, human — like texting a contact, not writing an email. Contractions are fine. Simple everyday words only, avoid formal phrases like \"may I,\" \"I'd be happy to,\" or \"regarding.\" No fillers (\"That's great!\", \"Hope you're well\"). If acknowledgment is needed, one word max: \"Understood.\" or \"Ok.\" — or skip it.\n- Mirror: Match the prospect's length and energy. Short from them, short from you.\n- One Screen: Two short paragraphs max. If it needs a third, cut something.\n- Language: Plain business language. Outcomes over features. No jargon.\n- Vocabulary: Use vocabulary appropriate for food online ordering context. \"Customer\" not \"guest,\" \"restaurant\" not \"venue,\" \"order\" not \"visit.\"\n- Format: No bold text. No em-dashes, use commas or periods instead. Hyphens only for lists. No formal sign-offs. End with the link or a question.\n- Scheduling link: Never include it while still handling an objection.\n- Output: Return in Markdown format.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-5 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Step 1: Input Parsing**\n- Prospect's latest messages contains the most recent 1-3 messages you must respond to.\n- Chat history contains up to 10 messages from the prospect only, in chronological order (oldest to newest). It does not include your previous replies. Use it to understand the prospect's journey, track what they've already said or asked, and avoid addressing things out of context.\n- Always read the full chat history before drafting. Your response must be relevant to the entire conversation thread, not just the latest message in isolation.\n\n**Step 2: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n**Step 3: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call-singapore\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call-singapore\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Grab or Foodpanda.\"\n- On pricing: Never mention specific pricing figures. Instead, position it as: we're offering a very competitive rate for Singapore partners, and it's guaranteed to be the most cost-effective option in the market. Direct them to a call to find out more.\n\t- Example: \"We're offering a very competitive rate for Singapore partners, and we guarantee it's the most cost-effective in the market. Best to hop on a quick call so we can walk you through it.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks in practice?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Pricing objections specifically: Do not discuss or reveal any pricing. Acknowledge the concern briefly, then angle it as: we're offering a very competitive rate for Singapore partners and it's guaranteed to be the most cost-effective in the market, so it's worth a quick chat.\n- Lapsed / Former Oddle User: If the prospect mentions they previously used Oddle and left, do not close the loop immediately. Treat this as a soft objection and attempt ONE rebuttal by first asking why they stopped, then offering to share what has since improved. Only close the loop if they decline to engage after that.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Unlisted Objections or Unrecognized Scenarios:**\n- If a prospect raises an objection, scenario, or question that does not match any logic in this prompt or the KB, do not make up data, invent features, or fabricate claims.\n- Handle it gracefully using general business reasoning. Acknowledge the concern in one sentence, then pivot back to the value of a quick conversation where it can be properly addressed.\n- Example: \"Fair point, and honestly the best way I can give you a proper answer is over a quick call. Worth 15 mins?\"\n- Never guess at specifics (pricing, integrations, features, timelines) that aren't confirmed in your knowledge sources.\n\n**Needs to Check with or Talk to Their Boss:**\n- Do not wait for them to loop back. Offer to reach out directly.\n- Ask for the boss's name and phone number so you can contact them directly.\n- Example: \"No worries, happy to reach out to them directly. Can you share their name and number?\"\n\n**Last-Minute / On-Demand Orders:**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Singapore)**\n- If a lead asks about restaurant partners that switched to another platform and returned to Oddle, mention exactly 1-2 names from this list: Brotzeit (from Getz), Uncle Leong Seafood, Westlake (switched from NinjaOS), Sum Kee (from Getz), Serangoon BBQ (from Atlas), Ba Shu Sichuan (from Firstcom).\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry, thanks for letting me know. Do you have their number by any chance? I'll also update our records to make sure we reach out to the right person in charge.\""
           }
         },
         "id": "96182d95-3434-43ae-add5-37f0dd13bd6b",
@@ -3973,7 +4083,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AHMPEV5DX\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -4171,7 +4281,7 @@
           240
         ],
         "typeVersion": 3.2,
-        "alwaysOutputData": true
+        "alwaysOutputData": false
       },
       {
         "parameters": {
@@ -4431,6 +4541,81 @@
             "name": "OpenAI Account"
           }
         }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "version": 3,
+              "leftValue": "",
+              "caseSensitive": true,
+              "typeValidation": "strict"
+            },
+            "conditions": [
+              {
+                "id": "3a29af30-f14f-4fc1-842d-a862f25c2c77",
+                "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEmpty"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          2800,
+          -80
+        ],
+        "id": "8d217647-348e-4814-b67e-2d723e8b91b2",
+        "name": "If"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "=https://api.attio.com/v2/9a0f4754-89aa-42b5-a6c5-166d67360ea3/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "=json",
+          "bodyParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3056,
+          -176
+        ],
+        "id": "77141fd8-0846-4f88-a5a5-bdddd7a26358",
+        "name": "Update Outreach Status",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          3056,
+          16
+        ],
+        "id": "76d6f183-ee47-4cec-96d6-92c0cb754ded",
+        "name": "Skip"
       }
     ],
     "connections": {
@@ -4764,6 +4949,11 @@
               "node": "Get conversation ID",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -4963,10 +5153,28 @@
             }
           ]
         ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Update Outreach Status",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Skip",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 519b84ad",
+    "name": "Version b2c0b38c",
     "description": "",
     "autosaved": false
   },
