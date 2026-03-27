@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-25T06:37:07.964Z",
+  "updatedAt": "2026-03-27T08:56:25.461Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -1873,6 +1873,41 @@
           "name": "Google Sheets account 1"
         }
       }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://live-mt-server.wati.io/api/ext/v3/messageTemplates/send",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"90570654\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2928,
+        368
+      ],
+      "id": "fcf9d118-081c-490b-bfb7-19caab8cef94",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
     }
   ],
   "connections": {
@@ -2471,7 +2506,7 @@
     "node:New Record Created": {
       "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
       "sheetId": 0,
-      "lastIndexChecked": 748
+      "lastIndexChecked": 749
     }
   },
   "meta": {
@@ -2511,7 +2546,7 @@
       }
     ]
   },
-  "versionId": "7535cd4a-68f5-4e2f-b8dd-dbb09c4d85e5",
+  "versionId": "223699ad-06b4-4368-9dbf-67b386c6a2c7",
   "activeVersionId": "7535cd4a-68f5-4e2f-b8dd-dbb09c4d85e5",
   "triggerCount": 1,
   "shared": [
