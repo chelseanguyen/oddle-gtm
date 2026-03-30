@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-27T08:56:25.461Z",
+  "updatedAt": "2026-03-30T09:42:58.775Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -1876,6 +1876,39 @@
     },
     {
       "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8debd0f6-7b8a-4ad5-bab9-704536b57264",
+              "leftValue": "={{ $('New Record Created').item.json.phoneNumber.toString() }}",
+              "rightValue": "886",
+              "operator": {
+                "type": "string",
+                "operation": "notStartsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3120,
+        320
+      ],
+      "id": "768e940e-c6a3-45cb-b725-a6399f99c688",
+      "name": "Non-Taiwan number?"
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "https://live-mt-server.wati.io/api/ext/v3/messageTemplates/send",
         "authentication": "genericCredentialType",
@@ -1891,17 +1924,17 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"90570654\"\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('New Record Created').item.json.phoneNumber }}\"\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        2928,
-        368
+        3360,
+        304
       ],
       "id": "fcf9d118-081c-490b-bfb7-19caab8cef94",
-      "name": "HTTP Request",
+      "name": "Send WATI template message",
       "credentials": {
         "httpBearerAuth": {
           "id": "qBoCbsiIZFcmrK9e",
@@ -1949,6 +1982,11 @@
         [
           {
             "node": "Has Email?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Non-Taiwan number?",
             "type": "main",
             "index": 0
           }
@@ -2492,6 +2530,17 @@
           }
         ]
       ]
+    },
+    "Non-Taiwan number?": {
+      "main": [
+        [
+          {
+            "node": "Send WATI template message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2506,7 +2555,7 @@
     "node:New Record Created": {
       "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
       "sheetId": 0,
-      "lastIndexChecked": 749
+      "lastIndexChecked": 752
     }
   },
   "meta": {
@@ -2546,8 +2595,8 @@
       }
     ]
   },
-  "versionId": "223699ad-06b4-4368-9dbf-67b386c6a2c7",
-  "activeVersionId": "7535cd4a-68f5-4e2f-b8dd-dbb09c4d85e5",
+  "versionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
+  "activeVersionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
   "triggerCount": 1,
   "shared": [
     {
@@ -2559,9 +2608,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-25T06:37:11.124Z",
-    "createdAt": "2026-03-25T06:37:07.967Z",
-    "versionId": "7535cd4a-68f5-4e2f-b8dd-dbb09c4d85e5",
+    "updatedAt": "2026-03-30T09:43:02.926Z",
+    "createdAt": "2026-03-30T09:42:58.782Z",
+    "versionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -4431,6 +4480,74 @@
             "name": "Google Sheets account 1"
           }
         }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "8debd0f6-7b8a-4ad5-bab9-704536b57264",
+                "leftValue": "={{ $('New Record Created').item.json.phoneNumber.toString() }}",
+                "rightValue": "886",
+                "operator": {
+                  "type": "string",
+                  "operation": "notStartsWith"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          3120,
+          320
+        ],
+        "id": "768e940e-c6a3-45cb-b725-a6399f99c688",
+        "name": "Non-Taiwan number?"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://live-mt-server.wati.io/api/ext/v3/messageTemplates/send",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('New Record Created').item.json.phoneNumber }}\"\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          3360,
+          304
+        ],
+        "id": "fcf9d118-081c-490b-bfb7-19caab8cef94",
+        "name": "Send WATI template message",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
       }
     ],
     "connections": {
@@ -4472,6 +4589,11 @@
           [
             {
               "node": "Has Email?",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Non-Taiwan number?",
               "type": "main",
               "index": 0
             }
@@ -5015,10 +5137,21 @@
             }
           ]
         ]
+      },
+      "Non-Taiwan number?": {
+        "main": [
+          [
+            {
+              "node": "Send WATI template message",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 7535cd4a",
+    "name": "Version 48826617",
     "description": "",
     "autosaved": false
   },
