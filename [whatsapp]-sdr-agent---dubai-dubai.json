@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T09:56:01.544Z",
+  "updatedAt": "2026-03-30T03:04:30.913Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -692,7 +692,8 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}"
+        "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}",
+        "autoFix": true
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
@@ -2015,6 +2016,25 @@
       ],
       "id": "8f464b77-f974-4e88-81ec-0468fae09ad0",
       "name": "Attio Entry ID available"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        128
+      ],
+      "id": "18fb1058-e6f6-49cc-9a8f-76479aa3d2af",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
     }
   ],
   "connections": {
@@ -2574,6 +2594,17 @@
           }
         ]
       ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Topic Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2731,8 +2762,8 @@
       }
     ]
   },
-  "versionId": "ca6a9e53-9147-4ac0-8f36-1763c6d0a9e1",
-  "activeVersionId": "ca6a9e53-9147-4ac0-8f36-1763c6d0a9e1",
+  "versionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
+  "activeVersionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
   "triggerCount": 1,
   "shared": [
     {
@@ -2744,9 +2775,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T09:56:05.338Z",
-    "createdAt": "2026-03-26T09:56:01.554Z",
-    "versionId": "ca6a9e53-9147-4ac0-8f36-1763c6d0a9e1",
+    "updatedAt": "2026-03-30T03:04:34.198Z",
+    "createdAt": "2026-03-30T03:04:30.920Z",
+    "versionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -3435,7 +3466,8 @@
       },
       {
         "parameters": {
-          "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}"
+          "jsonSchemaExample": "{\n  \"classification\": \"human\",\n  \"reason\": \"The user is asking about pricing and used informal language.\"\n}",
+          "autoFix": true
         },
         "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
         "typeVersion": 1.3,
@@ -4758,6 +4790,25 @@
         ],
         "id": "8f464b77-f974-4e88-81ec-0468fae09ad0",
         "name": "Attio Entry ID available"
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+        "typeVersion": 1,
+        "position": [
+          1360,
+          128
+        ],
+        "id": "18fb1058-e6f6-49cc-9a8f-76479aa3d2af",
+        "name": "Google Gemini Chat Model1",
+        "credentials": {
+          "googlePalmApi": {
+            "id": "RYsSfOkTTr5PB58p",
+            "name": "Oddle's Google Gemini(PaLM) API account"
+          }
+        }
       }
     ],
     "connections": {
@@ -5317,10 +5368,21 @@
             }
           ]
         ]
+      },
+      "Google Gemini Chat Model1": {
+        "ai_languageModel": [
+          [
+            {
+              "node": "Topic Output Parser",
+              "type": "ai_languageModel",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version ca6a9e53",
+    "name": "Version 4d96e734",
     "description": "",
     "autosaved": false
   },
