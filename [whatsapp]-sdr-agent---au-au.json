@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-26T07:01:20.834Z",
+  "updatedAt": "2026-03-31T06:03:58.801Z",
   "createdAt": "2026-03-26T06:29:41.552Z",
   "id": "CjejC6b5pGBIPHdI",
   "name": "[WhatsApp] SDR Agent - AU",
@@ -2348,11 +2348,6 @@
             "node": "Get conversation ID",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Attio Entry ID available",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -2760,8 +2755,8 @@
       }
     ]
   },
-  "versionId": "cccfce5d-d928-43c1-9900-4e867b2a3c8e",
-  "activeVersionId": "cccfce5d-d928-43c1-9900-4e867b2a3c8e",
+  "versionId": "d0504479-0dfc-4aa7-ae3e-fb9c01bfdb7e",
+  "activeVersionId": "d0504479-0dfc-4aa7-ae3e-fb9c01bfdb7e",
   "triggerCount": 1,
   "shared": [
     {
@@ -2773,9 +2768,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T07:01:23.849Z",
-    "createdAt": "2026-03-26T07:01:20.840Z",
-    "versionId": "cccfce5d-d928-43c1-9900-4e867b2a3c8e",
+    "updatedAt": "2026-03-31T06:04:01.256Z",
+    "createdAt": "2026-03-31T06:03:58.810Z",
+    "versionId": "d0504479-0dfc-4aa7-ae3e-fb9c01bfdb7e",
     "workflowId": "CjejC6b5pGBIPHdI",
     "nodes": [
       {
@@ -5120,11 +5115,6 @@
               "node": "Get conversation ID",
               "type": "main",
               "index": 0
-            },
-            {
-              "node": "Attio Entry ID available",
-              "type": "main",
-              "index": 0
             }
           ]
         ]
@@ -5378,7 +5368,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version cccfce5d",
+    "name": "Version d0504479",
     "description": "",
     "autosaved": false
   },
