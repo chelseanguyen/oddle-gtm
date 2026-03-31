@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-27T03:31:47.410Z",
+  "updatedAt": "2026-03-31T02:38:03.942Z",
   "createdAt": "2026-03-23T10:25:54.378Z",
   "id": "nkkFQLQhhhlUQPCR",
   "name": "[Email] AU SDR Agent",
@@ -480,7 +480,7 @@
     },
     {
       "parameters": {
-        "content": "## Update Attio entryin AU Attio list\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
+        "content": "## Update Attio entry in AU Attio list\nTo fix: check for existing status -> Only update if status is empty\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
         "height": 328,
         "width": 1500,
         "color": 6
@@ -757,11 +757,6 @@
             "node": "Workflow Configuration",
             "type": "main",
             "index": 0
-          },
-          {
-            "node": "Find Person in Attio",
-            "type": "main",
-            "index": 0
           }
         ]
       ]
@@ -936,8 +931,8 @@
       }
     ]
   },
-  "versionId": "1da79c21-1c0d-4005-af15-df9f1b0d048f",
-  "activeVersionId": "1da79c21-1c0d-4005-af15-df9f1b0d048f",
+  "versionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
+  "activeVersionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
   "triggerCount": 1,
   "shared": [
     {
@@ -949,9 +944,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-26T08:16:17.165Z",
-    "createdAt": "2026-03-26T08:16:15.205Z",
-    "versionId": "1da79c21-1c0d-4005-af15-df9f1b0d048f",
+    "updatedAt": "2026-03-31T02:38:07.400Z",
+    "createdAt": "2026-03-31T02:38:03.947Z",
+    "versionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
     "workflowId": "nkkFQLQhhhlUQPCR",
     "nodes": [
       {
@@ -1428,7 +1423,7 @@
       },
       {
         "parameters": {
-          "content": "## Update Attio entryin AU Attio list\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
+          "content": "## Update Attio entry in AU Attio list\nTo fix: check for existing status -> Only update if status is empty\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
           "height": 328,
           "width": 1500,
           "color": 6
@@ -1705,11 +1700,6 @@
               "node": "Workflow Configuration",
               "type": "main",
               "index": 0
-            },
-            {
-              "node": "Find Person in Attio",
-              "type": "main",
-              "index": 0
             }
           ]
         ]
@@ -1793,7 +1783,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 1da79c21",
+    "name": "Version ad7b0a98",
     "description": "",
     "autosaved": false
   },
