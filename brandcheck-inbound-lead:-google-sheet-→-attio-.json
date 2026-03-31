@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-30T09:42:58.775Z",
+  "updatedAt": "2026-03-31T06:24:40.894Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -1886,7 +1886,7 @@
           "conditions": [
             {
               "id": "8debd0f6-7b8a-4ad5-bab9-704536b57264",
-              "leftValue": "={{ $('New Record Created').item.json.phoneNumber.toString() }}",
+              "leftValue": "={{ $('Deduplicate Check').item.json.phoneNumber.toString() }}",
               "rightValue": "886",
               "operator": {
                 "type": "string",
@@ -1924,7 +1924,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('New Record Created').item.json.phoneNumber }}\"\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -2565,25 +2565,25 @@
     "New Record Created": [
       {
         "json": {
-          "timestamp": "2026-03-05 10:04:00",
-          "placeName": "三句－海味料理、台式居酒｜信義區熱炒・新鮮海產・深夜食堂・臺式手路菜・聚餐・包廂・現流海鮮・信義區宵夜小酌・信義區聚餐首選・鍋氣熱炒・生啤酒・烤物・烤串・炸物",
-          "placeId": "ChIJD4SOxGyrQjQRwfIdIHMDIrk",
-          "phoneNumber": 886906707081,
-          "cuisine": "台式料理, 海鮮料理",
-          "signatureDishes": "黑鮪魚��膛天肉, 蝦油麵線",
-          "website": "https://三句.tw/",
-          "instagramHandle": "@3xun.seafood",
-          "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/145.0.0.0 Mobile Safari/537.36",
-          "overallScore": "48/100",
-          "searchRankingScore": "14/30",
-          "reputationScore": "9/30",
-          "gmbScore": "20/20",
-          "socialMediaScore": "5/10",
+          "timestamp": "2026-03-30 6:04:00",
+          "placeName": "Dunkin' Raffles Holland V",
+          "placeId": "ChIJu_4GwFsb2jERY9Yssgkh6VQ",
+          "phoneNumber": 6585713041,
+          "cuisine": "Cafe, Donut Shop",
+          "signatureDishes": "Glazed Donut, Filled Donut",
+          "website": "https://dunkindonuts.com.sg/",
+          "instagramHandle": "@dunkindonuts_sg",
+          "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36",
+          "overallScore": "33/100",
+          "searchRankingScore": "0/30",
+          "reputationScore": "15/30",
+          "gmbScore": "18/20",
+          "socialMediaScore": "0/10",
           "websiteSEOScore": "0/10",
-          "role": "行銷經理",
-          "country": "Taiwan",
-          "email": "3XUN@lot.tw",
-          "pdfLink": "https://prod-scorecard.s3.ap-southeast-1.amazonaws.com/scorecards/_a5423244857d492280ce1eedcb6785ff_Oddle_Scorecard.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAY5KXPP337VY4MIAF%2F20260305%2Fap-southeast-1%2Fs3%2Faws4_request&X-Amz-Date=20260305T100716Z&X-Amz-Expires=604800&X-Amz-Signature=c14582bcd3d97b1bd6a2e648ee626fc85de713b0cb9cc532851417c5534dbdbe&X-Amz-SignedHeaders=host&x-amz-checksum-mode=ENABLED&x-id=GetObject",
+          "role": "Restaurant Owner",
+          "country": "Singapore",
+          "email": "",
+          "pdfLink": "",
           "added to Attio's Inbound list?": "",
           "date": "",
           "week": "",
@@ -2595,8 +2595,8 @@
       }
     ]
   },
-  "versionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
-  "activeVersionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
+  "versionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
+  "activeVersionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
   "triggerCount": 1,
   "shared": [
     {
@@ -2608,9 +2608,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-30T09:43:02.926Z",
-    "createdAt": "2026-03-30T09:42:58.782Z",
-    "versionId": "48826617-3abf-4174-bff6-30d8e6f64a4a",
+    "updatedAt": "2026-03-31T06:24:48.108Z",
+    "createdAt": "2026-03-31T06:24:40.899Z",
+    "versionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -4493,7 +4493,7 @@
             "conditions": [
               {
                 "id": "8debd0f6-7b8a-4ad5-bab9-704536b57264",
-                "leftValue": "={{ $('New Record Created').item.json.phoneNumber.toString() }}",
+                "leftValue": "={{ $('Deduplicate Check').item.json.phoneNumber.toString() }}",
                 "rightValue": "886",
                 "operator": {
                   "type": "string",
@@ -4531,7 +4531,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('New Record Created').item.json.phoneNumber }}\"\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -5151,7 +5151,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 48826617",
+    "name": "Version 3844c3b8",
     "description": "",
     "autosaved": false
   },
