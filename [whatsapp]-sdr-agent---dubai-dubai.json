@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-30T03:04:30.913Z",
+  "updatedAt": "2026-03-31T08:41:56.989Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -2275,13 +2275,7 @@
             "index": 0
           }
         ],
-        [
-          {
-            "node": "Get Conversation ID (Bot)",
-            "type": "main",
-            "index": 0
-          }
-        ]
+        []
       ]
     },
     "Format response": {
@@ -2762,8 +2756,8 @@
       }
     ]
   },
-  "versionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
-  "activeVersionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
+  "versionId": "b59be2e8-edca-4d1f-bf2a-984fb5034313",
+  "activeVersionId": "b59be2e8-edca-4d1f-bf2a-984fb5034313",
   "triggerCount": 1,
   "shared": [
     {
@@ -2775,9 +2769,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-30T03:04:34.198Z",
-    "createdAt": "2026-03-30T03:04:30.920Z",
-    "versionId": "4d96e734-e5a0-4ba6-b912-a2d0004c2e08",
+    "updatedAt": "2026-03-31T08:41:59.446Z",
+    "createdAt": "2026-03-31T08:41:56.996Z",
+    "versionId": "b59be2e8-edca-4d1f-bf2a-984fb5034313",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -5049,13 +5043,7 @@
               "index": 0
             }
           ],
-          [
-            {
-              "node": "Get Conversation ID (Bot)",
-              "type": "main",
-              "index": 0
-            }
-          ]
+          []
         ]
       },
       "Format response": {
@@ -5382,7 +5370,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 4d96e734",
+    "name": "Version b59be2e8",
     "description": "",
     "autosaved": false
   },
