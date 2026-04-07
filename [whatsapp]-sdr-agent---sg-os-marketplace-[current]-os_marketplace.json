@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-25T07:12:36.786Z",
+  "updatedAt": "2026-03-26T06:54:36.336Z",
   "createdAt": "2026-03-10T02:30:44.332Z",
   "id": "WamnPrGluo92mwT7",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [current]",
@@ -692,7 +692,7 @@
         "text": "={{ $('Merge Messages').item.json.merged_text }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
+          "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -2634,8 +2634,8 @@
       }
     ]
   },
-  "versionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
-  "activeVersionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
+  "versionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
+  "activeVersionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
   "triggerCount": 1,
   "shared": [
     {
@@ -2647,9 +2647,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-25T07:12:50.378Z",
-    "createdAt": "2026-03-25T07:12:36.789Z",
-    "versionId": "20b81c70-2fc6-460c-924e-67af8b0435c5",
+    "updatedAt": "2026-03-26T06:54:39.559Z",
+    "createdAt": "2026-03-26T06:54:36.343Z",
+    "versionId": "b2c0b38c-5041-499a-ab54-606c552cfbf8",
     "workflowId": "WamnPrGluo92mwT7",
     "nodes": [
       {
@@ -3338,7 +3338,7 @@
           "text": "={{ $('Merge Messages').item.json.merged_text }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
+            "systemMessage": "You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
           }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
@@ -5174,7 +5174,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 20b81c70",
+    "name": "Version b2c0b38c",
     "description": "",
     "autosaved": false
   },
