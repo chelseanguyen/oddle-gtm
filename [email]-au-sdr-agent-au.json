@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-31T02:38:03.942Z",
+  "updatedAt": "2026-04-06T06:41:44.846Z",
   "createdAt": "2026-03-23T10:25:54.378Z",
   "id": "nkkFQLQhhhlUQPCR",
   "name": "[Email] AU SDR Agent",
@@ -418,8 +418,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -2576,
-        64
+        -2256,
+        16
       ],
       "id": "attio-find-person",
       "name": "Find Person in Attio",
@@ -440,8 +440,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -1872,
-        64
+        -1552,
+        16
       ],
       "id": "attio-get-company-entries",
       "name": "Get Company List Entries",
@@ -454,41 +454,15 @@
     },
     {
       "parameters": {
-        "method": "PATCH",
-        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data[0].entry_id }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "{\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\"\n    }\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        -1424,
-        64
-      ],
-      "id": "attio-update-list-entry",
-      "name": "Update Attio List Entry",
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key_Header"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "## Update Attio entry in AU Attio list\nTo fix: check for existing status -> Only update if status is empty\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
-        "height": 328,
-        "width": 1500,
+        "content": "## Update Attio entry in AU Attio list\nMark lead as Replied in au_or_outreach_2026 list, update Reply date\nChange list slug for different outreach",
+        "height": 536,
+        "width": 1068,
         "color": 6
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -2736,
-        -48
+        -2416,
+        -112
       ],
       "typeVersion": 1,
       "id": "sticky-attio-flow",
@@ -522,8 +496,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -2368,
-        64
+        -2048,
+        16
       ],
       "id": "if-person-found",
       "name": "Person Found?"
@@ -556,8 +530,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -2128,
-        64
+        -1808,
+        16
       ],
       "id": "if-company-linked",
       "name": "Company Linked?"
@@ -590,8 +564,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        -1664,
-        64
+        -2256,
+        240
       ],
       "id": "if-entry-exists",
       "name": "List Entry Exists?"
@@ -619,6 +593,88 @@
         "openAiApi": {
           "id": "U11ZFugtdDzwhsyC",
           "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data.filter(entry => entry.list_api_slug === 'au_or_outreach_2026')[0].entry_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2048,
+        240
+      ],
+      "id": "1d4f0c18-6490-4fd0-8344-283aee58c930",
+      "name": "Get Attio Entry",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "check-outreach-status-empty",
+              "leftValue": "={{ $('Get Attio Entry').item.json.data.entry_values.outreach_status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1808,
+        256
+      ],
+      "id": "8353e745-8df7-4739-b359-e9631f69f179",
+      "name": "Outreach Status Empty"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\",\n      \"reply_date\": \"{{ $now.format('yyyy-MM-dd') }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1552,
+        256
+      ],
+      "id": "25e7eb50-3dac-42ad-8cb6-5ff9e79f1e00",
+      "name": "Update Attio List Entry",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
         }
       }
     }
@@ -757,6 +813,11 @@
             "node": "Workflow Configuration",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Find Person in Attio",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -809,7 +870,7 @@
       "main": [
         [
           {
-            "node": "Update Attio List Entry",
+            "node": "Get Attio Entry",
             "type": "main",
             "index": 0
           }
@@ -833,6 +894,28 @@
           {
             "node": "Email Agent",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Attio Entry": {
+      "main": [
+        [
+          {
+            "node": "Outreach Status Empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Status Empty": {
+      "main": [
+        [
+          {
+            "node": "Update Attio List Entry",
+            "type": "main",
             "index": 0
           }
         ]
@@ -931,8 +1014,8 @@
       }
     ]
   },
-  "versionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
-  "activeVersionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
+  "versionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
+  "activeVersionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
   "triggerCount": 1,
   "shared": [
     {
@@ -944,9 +1027,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-31T02:38:07.400Z",
-    "createdAt": "2026-03-31T02:38:03.947Z",
-    "versionId": "ad7b0a98-55f7-4d43-b8b5-3c277afb3fa3",
+    "updatedAt": "2026-04-06T06:41:47.011Z",
+    "createdAt": "2026-04-06T06:41:44.852Z",
+    "versionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
     "workflowId": "nkkFQLQhhhlUQPCR",
     "nodes": [
       {
@@ -1361,8 +1444,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -2576,
-          64
+          -2256,
+          16
         ],
         "id": "attio-find-person",
         "name": "Find Person in Attio",
@@ -1383,8 +1466,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          -1872,
-          64
+          -1552,
+          16
         ],
         "id": "attio-get-company-entries",
         "name": "Get Company List Entries",
@@ -1397,41 +1480,15 @@
       },
       {
         "parameters": {
-          "method": "PATCH",
-          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data[0].entry_id }}",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "{\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\"\n    }\n  }\n}",
-          "options": {}
-        },
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          -1424,
-          64
-        ],
-        "id": "attio-update-list-entry",
-        "name": "Update Attio List Entry",
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "9CO17PzdcubAn70Q",
-            "name": "Attio API Key_Header"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "content": "## Update Attio entry in AU Attio list\nTo fix: check for existing status -> Only update if status is empty\nMark lead as Replied in au_or_outreach_2026 list\nChange list slug for different outreach",
-          "height": 328,
-          "width": 1500,
+          "content": "## Update Attio entry in AU Attio list\nMark lead as Replied in au_or_outreach_2026 list, update Reply date\nChange list slug for different outreach",
+          "height": 536,
+          "width": 1068,
           "color": 6
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          -2736,
-          -48
+          -2416,
+          -112
         ],
         "typeVersion": 1,
         "id": "sticky-attio-flow",
@@ -1465,8 +1522,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          -2368,
-          64
+          -2048,
+          16
         ],
         "id": "if-person-found",
         "name": "Person Found?"
@@ -1499,8 +1556,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          -2128,
-          64
+          -1808,
+          16
         ],
         "id": "if-company-linked",
         "name": "Company Linked?"
@@ -1533,8 +1590,8 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2.2,
         "position": [
-          -1664,
-          64
+          -2256,
+          240
         ],
         "id": "if-entry-exists",
         "name": "List Entry Exists?"
@@ -1562,6 +1619,88 @@
           "openAiApi": {
             "id": "U11ZFugtdDzwhsyC",
             "name": "OpenAI Account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $json.data.filter(entry => entry.list_api_slug === 'au_or_outreach_2026')[0].entry_id }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -2048,
+          240
+        ],
+        "id": "1d4f0c18-6490-4fd0-8344-283aee58c930",
+        "name": "Get Attio Entry",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "check-outreach-status-empty",
+                "leftValue": "={{ $('Get Attio Entry').item.json.data.entry_values.outreach_status }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "array",
+                  "operation": "empty",
+                  "singleValue": true
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          -1808,
+          256
+        ],
+        "id": "8353e745-8df7-4739-b359-e9631f69f179",
+        "name": "Outreach Status Empty"
+      },
+      {
+        "parameters": {
+          "method": "PUT",
+          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"Lemlist\",\n      \"reply_date\": \"{{ $now.format('yyyy-MM-dd') }}\"\n    }\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          -1552,
+          256
+        ],
+        "id": "25e7eb50-3dac-42ad-8cb6-5ff9e79f1e00",
+        "name": "Update Attio List Entry",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "9CO17PzdcubAn70Q",
+            "name": "Attio API Key_Header"
           }
         }
       }
@@ -1700,6 +1839,11 @@
               "node": "Workflow Configuration",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Find Person in Attio",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -1752,7 +1896,7 @@
         "main": [
           [
             {
-              "node": "Update Attio List Entry",
+              "node": "Get Attio Entry",
               "type": "main",
               "index": 0
             }
@@ -1780,10 +1924,32 @@
             }
           ]
         ]
+      },
+      "Get Attio Entry": {
+        "main": [
+          [
+            {
+              "node": "Outreach Status Empty",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Outreach Status Empty": {
+        "main": [
+          [
+            {
+              "node": "Update Attio List Entry",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version ad7b0a98",
+    "name": "Version 0de11f69",
     "description": "",
     "autosaved": false
   },
