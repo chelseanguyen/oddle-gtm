@@ -1,0 +1,776 @@
+{
+  "updatedAt": "2026-04-07T07:26:26.096Z",
+  "createdAt": "2026-04-07T07:08:53.661Z",
+  "id": "EjvYPyhq2WeZTkHG",
+  "name": "Attio Person Lookup from Google Sheets (Numbers)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1k-pQ-5R_L8rXUMMNiCHCQ3BA87I1X-QMp1pWJ9Ec-Z4",
+          "mode": "list",
+          "cachedResultName": "MY Contacts Enrichment - Mar 2026",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1k-pQ-5R_L8rXUMMNiCHCQ3BA87I1X-QMp1pWJ9Ec-Z4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Mobile Numbers",
+          "mode": "name"
+        },
+        "options": {
+          "outputFormatting": {
+            "values": {
+              "general": "UNFORMATTED_VALUE",
+              "date": "SERIAL_NUMBER"
+            }
+          }
+        }
+      },
+      "id": "55bf4d68-42f3-4a61-a3b9-b383c513402c",
+      "name": "Read Emails Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        224,
+        0
+      ],
+      "executeOnce": true,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "caseSensitive": true,
+            "typeValidation": "strict",
+            "leftValue": ""
+          },
+          "conditions": [
+            {
+              "id": "status-empty",
+              "leftValue": "={{ $json.Status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3bbb161e-48ee-4437-b2ee-b290bed0a9b3",
+      "name": "Filter Unprocessed Rows",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.attio.com/v2/objects/people/records/query",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"filter\": {\"phone_numbers\": \"+{{ $json['Mobile Number'] }}\"}} ",
+        "options": {}
+      },
+      "id": "bfdd3996-6ccd-4bde-8f33-f0ecb107baf5",
+      "name": "Find Person in Attio",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        672,
+        0
+      ],
+      "retryOnFail": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "person-exists",
+              "leftValue": "={{ $json.data.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "79c34ae8-611f-4638-b113-3f03b65f69ba",
+      "name": "Person Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract person record ID and company info from Attio response\nconst attioData = $input.first().json;\nconst filterData = $('Filter Unprocessed Rows').item.json;\n\nconst personRecordId = attioData.data[0]?.id?.record_id || '';\nconst companyLink = attioData.data[0]?.values?.company?.[0];\nconst companyRecordId = companyLink?.target_record_id || '';\n\nreturn {\n  json: {\n    row_number: filterData.row_number,\n    email: filterData.Email,\n    personRecordId: personRecordId,\n    companyRecordId: companyRecordId,\n    hasCompany: !!companyRecordId\n  }\n};"
+      },
+      "id": "af59411a-7711-4906-973d-0cd2598e28db",
+      "name": "Extract Person Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1104,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 2,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "company-exists",
+              "leftValue": "={{ $json.hasCompany }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "279e0dbc-eae9-4a5e-8bbd-f2175bf24dc7",
+      "name": "Has Company?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1328,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.attio.com/v2/objects/companies/records/{{ $json.companyRecordId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "f6f27d8d-bcc2-4ff3-a92a-87236d804c56",
+      "name": "Get Company Details",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1552,
+        -208
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "row_number",
+              "name": "row_number",
+              "value": "={{ $('Extract Person Data').item.json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "person_record_id",
+              "name": "Person Record ID",
+              "value": "={{ $('Extract Person Data').item.json.personRecordId }}",
+              "type": "string"
+            },
+            {
+              "id": "company_record_id",
+              "name": "Company Record ID",
+              "value": "={{ $('Extract Person Data').item.json.companyRecordId }}",
+              "type": "string"
+            },
+            {
+              "id": "company_name",
+              "name": "Company Name",
+              "value": "={{ $json.data.values.name[0].value }}",
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "name": "Status",
+              "value": "Processed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b3417a46-2128-43fc-89f5-51d99ed54273",
+      "name": "Prepare Update (With Company)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1760,
+        -208
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "row_number",
+              "name": "row_number",
+              "value": "={{ $json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "person_record_id",
+              "name": "Person Record ID",
+              "value": "={{ $json.personRecordId }}",
+              "type": "string"
+            },
+            {
+              "id": "company_record_id",
+              "name": "Company Record ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "company_name",
+              "name": "Company Name",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "name": "Status",
+              "value": "Processed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8cb2e0dd-dc4a-42c8-8973-9bc0c7aad8e7",
+      "name": "Prepare Update (No Company)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1552,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "row_number",
+              "name": "row_number",
+              "value": "={{ $('Filter Unprocessed Rows').item.json.row_number }}",
+              "type": "number"
+            },
+            {
+              "id": "person_record_id",
+              "name": "Person Record ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "company_record_id",
+              "name": "Company Record ID",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "company_name",
+              "name": "Company Name",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "status",
+              "name": "Status",
+              "value": "Not found",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "07dd0f05-ef90-4755-9bc2-3b7f0c3f3e77",
+      "name": "Prepare Not Found",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        112
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6f93fe2b-8ba4-4f16-b384-65916807db55",
+      "name": "Merge Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        1984,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1k-pQ-5R_L8rXUMMNiCHCQ3BA87I1X-QMp1pWJ9Ec-Z4"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Mobile Numbers",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Status": "={{ $json.Status }}",
+            "Place ID": "={{ $json.row_number }}",
+            "Person Attio Record ID": "={{ $json['Person Record ID'] }}",
+            "Person's Company Record ID": "={{ $json['Company Record ID'] }}",
+            "Person's Company": "={{ $json['Company Name'] }}",
+            "row_number": "={{ $json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "Company Attio Record ID",
+              "displayName": "Company Attio Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Place ID",
+              "displayName": "Place ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Brand",
+              "displayName": "Brand",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Country",
+              "displayName": "Country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Full Name",
+              "displayName": "Full Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Job Title",
+              "displayName": "Job Title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "LinkedIn URL",
+              "displayName": "LinkedIn URL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Person Attio Record ID",
+              "displayName": "Person Attio Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person's Company Record ID",
+              "displayName": "Person's Company Record ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Person's Company",
+              "displayName": "Person's Company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "1387b2db-1b8e-4e89-8d08-2543dc6571d3",
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2208,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1k-pQ-5R_L8rXUMMNiCHCQ3BA87I1X-QMp1pWJ9Ec-Z4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Mobile Numbers",
+          "mode": "name"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "6543eeed-0e42-4d10-999f-e72d8d0aa626",
+      "name": "New Row Added",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "pDR6QZ9oC3DsT1h3",
+          "name": "Google Sheets Account 2"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Read Emails Sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter Unprocessed Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Unprocessed Rows": {
+      "main": [
+        [
+          {
+            "node": "Find Person in Attio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Person in Attio": {
+      "main": [
+        [
+          {
+            "node": "Person Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Person Found?": {
+      "main": [
+        [
+          {
+            "node": "Extract Person Data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Not Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Person Data": {
+      "main": [
+        [
+          {
+            "node": "Has Company?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Company?": {
+      "main": [
+        [
+          {
+            "node": "Get Company Details",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Update (No Company)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Company Details": {
+      "main": [
+        [
+          {
+            "node": "Prepare Update (With Company)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Update (With Company)": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Update (No Company)": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Not Found": {
+      "main": [
+        [
+          {
+            "node": "Merge Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Results": {
+      "main": [
+        [
+          {
+            "node": "Update Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "New Row Added": {
+      "main": [
+        [
+          {
+            "node": "Read Emails Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:New Row Added": {
+      "documentId": "1k-pQ-5R_L8rXUMMNiCHCQ3BA87I1X-QMp1pWJ9Ec-Z4",
+      "sheetId": 1986387633,
+      "lastIndexChecked": 820
+    }
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {},
+  "versionId": "2bf39f40-9fbd-4630-9274-4442a47102ba",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-07T07:08:53.661Z",
+      "createdAt": "2026-04-07T07:08:53.661Z",
+      "role": "workflow:owner",
+      "workflowId": "EjvYPyhq2WeZTkHG",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
