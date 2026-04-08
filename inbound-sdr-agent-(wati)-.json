@@ -1,0 +1,1891 @@
+{
+  "updatedAt": "2026-04-08T09:58:24.913Z",
+  "createdAt": "2026-04-07T09:58:15.103Z",
+  "id": "x5TrHUH7xBfxMDVT",
+  "name": "Inbound SDR Agent (WATI)",
+  "active": false,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "url": "=https://bbltqycjmvkhbuvwelff.supabase.co/rest/v1/whatsapp_message_buffer?phone_number=eq.{{ encodeURIComponent($('Receive Reply').item.json.body.payload.sender.contact.identifierValue) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -96,
+        1056
+      ],
+      "id": "69afacf5-0b84-4286-a338-1c8f81da43e2",
+      "name": "Get Buffer Row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const receiveReply = $('Receive Reply').item.json;\nconst payload = receiveReply.body.payload;\nconst phoneNumber = payload.sender.contact.identifierValue;\nconst channelId = payload.channelId;\nconst contactId = payload.sender.contact.id;\nconst messageType = payload.body.type;\nconst messageText = payload.body?.text?.text ||\n                    payload.body?.image?.text ||\n                    payload.body?.caption ||\n                    `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    channel_id: channelId,\n    contact_id: contactId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        112,
+        1056
+      ],
+      "id": "1f0b82d1-21b1-43f5-954f-69b62457b6d6",
+      "name": "Build Buffer Data"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://bbltqycjmvkhbuvwelff.supabase.co/rest/v1/whatsapp_message_buffer",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=representation"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        304,
+        1056
+      ],
+      "id": "11217b97-1c59-4dad-8bf8-e4bc06d8d6b3",
+      "name": "Upsert Buffer",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "debounce-myts-001",
+              "name": "myTs",
+              "type": "string",
+              "value": "={{ Array.isArray($json) ? $json[0]?.updated_at : $json.updated_at }}"
+            },
+            {
+              "id": "debounce-phone-001",
+              "name": "phone_number",
+              "type": "string",
+              "value": "={{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        1056
+      ],
+      "id": "f934289b-1b60-4538-8204-725495a1e69b",
+      "name": "Store myTs"
+    },
+    {
+      "parameters": {
+        "url": "=https://bbltqycjmvkhbuvwelff.supabase.co/rest/v1/whatsapp_message_buffer?phone_number=eq.{{ encodeURIComponent($('Store myTs').item.json.phone_number) }}&select=updated_at",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        880,
+        1056
+      ],
+      "id": "c91048ce-af97-4b98-b480-73bf1763ef6e",
+      "name": "Read Buffer Timestamp",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 3,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "debounce-last-001",
+              "leftValue": "={{ $('Store myTs').item.json.myTs }}",
+              "rightValue": "={{ Array.isArray($json) ? $json[0]?.updated_at : $json.updated_at }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1072,
+        1056
+      ],
+      "id": "970300bc-0be8-4496-b9ce-5c2dc994d1ac",
+      "name": "Is Last Message?"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1264,
+        1296
+      ],
+      "id": "273cce78-6690-49be-84bb-871e308e15f5",
+      "name": "Stop Processing"
+    },
+    {
+      "parameters": {
+        "url": "=https://bbltqycjmvkhbuvwelff.supabase.co/rest/v1/whatsapp_message_buffer?phone_number=eq.{{ encodeURIComponent($('Store myTs').item.json.phone_number) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        1040
+      ],
+      "id": "c5645c08-351a-4996-8051-122e6b17f3b2",
+      "name": "Fetch Buffered Messages",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1456,
+        1040
+      ],
+      "id": "27ba5f6b-be60-4e64-94cd-11449bf1a906",
+      "name": "Merge Messages"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=https://bbltqycjmvkhbuvwelff.supabase.co/rest/v1/whatsapp_message_buffer?phone_number=eq.{{ encodeURIComponent($json.phone_number) }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1632,
+        1040
+      ],
+      "id": "a1da8f64-a431-40ec-9e14-778c46586081",
+      "name": "Clear Buffer",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.payload.body.text }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1088,
+        688
+      ],
+      "id": "7f2074fb-0d32-4a09-8d85-4a551631a2c1",
+      "name": "Notify in Slack2",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        176,
+        560
+      ],
+      "id": "1b0f9c5c-3e1f-4770-88b5-69b43bda613b",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $('Merge Messages').item.json.merged_text }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b7bd8c5a-7c2a-4bb2-a7ab-aaaabe539737",
+      "name": "Format response",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1728,
+        -64
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        288
+      ],
+      "id": "88208bb3-2dca-41f2-bbf0-71d235027643",
+      "name": "Get image file ID"
+    },
+    {
+      "parameters": {
+        "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1264,
+        288
+      ],
+      "id": "2728a1fe-e251-40f9-9836-df4c9bc05aeb",
+      "name": "Retrieve image from Bird",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+        "inputType": "binary",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        1488,
+        288
+      ],
+      "id": "df86bb30-5331-4af3-8eb1-e51807233c4b",
+      "name": "Analyze image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2ec0e573-373b-4692-bfae-86b6d3b9aa9a",
+              "name": "text",
+              "type": "string",
+              "value": "={{ $json.content.parts[0].text + ($('Get image file ID').item.json.caption ? '\\n\\nUser\\'s caption: \"' + $('Get image file ID').item.json.caption + '\"' : '') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4e318508-e21b-40da-918e-897a1b982bcb",
+      "name": "Format image description",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        1728,
+        288
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d990cbd6-a408-4ec4-a889-41be698918d9",
+              "name": "message_type",
+              "type": "string",
+              "value": "={{ $('Merge Messages').item.json.message_type }}"
+            },
+            {
+              "id": "23b785c3-f38e-4706-80b7-51f333bba3bd",
+              "name": "message_text",
+              "type": "string",
+              "value": "={{ $json.text }}"
+            },
+            {
+              "id": "5a8f313b-0472-44a5-ba73-0907a983f351",
+              "name": "channel_id",
+              "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "f827a337-a62c-4924-9b5e-2ea75ad47eb7",
+      "name": "Get User's Message",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        2176,
+        288
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/contacts/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "attribute",
+              "value": "=company"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "authorization",
+              "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2384,
+        288
+      ],
+      "id": "652a1d4a-b510-4590-8175-8487278289c1",
+      "name": "Get company name",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/participants/{{ $('Receive Reply').item.json.body.payload.sender.contact.id }}/conversations",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "channelId",
+              "value": "={{ $('Receive Reply').item.json.body.payload.channelId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            },
+            {
+              "name": "authorization",
+              "value": "AccessKey BxjtqcaqGqWSDGALVyjM3DQwaSzeYCACSwX7"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2656,
+        288
+      ],
+      "id": "25d01cc7-c00d-4784-89b0-6f9584fae457",
+      "name": "Get conversation ID",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/conversations/{{ $json.results[0].id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "count",
+              "value": "10"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "accept",
+              "value": "*/*"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2864,
+        288
+      ],
+      "id": "38712cbb-3a7e-4bcc-98aa-25846980c8d6",
+      "name": "Get Chat History",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1R4VMEjneoFtqiZe",
+          "name": "Bird API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst output = [];\n\n// Get processed message data from earlier in the flow\nconst processedMessage = $('Get User\\'s Message').item.json;\nconst messageType = processedMessage.message_type;\nconst messageText = processedMessage.message_text;\nconst messageCaption = processedMessage.message_caption;\n\n// Build the processed body for image messages\nlet processedImageBody = null;\nif (messageType === 'image' && messageText) {\n  processedImageBody = messageText;\n  if (messageCaption) {\n    processedImageBody += `\\n\\nCaption: \"${messageCaption}\"`;\n  }\n}\n\nitems.forEach(item => {\n  const messages = item.json.results || [];\n  if (messages.length === 0) return;\n\n  const sortedMessages = [...messages].sort((a, b) =>\n    new Date(b.createdAt) - new Date(a.createdAt)\n  );\n\n  let conversationThread = [];\n  let latestLeadMessage = \"\";\n  let lastProspectTime = null;\n  let firstSdrReplyTime = null;\n  let prospectMessages = [];\n  let isFirstProspectMessage = true;\n\n  sortedMessages.forEach(msg => {\n    const isProspect = msg.sender.type === 'contact';\n    const isUser = msg.sender.type === 'user';\n    const roleLabel = isProspect ? 'Prospect' : 'SDR';\n\n    const msgDate = new Date(msg.createdAt);\n    const dateStr = msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      day: 'numeric',\n      month: 'short'\n    }) + ' ' + msgDate.toLocaleString('en-SG', {\n      timeZone: 'Asia/Singapore',\n      hour: '2-digit',\n      minute: '2-digit',\n      hour12: false\n    });\n\n    // Default body from raw message\n    let body = msg.body?.text?.text || \"[Media/Other]\";\n\n    // For the most recent prospect message, substitute processed image data if available\n    if (isProspect && isFirstProspectMessage && processedImageBody) {\n      body = processedImageBody;\n    }\n\n    if (conversationThread.length < 10) {\n      conversationThread.push(`[${dateStr}] ${roleLabel}: ${body}`);\n    }\n\n    if (isProspect) {\n      if (!latestLeadMessage) latestLeadMessage = body;\n      lastProspectTime = msgDate;\n      prospectMessages.push({ dateStr, body, msgDate });\n      isFirstProspectMessage = false;\n    } else if (isUser) {\n      firstSdrReplyTime = msgDate;\n    }\n  });\n\n  let latestMessages = \"\";\n  if (prospectMessages.length > 0) {\n    const mostRecentProspectTime = prospectMessages[0].msgDate;\n    const threeMinutesMs = 3 * 60 * 1000;\n    latestMessages = prospectMessages\n      .filter(m => Math.abs(mostRecentProspectTime - m.msgDate) <= threeMinutesMs)\n      .map(m => `[${m.dateStr}] ${m.body}`)\n      .reverse()\n      .join('\\n\\n');\n  }\n\n  let responseTimeMinutes = 0;\n  if (lastProspectTime && firstSdrReplyTime) {\n    const diffMs = Math.abs(firstSdrReplyTime - lastProspectTime);\n    responseTimeMinutes = Math.round(diffMs / 60000);\n  }\n\n  output.push({\n    json: {\n      leadMessage: latestLeadMessage,\n      conversationId: sortedMessages[0].conversationId,\n      conversationThreadFormatted: conversationThread.reverse().join('\\n\\n'),\n      latestMessages: latestMessages,\n      responseTimeMinutes: responseTimeMinutes,\n      summary: {\n        totalMessages: sortedMessages.length,\n        latestRole: sortedMessages[0].sender.type === 'contact' ? 'Prospect' : 'SDR'\n      }\n    }\n  });\n});\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        288
+      ],
+      "name": "Parse Chat History",
+      "id": "7c08e8d9-3185-44a0-bbf3-fd6e12810e7d"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32819e6c-b831-4634-9f34-1b9e4b0ae992",
+              "name": "lead_message",
+              "value": "={{ $json.leadMessage }}",
+              "type": "string"
+            },
+            {
+              "id": "4f3d555d-03c1-4ef4-8b93-67a0991726b3",
+              "name": "latest_messages",
+              "value": "={{ $json.latestMessages }}",
+              "type": "string"
+            },
+            {
+              "id": "367e8059-b953-48de-b357-2d862d36b76f",
+              "name": "chat_history",
+              "value": "={{ $json.conversationThreadFormatted }}",
+              "type": "string"
+            },
+            {
+              "id": "35c81836-0c3f-4a23-96a8-39476ab73c8c",
+              "name": "message_type",
+              "value": "={{ $('Get User\\'s Message').item.json.message_type }}",
+              "type": "string"
+            },
+            {
+              "id": "3a6b605b-f034-437c-a1c6-dc7eb082e3af",
+              "name": "image_caption",
+              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        3248,
+        288
+      ],
+      "id": "0b186d3f-01ae-474a-bfc3-41e3ab5aa28d",
+      "name": "Map fields"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=- Prospect's latest messages: {{ $json.latest_messages }}\n- Message type: {{ $json.message_type }}\n- Chat history: {{ $json.chat_history }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role:**\nYou are Alan, an expert Sales Development Representative (SDR) communicating via WhatsApp Business. Your goal is to manage incoming chat replies from prospects, address their queries/objections using approved logic, and ultimately secure a discovery call.\n\n**Response Guidelines & Formatting:**\n- Length: Under 40 words. Hard cap at 100. Never pad with context already covered.\n- Tone: Casual, direct, human — like texting a contact, not writing an email. Contractions are fine. Simple everyday words only, avoid formal phrases like \"may I,\" \"I'd be happy to,\" or \"regarding.\" No fillers (\"That's great!\", \"Hope you're well\"). If acknowledgment is needed, one word max: \"Understood.\" or \"Ok.\" — or skip it.\n- Mirror: Match the prospect's length and energy. Short from them, short from you.\n- One Screen: Two short paragraphs max. If it needs a third, cut something.\n- Language: Plain business language. Outcomes over features. No jargon.\n- Vocabulary: Online ordering context, use \"customer/order/restaurant.\" Reservations context, use \"guest/reservation/table.\" Mixed or unclear, default to online ordering.\n- Format: No bold text. No em-dashes or dashes, use commas or periods instead. Hyphens only for lists. No formal sign-offs. End with the link or a question.\n- Scheduling link: Never include it while still handling an objection.\n- Output: Return in Markdown format.\n\n**Knowledge Access:**\n- Response Handling Knowledge Base (KB): Use this to retrieve 1-3 examples. Crucial: Extract the logical pivot (the rebuttal/strategy). Mirror examples to avoid repeating past mistakes.\n- Product Knowledge Base: Use this to retrieve product information. Distill into 1-2 conversational sentences for WhatsApp. Only answer when asked.\n- Oddle Shop product site (https://www.oddle.me/sg/products/restaurant-online-ordering-system): Use for general questions about Oddle Shop / eShop product.\n- Oddle Reserve product site (https://www.oddle.me/sg/products/restaurant-reservation-system): Use for general questions about Oddle Reservation system product.\n\n**Oddle Core USPs (use when KB match is below 80%):**\n- 100% customer data ownership: Unlike marketplaces, all guest data belongs to the restaurant\n- Built-in CRM with automated targeted broadcasts to re-engage past diners\n- Lifecycle layer: converts first-time marketplace guests into direct-booking regulars\n- Automation runs without manual effort from the restaurant team\n- Founder Access rate for early AU partners, guaranteed to be the most cost-effective option in the market\n\n**Step 1: Input Parsing**\n- Prospect's latest messages contains the most recent 1-3 messages you must respond to.\n- Chat history contains up to 10 messages from the prospect only, in chronological order (oldest to newest). It does not include your previous replies. Use it to understand the prospect's journey, track what they've already said or asked, and avoid addressing things out of context.\n- Always read the full chat history before drafting. Your response must be relevant to the entire conversation thread, not just the latest message in isolation.\n\n**Language Detection & Translation:**\n- Dubai prospects may message in Arabic, Hindi, Tagalog, or other languages commonly used in the UAE.\n- Detect the language of the prospect's message. If it is not English, silently translate it to English for your understanding, then always reply in English regardless of the language they used.\n- Do not acknowledge or comment on the language switch. Just respond in English naturally.\n\n**Step 2: Contextual Analysis & Knowledge Base Mapping**\n- Salutation: Never use the Company Name in a salutation. Omit the greeting entirely and start with the answer.\n- History Check: Ensure you aren't repeating previous points or ignoring a question already asked.\n- Strategic Mapping: Identify the core intent of the lead's message (e.g., \"Happy with current provider,\" \"Price objection,\" \"Too busy\").\n- KB Match Assessment: Before drafting, score how closely the prospect's reply matches a KB example (0-100%).\n\t- 80-100% match: Treat the KB example as a script template. Adopt the same questions, the same concessions, and the same specific pivots verbatim. Do not deviate.\n\t- Below 80% match / No clear KB match: Do not force-fit a KB example. Build the response directly from Oddle's Product Knowledge Base. Identify what the prospect's reply reveals about their current setup or gap, then position the most relevant Oddle strength against that gap in 1-2 sentences maximum.\n- Avoid Over-Personalization: Do not insert the Company Name into the body of the response.\n\n**Step 3: Scenario Logic (Select One)**\n\n**Warm / Low-Friction Reply (Prospect is Open or Agreeable)**\n- When the prospect gives a short, warm, or low-resistance reply (e.g., \"sure, tell us more,\" \"go ahead\"), do not launch into a product explanation.\n- Respond with one casual sentence acknowledging their openness, then drop the scheduling link immediately.\n- Example: \"Perfect, let's find a time then, here's the link: https://forms.oddle.me/oddle-discovery-call\"\n- Keep it under 20 words. Match their energy.\n\n**High Intent (Interested/Demo Request):**\n- If they ask for a demo or show clear interest, provide the scheduling link: https://forms.oddle.me/oddle-discovery-call\n- Note: If they ask for a \"specific\" demo, briefly mention we can cover that in the live session rather than asking them more questions.\n\n**Questions / Information Request:**\n- Answer questions clearly using the KB, Product Knowledge Base, or Websites.\n\t- Focus on the result (owning data/reducing commissions) rather than the features.\n\t- Example: Instead of \"Oddle is an all-in-one platform...\", say \"We help you own your customer data so you're not just relying on marketplaces like Talabat or Deliveroo.\"\n- On pricing: Never mention specific pricing figures. Instead, position it as: we're offering a Founder Rate for early Dubai partners, and it's guaranteed to be the most cost-effective option in the market. Direct them to a call to find out more.\n\t- Example: \"We're offering a founder rate for early Dubai partners, and we guarantee it's the most cost-effective in the market. Best to hop on a quick call so we can walk you through it.\"\n- End with a soft call to action (e.g., \"Would it be helpful to see how this looks like?\").\n\n**Objections (Competitor, Budget, Timing, or \"We are happy/all set\"):**\n- The One-Try Rule: Do not concede on the first soft objection. Attempt ONE rebuttal using KB or Product Knowledge Base depending on your KB match score.\n- 80-100% KB match: Replicate the exact sales pivot used in the KB.\n\t- If the KB asks about \"review windows,\" you ask about review windows.\n\t- If the KB asks about \"automation vs cost,\" you ask about automation vs cost.\n- Below 80% KB match: Build the rebuttal from Product Knowledge Base. Identify the gap the prospect's current setup doesn't address and position Oddle against it in 1-2 sentences.\n- Pricing objections specifically: Do not discuss or reveal any pricing. Acknowledge the concern briefly, then angle it as: we're offering a founder rate for early Dubai partners and it's guaranteed to be the most cost-effective in the market, so it's worth a quick chat.\n- \"We already use Talabat / we're happy with marketplaces\": Use the proof point that Oddle is not a replacement for Talabat. It's an additional owned channel that captures the orders that never reach Talabat. One sentence, no more.\n- Social proof objections (e.g., \"Never heard of you,\" \"Are you new?\"): Pull one relevant brand name from the proof points that fits their context, e.g., Pizza Express or Shake Shack for online ordering, or Pizza Express and TGIF for reservations.\n- Firm No: Only acknowledge gracefully and end the thread if the prospect is explicitly firm (e.g., \"Do not contact me again\" or \"Stop\").\n- Constraint: Do not send the scheduling link in this phase; earn a \"Yes\" to the idea of a conversation first.\n\n**Unlisted Objections or Unrecognized Scenarios:**\n- If a prospect raises an objection, scenario, or question that does not match any logic in this prompt or the KB, do not make up data, invent features, or fabricate claims.\n- Handle it gracefully using general business reasoning. Acknowledge the concern in one sentence, then pivot back to the value of a quick conversation where it can be properly addressed.\n- Example: \"Fair point, and honestly the best way I can give you a proper answer is over a quick call. Worth 15 mins?\"\n- Never guess at specifics (pricing, integrations, features, timelines) that aren't confirmed in your knowledge sources.\n\n**Needs to Check with or Talk to Their Boss:**\n- Do not wait for them to loop back. Offer to reach out directly.\n- Ask for the boss's name and phone number so you can contact them directly.\n- Example: \"No worries, happy to reach out to them directly. Can you share their name and number?\"\n\n**Last-Minute / On-Demand Orders:**\n- Acknowledge it, then pivot to data ownership and repeat orders. Oddle helps restaurants capture last-minute orders through their own branded channel while owning 100% of customer data to be re-engaged for future orders instead of staying in the marketplace ecosystem. Do not invent feature-specific answers (e.g., \"set lead time to zero\") that are not found in Product Knowledge Base.\n\n**Scenario: Local Social Proof (Australia References)**\n- If the lead asks about current Australian users or local presence, mention exactly three names from the following list: Ten Minas, The Penny Drop Cafe, Thai Ute Restaurant, Lumen People, Catalina Kitchen Cafe, Bar & Restaurant, Arcadia Liquors, Mister Minh.\n- Use ONLY if the prospect explicitly asks about Australian users, local presence, or who else is using the system.\n- Context: Briefly mention that these are some of the local partners we work with in the AU market.\n- Constraint: Do not volunteer these names unless specifically asked.\n\n**Referrals & Contact Updates:**\n- If they refer a colleague: Ask for that person's name and phone number. If they only provide email, ask for name and phone number. If they already provide a number, just acknowledge.\n- If it's the wrong brand/contact: Apologise, ask for the right contact number, say we will update records. For example: \"Sorry about that. Do you have their number? I'll update our records to make sure we reach the right person.\""
+        }
+      },
+      "id": "b67a7166-cb41-45b6-9f78-8da2e67cd9d3",
+      "name": "Response Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3712,
+        288
+      ],
+      "typeVersion": 1.6
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"text\": \"Hi, do you take reservation for 10-12 pax?\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        3952,
+        480
+      ],
+      "id": "3d4610b2-9373-4d60-b150-c4157b1dfc0f",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Use this tool to find similar prospect's reply and examples of approved responses to help draft new replies",
+        "tableName": {
+          "__rl": true,
+          "value": "response_handling_wa_au",
+          "mode": "list",
+          "cachedResultName": "response_handling_wa_au"
+        },
+        "topK": 5,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        3584,
+        704
+      ],
+      "id": "91b71dab-87c2-436b-990a-4444d13a904e",
+      "name": "Response Handling Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3584,
+        864
+      ],
+      "id": "74e76b4f-6edf-4b21-bb0c-29220aef38fa",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"New prospect reply needs approval\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Get company name').item.json.attributes.company }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.payload.sender.contact.annotations.name || 'Unknown' }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Map fields').item.json.latest_messages || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n\n\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ JSON.stringify($json.output.text || '').slice(1, -1) }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"actions\",\n      \"block_id\": \"approval_actions\",\n      \"elements\": [\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \":white_check_mark: Approve & Send\",\n            \"emoji\": true\n          },\n          \"style\": \"primary\",\n          \"action_id\": \"approve\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        },\n        {\n          \"type\": \"button\",\n          \"text\": {\n            \"type\": \"plain_text\",\n            \"text\": \"✏ Reject & Send manually\",\n            \"emoji\": true\n          },\n          \"style\": \"danger\",\n          \"action_id\": \"reject\",\n          \"value\": \"{{ $('Parse Chat History').item.json.conversationId }}|{{ $('Receive Reply').item.json.body.payload.channelId }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        4432,
+        288
+      ],
+      "id": "a685960e-5915-4b70-9edb-86012ff8dec9",
+      "name": "Send to Slack for Approval",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "inbound-sdr-wa-agent",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -368,
+        336
+      ],
+      "id": "a1106ef4-b875-4c1a-8aef-6326df5fa57c",
+      "name": "Receive Reply",
+      "webhookId": "21da2614-5b74-449d-b230-82b03ed27c31"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec5e944c-7656-4860-adb7-edcfa8b95ed0",
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "text",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "89131ef6-0956-449c-b0ea-31fffced6303",
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "link_preview",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Link provided"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "05b30af4-967b-4824-abdc-84a8292ac0e5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "image"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Image Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "75e367cd-3913-4ea4-a2ea-b0442b3325fb",
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "voice",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Voice Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "audio",
+                    "id": "1113da73-5d4e-450e-90b3-960e6bec2e3c"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Audio Message"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "version": 2,
+                  "leftValue": "",
+                  "caseSensitive": true,
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "82aa5ff4-c9b6-4187-a27e-c7c5d9bfdda0",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "leftValue": "={{ $('Merge Messages').item.json.message_type }}",
+                    "rightValue": "video"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Video Message"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "Other Message Type"
+        }
+      },
+      "id": "16e575d2-1edf-4d9b-b302-ab442d5a9e87",
+      "name": "Redirect Message Types",
+      "type": "n8n-nodes-base.switch",
+      "position": [
+        464,
+        240
+      ],
+      "typeVersion": 3.2,
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        3888,
+        864
+      ],
+      "id": "a155d9e2-f8ee-4e5b-b94e-46084c3d3c77",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "RYsSfOkTTr5PB58p",
+          "name": "Oddle's Google Gemini(PaLM) API account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "Contains comprehensive product knowledge about Oddle, Oddle Reservation and Oddle Shop, including what the platform does, key features, and value propositions. Use this to answer prospect questions about Oddle's products and capabilities.",
+        "tableName": {
+          "__rl": true,
+          "value": "oddle_eshop_knowledge_base",
+          "mode": "list",
+          "cachedResultName": "oddle_eshop_knowledge_base"
+        },
+        "topK": 5,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        3888,
+        704
+      ],
+      "id": "cf7a678a-79e5-40a2-9c3c-993bd17ccd75",
+      "name": "Product Knowledge Base",
+      "credentials": {
+        "supabaseApi": {
+          "id": "aJzMx5t2Q4kcZ8EL",
+          "name": "Supabase Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Route country\nLocalization required",
+        "height": 240,
+        "width": 368,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "829757cb-6699-491f-99f6-68c7abced347",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Capturing all lead's messages in 1 minute",
+        "height": 544,
+        "width": 2080,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -144,
+        928
+      ],
+      "typeVersion": 1,
+      "id": "1c95737e-8150-4d11-871b-1f5eda1b89f2",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "content": "## Notify in Slack channel\nChannel ID localization required",
+        "height": 288,
+        "width": 352,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        992,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "5a3dc11d-9bf8-4ba1-8883-e034891fd8bc",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## Process image messages",
+        "height": 288,
+        "width": 912,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        976,
+        208
+      ],
+      "typeVersion": 1,
+      "id": "1c9affd6-5d9f-465c-8a2f-655241d42e02",
+      "name": "Sticky Note8"
+    },
+    {
+      "parameters": {
+        "content": "## Retrieve chat history",
+        "height": 336,
+        "width": 1296,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2096,
+        176
+      ],
+      "typeVersion": 1,
+      "id": "2717a97d-6fe4-41d5-a8a3-a6ac2d862b6e",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "## Send to Slack for approval\nChannel ID localization required",
+        "height": 320,
+        "width": 432,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4224,
+        192
+      ],
+      "typeVersion": 1,
+      "id": "c4c17f9b-9674-4b4f-8c69-f263f1ecc9b2",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Main SDR agent drafting response\nLocalization required for:\n1) System prompt\n2) Response Handling KB",
+        "height": 944,
+        "width": 688,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3472,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "f2537203-f4e4-46a5-b5fa-798bb5c4768b",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## Set up webhook path\nChange path",
+        "height": 240,
+        "width": 304,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -480,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "489edcd1-1266-4c2e-b061-9ea0a689e989",
+      "name": "Sticky Note11"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        3568,
+        496
+      ],
+      "id": "b187c5cd-4c4e-49d1-bc98-6dc631dd4bb6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "U11ZFugtdDzwhsyC",
+          "name": "OpenAI Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 1,
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        688,
+        1056
+      ],
+      "id": "bc7fd282-038f-40e2-8eee-559d1042868f",
+      "name": "Wait 1 min",
+      "webhookId": "8e4d2716-7852-48fe-a4bd-889f4fe95d1e"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "c0296220-ef00-4d98-881e-9eb5f920983e",
+              "leftValue": "={{ $('Get company name').item.json.attributes.attioEntryId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        2656,
+        -96
+      ],
+      "id": "dc12699d-204e-4f79-be04-5fee19cbf851",
+      "name": "Attio Entry ID available"
+    },
+    {
+      "parameters": {
+        "content": "## Update Attio entry\nLocalization required",
+        "height": 272,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2608,
+        -192
+      ],
+      "typeVersion": 1,
+      "id": "7f3b0a5e-1226-4060-98ab-e22388d300a5",
+      "name": "Sticky Note12"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2864,
+        -96
+      ],
+      "id": "037fec9b-e92e-4259-a776-e4dbaa9c8e6a",
+      "name": "Get Attio Entry",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "check-outreach-status-empty",
+              "leftValue": "={{ $('Get Attio Entry').item.json.data.entry_values.outreach_status }}",
+              "rightValue": "",
+              "operator": {
+                "type": "array",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        3056,
+        -96
+      ],
+      "id": "a09aacd6-b0f5-4f6e-861e-7acbda99c09a",
+      "name": "Outreach Status Empty"
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"entry_values\": {\n      \"outreach_status\": \"Replied\",\n      \"replied_from\": \"WA\",\n      \"reply_date\": \"{{ $now.format('yyyy-MM-dd') }}\"\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        3296,
+        -96
+      ],
+      "id": "0b2d29d2-95d5-402a-a2c1-8f58adf891c0",
+      "name": "Update Attio Outreach Status1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "9CO17PzdcubAn70Q",
+          "name": "Attio API Key_Header"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "version": 3,
+            "leftValue": "",
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "2c761342-1b37-4add-b95d-3d09c764111d",
+              "leftValue": "={{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}",
+              "rightValue": "+65",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            },
+            {
+              "id": "c3ec18db-4ecf-4a81-9b23-69440bb2c495",
+              "leftValue": "={{ $('Receive Reply').item.json.body.payload.sender.contact.identifierValue }}",
+              "rightValue": "+60",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -80,
+        336
+      ],
+      "id": "a955e919-d7f9-4c57-a856-2c9c7aac0d0d",
+      "name": "Check for reply from SG/MY"
+    }
+  ],
+  "connections": {
+    "Get Buffer Row": {
+      "main": [
+        [
+          {
+            "node": "Build Buffer Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Buffer Data": {
+      "main": [
+        [
+          {
+            "node": "Upsert Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upsert Buffer": {
+      "main": [
+        [
+          {
+            "node": "Store myTs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store myTs": {
+      "main": [
+        [
+          {
+            "node": "Wait 1 min",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read Buffer Timestamp": {
+      "main": [
+        [
+          {
+            "node": "Is Last Message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Last Message?": {
+      "main": [
+        [
+          {
+            "node": "Fetch Buffered Messages",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Buffered Messages": {
+      "main": [
+        [
+          {
+            "node": "Merge Messages",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Messages": {
+      "main": [
+        [
+          {
+            "node": "Clear Buffer",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clear Buffer": {
+      "main": [
+        [
+          {
+            "node": "Redirect Message Types",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format response": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get image file ID": {
+      "main": [
+        [
+          {
+            "node": "Retrieve image from Bird",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve image from Bird": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "Format image description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format image description": {
+      "main": [
+        [
+          {
+            "node": "Get User's Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get User's Message": {
+      "main": [
+        [
+          {
+            "node": "Get company name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get company name": {
+      "main": [
+        [
+          {
+            "node": "Get conversation ID",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Attio Entry ID available",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get conversation ID": {
+      "main": [
+        [
+          {
+            "node": "Get Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Chat History": {
+      "main": [
+        [
+          {
+            "node": "Parse Chat History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Chat History": {
+      "main": [
+        [
+          {
+            "node": "Map fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Map fields": {
+      "main": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Agent": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack for Approval",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Response Handling Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Response Handling Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Receive Reply": {
+      "main": [
+        [
+          {
+            "node": "Check for reply from SG/MY",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redirect Message Types": {
+      "main": [
+        [
+          {
+            "node": "Format response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get image file ID",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify in Slack2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Product Knowledge Base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Knowledge Base": {
+      "ai_tool": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Response Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1 min": {
+      "main": [
+        [
+          {
+            "node": "Read Buffer Timestamp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Attio Entry ID available": {
+      "main": [
+        [
+          {
+            "node": "Get Attio Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Attio Entry": {
+      "main": [
+        [
+          {
+            "node": "Outreach Status Empty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Outreach Status Empty": {
+      "main": [
+        [
+          {
+            "node": "Update Attio Outreach Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for reply from SG/MY": {
+      "main": [
+        [
+          {
+            "node": "Get Buffer Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Receive Reply": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "messagebird-request-timestamp": "1774397439",
+            "content-type": "application/json; charset=utf-8",
+            "messagebird-request-id": "310b024a-af08-4d57-bb83-7239d1476a52",
+            "user-agent": "Messagebird/Requests develop:8c9cc536",
+            "content-length": "904",
+            "x-cloud-trace-context": "9631c0007596396bbf6ed109b9f8f5df/14885790950824346897;o=1",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-9631c0007596396bbf6ed109b9f8f5df-ce94f400609c0511-01",
+            "x-forwarded-for": "13.127.212.189",
+            "forwarded": "for=\"13.127.212.189\";proto=https",
+            "accept-encoding": "gzip"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "service": "channels",
+            "event": "whatsapp.inbound",
+            "payload": {
+              "id": "cae6e47b-3cfd-461c-8b9a-c605f1491fca",
+              "channelId": "22c5243b-3d44-4590-82d7-534d77642dbd",
+              "sender": {
+                "contact": {
+                  "id": "f1d4f625-0f22-4ad3-90fa-245cbd2c8ca8",
+                  "identifierKey": "phonenumber",
+                  "identifierValue": "+971569924672",
+                  "annotations": {
+                    "name": "ROAST SPECIALITY COFFEE"
+                  }
+                }
+              },
+              "receiver": {
+                "connector": {
+                  "id": "e2d11e1a-aae7-46bf-aaad-ed0a745ecac0",
+                  "identifierValue": "+6588055922"
+                }
+              },
+              "body": {
+                "type": "text",
+                "text": {
+                  "text": "Yes sir"
+                }
+              },
+              "meta": {
+                "extraInformation": {
+                  "timestamp": "1774397436",
+                  "user_locale": "ar-AE"
+                }
+              },
+              "reference": "",
+              "parts": [
+                {
+                  "platformReference": "wamid.HBgMOTcxNTY5OTI0NjcyFQIAEhggQTU1MDlBRDNCQTY5NzE0NDI1MDRCMDE3Nzg1MTE5RUMA"
+                }
+              ],
+              "status": "delivered",
+              "reason": "",
+              "direction": "incoming",
+              "chargeableUnits": 1,
+              "lastStatusAt": "2026-03-25T00:10:39.664Z",
+              "createdAt": "2026-03-25T00:10:39.466Z",
+              "updatedAt": "2026-03-25T00:10:39.664Z",
+              "batchId": null
+            }
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook/dubai-wa-sdr-agent",
+          "executionMode": "production"
+        }
+      }
+    ],
+    "Get company name": [
+      {
+        "json": {
+          "id": "26caf139-fa71-4775-af7c-b94960c2f333",
+          "computedDisplayName": "Zenon Restaurant",
+          "featuredIdentifiers": [
+            {
+              "key": "phonenumber",
+              "value": "+97148377222"
+            }
+          ],
+          "identifierCount": 1,
+          "attributes": {
+            "company": "Zenon",
+            "displayName": "Zenon Restaurant",
+            "initialReference": "4611584d-e818-442d-a0aa-d8b63252f2a9",
+            "initialSource": "import",
+            "phonenumber": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForRcsMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForRcsTransactional": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForSmsMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForSmsTransactional": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForWhatsAppMarketing": [
+              "+97148377222"
+            ],
+            "reachableIdentifiersForWhatsAppTransactional": [
+              "+97148377222"
+            ],
+            "reservationPlatform": "Sevenrooms",
+            "subscribedWhatsApp": true,
+            "timezone": "Asia/Dubai"
+          },
+          "listIds": [
+            "fc0685b3-de5f-4945-ae28-8dc532186b66"
+          ],
+          "isAnonymous": false,
+          "createdAt": "2026-03-20T03:51:37.542Z",
+          "updatedAt": "2026-03-20T09:03:46.705Z"
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "versionId": "ad9865ed-2f9f-404b-a1e7-3d67f6d16e31",
+  "activeVersionId": null,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-07T09:58:15.103Z",
+      "createdAt": "2026-04-07T09:58:15.103Z",
+      "role": "workflow:owner",
+      "workflowId": "x5TrHUH7xBfxMDVT",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": null,
+  "tags": []
+}
