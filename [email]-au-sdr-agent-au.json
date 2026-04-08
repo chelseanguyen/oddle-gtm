@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-06T06:41:44.846Z",
+  "updatedAt": "2026-04-08T02:34:48.953Z",
   "createdAt": "2026-03-23T10:25:54.378Z",
   "id": "nkkFQLQhhhlUQPCR",
   "name": "[Email] AU SDR Agent",
@@ -655,7 +655,7 @@
     {
       "parameters": {
         "method": "PUT",
-        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+        "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get Attio Entry').item.json.data.id.entry_id }}",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -667,7 +667,7 @@
       "typeVersion": 4.3,
       "position": [
         -1552,
-        256
+        240
       ],
       "id": "25e7eb50-3dac-42ad-8cb6-5ff9e79f1e00",
       "name": "Update Attio List Entry",
@@ -1014,8 +1014,8 @@
       }
     ]
   },
-  "versionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
-  "activeVersionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
+  "versionId": "d6235d15-3e04-4545-8b17-ea96ff49ed56",
+  "activeVersionId": "d6235d15-3e04-4545-8b17-ea96ff49ed56",
   "triggerCount": 1,
   "shared": [
     {
@@ -1027,9 +1027,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-06T06:41:47.011Z",
-    "createdAt": "2026-04-06T06:41:44.852Z",
-    "versionId": "0de11f69-7eb7-4939-847d-6e2100efc226",
+    "updatedAt": "2026-04-08T02:34:50.962Z",
+    "createdAt": "2026-04-08T02:34:48.956Z",
+    "versionId": "d6235d15-3e04-4545-8b17-ea96ff49ed56",
     "workflowId": "nkkFQLQhhhlUQPCR",
     "nodes": [
       {
@@ -1681,7 +1681,7 @@
       {
         "parameters": {
           "method": "PUT",
-          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get company name').item.json.attributes.attioEntryId }}",
+          "url": "=https://api.attio.com/v2/lists/au_or_outreach_2026/entries/{{ $('Get Attio Entry').item.json.data.id.entry_id }}",
           "authentication": "genericCredentialType",
           "genericAuthType": "httpHeaderAuth",
           "sendBody": true,
@@ -1693,7 +1693,7 @@
         "typeVersion": 4.3,
         "position": [
           -1552,
-          256
+          240
         ],
         "id": "25e7eb50-3dac-42ad-8cb6-5ff9e79f1e00",
         "name": "Update Attio List Entry",
@@ -1949,7 +1949,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 0de11f69",
+    "name": "Version d6235d15",
     "description": "",
     "autosaved": false
   },
