@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-06T06:31:22.284Z",
+  "updatedAt": "2026-04-10T08:56:29.828Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
@@ -1106,7 +1106,7 @@
           "mode": "list",
           "cachedResultName": "models/gemini-2.5-flash"
         },
-        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image, prioritize texts that are contact details such as name and phone number/email. Keep it under 100 words, capped at 150 words.",
         "inputType": "binary",
         "options": {}
       },
@@ -2796,8 +2796,8 @@
       }
     ]
   },
-  "versionId": "06a46f64-6622-498e-8e4c-cddb64b00bf9",
-  "activeVersionId": "06a46f64-6622-498e-8e4c-cddb64b00bf9",
+  "versionId": "ba55d78d-5000-487f-ac8a-06fa8f251644",
+  "activeVersionId": "ba55d78d-5000-487f-ac8a-06fa8f251644",
   "triggerCount": 1,
   "shared": [
     {
@@ -2809,9 +2809,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-06T06:31:24.901Z",
-    "createdAt": "2026-04-06T06:31:22.290Z",
-    "versionId": "06a46f64-6622-498e-8e4c-cddb64b00bf9",
+    "updatedAt": "2026-04-10T08:56:31.717Z",
+    "createdAt": "2026-04-10T08:56:29.834Z",
+    "versionId": "ba55d78d-5000-487f-ac8a-06fa8f251644",
     "workflowId": "UpdWY7NyuhKEQFsQ",
     "nodes": [
       {
@@ -3914,7 +3914,7 @@
             "mode": "list",
             "cachedResultName": "models/gemini-2.5-flash"
           },
-          "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+          "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image, prioritize texts that are contact details such as name and phone number/email. Keep it under 100 words, capped at 150 words.",
           "inputType": "binary",
           "options": {}
         },
@@ -5504,7 +5504,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 06a46f64",
+    "name": "Version ba55d78d",
     "description": "",
     "autosaved": false
   },
