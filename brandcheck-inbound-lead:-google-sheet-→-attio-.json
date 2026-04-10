@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-31T06:24:40.894Z",
+  "updatedAt": "2026-04-10T06:07:37.555Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -1924,7 +1924,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brand_check_response\",\n  \"broadcast_name\": \"brand_check_response\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -2595,8 +2595,8 @@
       }
     ]
   },
-  "versionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
-  "activeVersionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
+  "versionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
+  "activeVersionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
   "triggerCount": 1,
   "shared": [
     {
@@ -2608,9 +2608,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-31T06:24:48.108Z",
-    "createdAt": "2026-03-31T06:24:40.899Z",
-    "versionId": "3844c3b8-5210-4171-bb26-04957ab501c0",
+    "updatedAt": "2026-04-10T06:07:40.833Z",
+    "createdAt": "2026-04-10T06:07:37.559Z",
+    "versionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -4531,7 +4531,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brandcheck_msg1\",\n  \"broadcast_name\": \"brandcheck_msg1\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"6583616212\",\n  \"template_name\": \"brand_check_response\",\n  \"broadcast_name\": \"brand_check_response\",\n  \"recipients\": [\n    {\n      \"phone_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\"\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -5151,7 +5151,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 3844c3b8",
+    "name": "Version 7f6fee0d",
     "description": "",
     "autosaved": false
   },
