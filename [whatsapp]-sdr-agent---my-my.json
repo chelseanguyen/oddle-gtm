@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-09T09:07:54.240Z",
+  "updatedAt": "2026-04-10T07:28:51.508Z",
   "createdAt": "2026-04-08T07:40:32.103Z",
   "id": "xrEOhwkNaUnxwCZE",
   "name": "[WhatsApp] SDR Agent - MY",
@@ -203,7 +203,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => m.text || null) //previously: .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -290,7 +290,7 @@
         "text": "={{ $('Merge Messages').item.json.merged_text }}",
         "hasOutputParser": true,
         "options": {
-          "systemMessage": "=You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
+          "systemMessage": "=You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\nIf the message is in another language other than English, translate it to English and proceed with the classification.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -796,7 +796,7 @@
           "mode": "list",
           "cachedResultName": "models/gemini-2.5-flash"
         },
-        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+        "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image, prioritize texts that are contact details such as name and phone number/email. Keep it under 100 words, capped at 150 words.",
         "inputType": "binary",
         "options": {}
       },
@@ -2454,8 +2454,8 @@
       }
     ]
   },
-  "versionId": "99e12cd4-735a-495e-b787-860dff29538f",
-  "activeVersionId": "99e12cd4-735a-495e-b787-860dff29538f",
+  "versionId": "fcaa84d5-4a10-4198-b2bf-7287d5949443",
+  "activeVersionId": "fcaa84d5-4a10-4198-b2bf-7287d5949443",
   "triggerCount": 1,
   "shared": [
     {
@@ -2467,9 +2467,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-09T09:07:56.180Z",
-    "createdAt": "2026-04-09T09:07:54.249Z",
-    "versionId": "99e12cd4-735a-495e-b787-860dff29538f",
+    "updatedAt": "2026-04-10T07:28:55.658Z",
+    "createdAt": "2026-04-10T07:28:51.513Z",
+    "versionId": "fcaa84d5-4a10-4198-b2bf-7287d5949443",
     "workflowId": "xrEOhwkNaUnxwCZE",
     "nodes": [
       {
@@ -2669,7 +2669,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => m.text || null) //previously: .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\n// Determine dominant message type by priority (non-text types take precedence)\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    channel_id: row.channel_id,\n    contact_id: row.contact_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2756,7 +2756,7 @@
           "text": "={{ $('Merge Messages').item.json.merged_text }}",
           "hasOutputParser": true,
           "options": {
-            "systemMessage": "=You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
+            "systemMessage": "=You are a message classifier for WhatsApp business messages.\n\nTask: Determine if a message was sent by an automated bot/system or a real human.\n\nIf the message is in another language other than English, translate it to English and proceed with the classification.\n\n## Classify as `auto_bot` if the message contains ANY of:\n- A \"Welcome to [Business Name]\" or generic greeting opener\n- Multiple URLs or links (menus, bookings, maps, Instagram, etc.)\n- Templated info blocks: operating hours, pricing, location, contact details\n- Emoji used as visual bullet points or decorators in a structured list\n- Phrases like \"Thank you for contacting us\", \"We will get back to you shortly\", \"Click for menu\"\n- FAQ links or pre-written Q&A redirects\n- A rigid menu of numbered/lettered options to select\n\n## Classify as `human` if the message:\n- References a specific internal action (\"I'll raise this\", \"I checked with the team\")\n- Contains conditional or uncertain language (\"if they're interested\", \"we might be able to\")\n- Asks the recipient to send or provide something (a proposal, details, availability)\n- Has natural imperfections: typos, informal phrasing, incomplete sentences\n- Responds directly and specifically to what was said, rather than delivering a pre-written block\n- Contains no links and no structured info blocks\n- Expresses disinterest, rejection, or dismissal (\"not interested\", \"no thanks\", \"please stop\", \"remove me\")\n- Short, blunt replies even if they contain polite closings — \"Thank you for reaching out\" after a rejection is human, bots do not decline offers\n\n## Key Rule:\nFormal or professional tone alone does NOT make a message a bot.\nA human can write formally. Look for STRUCTURE and LINKS, not just tone.\nPolite closing phrases like \"Thank you for reaching out\" do NOT indicate a bot when paired with a rejection or short dismissal. Bots do not turn down offers.\n\n## Constraint:\nYour output must ONLY be a valid JSON object. No other text.\n\n## Output Format:\n{ \"classification\": \"human\" | \"auto_bot\", \"reason\": \"Brief explanation within 100 characters\" }"
           }
         },
         "type": "@n8n/n8n-nodes-langchain.agent",
@@ -3262,7 +3262,7 @@
             "mode": "list",
             "cachedResultName": "models/gemini-2.5-flash"
           },
-          "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image.",
+          "text": "Here is an image sent by the user. Describe the image and transcribe any text visible in the image, prioritize texts that are contact details such as name and phone number/email. Keep it under 100 words, capped at 150 words.",
           "inputType": "binary",
           "options": {}
         },
@@ -4778,7 +4778,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 99e12cd4",
+    "name": "Version fcaa84d5",
     "description": "",
     "autosaved": false
   },
