@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-10T06:07:37.555Z",
+  "updatedAt": "2026-04-13T08:56:06.389Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -524,7 +524,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5264,
+        5584,
         576
       ]
     },
@@ -566,7 +566,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        5488,
+        5808,
         576
       ]
     },
@@ -586,7 +586,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        5728,
+        6048,
         416
       ],
       "credentials": {
@@ -625,7 +625,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        5936,
+        6256,
         416
       ]
     },
@@ -667,7 +667,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        5952,
+        6272,
         704
       ]
     },
@@ -687,7 +687,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        6192,
+        6512,
         496
       ],
       "credentials": {
@@ -726,7 +726,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6448,
+        6768,
         656
       ]
     },
@@ -777,7 +777,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6448,
+        6768,
         896
       ]
     },
@@ -797,7 +797,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        6736,
+        7056,
         736
       ],
       "credentials": {
@@ -836,7 +836,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6960,
+        7280,
         736
       ]
     },
@@ -878,7 +878,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6960,
+        7280,
         976
       ]
     },
@@ -898,7 +898,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        7296,
+        7616,
         816
       ],
       "credentials": {
@@ -937,7 +937,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        7504,
+        7824,
         816
       ]
     },
@@ -957,7 +957,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        7520,
+        7840,
         1040
       ],
       "credentials": {
@@ -976,7 +976,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8144,
+        8464,
         464
       ]
     },
@@ -989,7 +989,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        7920,
+        8240,
         416
       ]
     },
@@ -1031,7 +1031,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        8352,
+        8672,
         464
       ]
     },
@@ -1051,7 +1051,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8624,
+        8944,
         304
       ],
       "credentials": {
@@ -1090,7 +1090,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        8832,
+        9152,
         304
       ]
     },
@@ -1110,7 +1110,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9104,
+        9424,
         288
       ],
       "credentials": {
@@ -1136,7 +1136,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8624,
+        8944,
         608
       ],
       "credentials": {
@@ -1162,7 +1162,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8832,
+        9152,
         608
       ],
       "credentials": {
@@ -1230,7 +1230,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5216,
+        5536,
         352
       ],
       "typeVersion": 1,
@@ -1543,7 +1543,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        9344,
+        9664,
         608
       ],
       "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
@@ -1930,11 +1930,46 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        3360,
+        3376,
         304
       ],
       "id": "fcf9d118-081c-490b-bfb7-19caab8cef94",
       "name": "Send WATI template message",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://live-mt-server.wati.io/api/ext/v3/contacts",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
+      "name": "Add new WATI contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5328,
+        576
+      ],
       "credentials": {
         "httpBearerAuth": {
           "id": "qBoCbsiIZFcmrK9e",
@@ -2158,17 +2193,6 @@
         [
           {
             "node": "Add Existing to Inbound List (Phone)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Merge Company Search Paths": {
-      "main": [
-        [
-          {
-            "node": "Prepare Company Search",
             "type": "main",
             "index": 0
           }
@@ -2541,6 +2565,28 @@
           }
         ]
       ]
+    },
+    "Merge Company Search Paths": {
+      "main": [
+        [
+          {
+            "node": "Add new WATI contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add new WATI contact": {
+      "main": [
+        [
+          {
+            "node": "Prepare Company Search",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -2595,8 +2641,8 @@
       }
     ]
   },
-  "versionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
-  "activeVersionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
+  "versionId": "492a8085-3596-4e05-9ff3-78928a063089",
+  "activeVersionId": "492a8085-3596-4e05-9ff3-78928a063089",
   "triggerCount": 1,
   "shared": [
     {
@@ -2608,9 +2654,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-10T06:07:40.833Z",
-    "createdAt": "2026-04-10T06:07:37.559Z",
-    "versionId": "7f6fee0d-f7d5-4403-823b-6f95ca2204aa",
+    "updatedAt": "2026-04-13T08:56:10.026Z",
+    "createdAt": "2026-04-13T08:56:06.394Z",
+    "versionId": "492a8085-3596-4e05-9ff3-78928a063089",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -3131,7 +3177,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          5264,
+          5584,
           576
         ]
       },
@@ -3173,7 +3219,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          5488,
+          5808,
           576
         ]
       },
@@ -3193,7 +3239,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          5728,
+          6048,
           416
         ],
         "credentials": {
@@ -3232,7 +3278,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          5936,
+          6256,
           416
         ]
       },
@@ -3274,7 +3320,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          5952,
+          6272,
           704
         ]
       },
@@ -3294,7 +3340,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          6192,
+          6512,
           496
         ],
         "credentials": {
@@ -3333,7 +3379,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6448,
+          6768,
           656
         ]
       },
@@ -3384,7 +3430,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6448,
+          6768,
           896
         ]
       },
@@ -3404,7 +3450,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          6736,
+          7056,
           736
         ],
         "credentials": {
@@ -3443,7 +3489,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6960,
+          7280,
           736
         ]
       },
@@ -3485,7 +3531,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6960,
+          7280,
           976
         ]
       },
@@ -3505,7 +3551,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          7296,
+          7616,
           816
         ],
         "credentials": {
@@ -3544,7 +3590,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          7504,
+          7824,
           816
         ]
       },
@@ -3564,7 +3610,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          7520,
+          7840,
           1040
         ],
         "credentials": {
@@ -3583,7 +3629,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          8144,
+          8464,
           464
         ]
       },
@@ -3596,7 +3642,7 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          7920,
+          8240,
           416
         ]
       },
@@ -3638,7 +3684,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          8352,
+          8672,
           464
         ]
       },
@@ -3658,7 +3704,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          8624,
+          8944,
           304
         ],
         "credentials": {
@@ -3697,7 +3743,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          8832,
+          9152,
           304
         ]
       },
@@ -3717,7 +3763,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          9104,
+          9424,
           288
         ],
         "credentials": {
@@ -3743,7 +3789,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          8624,
+          8944,
           608
         ],
         "credentials": {
@@ -3769,7 +3815,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          8832,
+          9152,
           608
         ],
         "credentials": {
@@ -3837,7 +3883,7 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          5216,
+          5536,
           352
         ],
         "typeVersion": 1,
@@ -4150,7 +4196,7 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          9344,
+          9664,
           608
         ],
         "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
@@ -4537,11 +4583,46 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
         "position": [
-          3360,
+          3376,
           304
         ],
         "id": "fcf9d118-081c-490b-bfb7-19caab8cef94",
         "name": "Send WATI template message",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://live-mt-server.wati.io/api/ext/v3/contacts",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId }}\" }\n  ]\n}",
+          "options": {}
+        },
+        "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
+        "name": "Add new WATI contact",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.2,
+        "position": [
+          5328,
+          576
+        ],
         "credentials": {
           "httpBearerAuth": {
             "id": "qBoCbsiIZFcmrK9e",
@@ -4765,17 +4846,6 @@
           [
             {
               "node": "Add Existing to Inbound List (Phone)",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Merge Company Search Paths": {
-        "main": [
-          [
-            {
-              "node": "Prepare Company Search",
               "type": "main",
               "index": 0
             }
@@ -5148,10 +5218,32 @@
             }
           ]
         ]
+      },
+      "Merge Company Search Paths": {
+        "main": [
+          [
+            {
+              "node": "Add new WATI contact",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Add new WATI contact": {
+        "main": [
+          [
+            {
+              "node": "Prepare Company Search",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 7f6fee0d",
+    "name": "Version 492a8085",
     "description": "",
     "autosaved": false
   },
