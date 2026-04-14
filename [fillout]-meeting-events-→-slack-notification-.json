@@ -1,0 +1,421 @@
+{
+  "updatedAt": "2026-04-14T04:11:40.982Z",
+  "createdAt": "2026-04-14T03:51:12.106Z",
+  "id": "ZdQdFQrfbXkbNCw5",
+  "name": "[Fillout] Meeting Events → Slack Notification",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fillout-meeting-events",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-1",
+      "name": "Fillout Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "b07d141e-e9dc-43a3-900f-b3cbe200a0eb"
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json;\n\n// Extract phone number (phoneNumber takes priority over phone)\nconst phone = payload.phoneNumber || payload.phone || '';\n\n// Map country from phone prefix (longest prefixes first)\nconst countryMap = [\n  ['+971', 'Dubai'],\n  ['+852', 'Hong Kong'],\n  ['+65', 'Singapore'],\n  ['+64', 'New Zealand'],\n  ['+61', 'Australia'],\n  ['+60', 'Malaysia'],\n  ['+1', 'United States / Canada'],\n];\n\nlet country = 'Unknown';\nfor (const [prefix, name] of countryMap) {\n  if (phone.startsWith(prefix)) {\n    country = name;\n    break;\n  }\n}\n\n// Format meeting start time in Singapore timezone\nconst eventStart = new Date(payload.eventStartTime);\nconst formattedTime = eventStart.toLocaleString('en-SG', {\n  weekday: 'short',\n  month: 'short',\n  day: 'numeric',\n  year: 'numeric',\n  hour: 'numeric',\n  minute: '2-digit',\n  hour12: true,\n  timeZone: 'Asia/Singapore'\n});\n\n// Ensure gmeetLink has https://\nlet gmeetLink = payload.gmeetLink || '';\nif (gmeetLink && !gmeetLink.startsWith('http')) {\n  gmeetLink = 'https://' + gmeetLink;\n}\n\n// Emoji + label per event type\nconst emojiMap = {\n  'Meeting Scheduled': '\\u2705',\n  'Meeting Rescheduled': '\\ud83d\\udd04',\n  'Meeting Cancelled': '\\u274c',\n};\n\nconst eventType = payload.eventType || 'Unknown Event';\nconst emoji = emojiMap[eventType] || '\\ud83d\\udcc5';\nconst headerText = `${emoji} ${eventType}`;\n\nreturn [{\n  json: {\n    fullName: payload.fullName || 'N/A',\n    restaurantName: payload.restaurantName || 'N/A',\n    email: payload.email || 'N/A',\n    phone: phone || 'N/A',\n    country,\n    formattedTime,\n    gmeetLink: gmeetLink || 'N/A',\n    salesPerson: payload.scheduledUserEmail || 'N/A',\n    headerText,\n    fallbackText: `${headerText} \\u2014 ${payload.fullName || 'N/A'} (${payload.restaurantName || 'N/A'})`\n  }\n}];"
+      },
+      "id": "code-1",
+      "name": "Process Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"status\": \"ok\", \"message\": \"Notification sent\" }",
+        "options": {}
+      },
+      "id": "respond-1",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1120,
+        -16
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"C0ATHGN0MSL\",\n  \"text\": \"{{ $('Process Payload').item.json.fallbackText }} \",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"{{ $('Process Payload').item.json.headerText }}\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Process Payload').item.json.fullName }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Process Payload').item.json.restaurantName }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Email:*\\n{{ $('Process Payload').item.json.email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Phone:*\\n{{ $('Process Payload').item.json.phone }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Process Payload').item.json.country }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Meeting Time:*\\n{{ $('Process Payload').item.json.formattedTime }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Google Meet:*\\n{{ $('Process Payload').item.json.gmeetLink }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Sales Person:*\\n{{ $('Process Payload').item.json.salesPerson }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "http-slack-1",
+      "name": "Send to Slack",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        816,
+        -16
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "6pkLuqxfUVBFQxXi",
+          "name": "Slack RevOps Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "d48d1106-1c79-44bb-961b-a03eb344f0c3",
+              "leftValue": "={{ $('Fillout Webhook').item.json.eventType }}",
+              "rightValue": "Meeting Reminder",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        544,
+        0
+      ],
+      "id": "0d8eef4c-29ee-45d7-8ec0-002e8ff8b52f",
+      "name": "If"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        816,
+        192
+      ],
+      "id": "f866cf72-fb83-466d-9a5d-93bf894b8013",
+      "name": "No Operation, do nothing"
+    }
+  ],
+  "connections": {
+    "Fillout Webhook": {
+      "main": [
+        [
+          {
+            "node": "Process Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Process Payload": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Slack": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Singapore",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Fillout Webhook": [
+      {
+        "json": {
+          "submissionTime": "2026-04-13T08:45:00.988Z",
+          "submissionId": "1dcef8d3-9ef9-4294-8fad-6906ec362379",
+          "eventStartTime": "2026-04-14T08:45:00.000Z",
+          "eventEndTime": "2026-04-14T09:30:00.000Z",
+          "fullName": "BAKERS CORNER",
+          "email": "bakerscornerdubai@gmail.com",
+          "phone": "",
+          "phoneNumber": "+971502732798",
+          "restaurantName": "LUXURY CAKES BY BAKERS CORNER",
+          "eventUrl": "https://www.google.com/calendar/event?eid=ZTV1MGJzMzR2dmhyY25qNWZhOHUzMTZ0dTggYWxhbmdvaEBvZGRsZS5tZQ&authuser=alangoh%40oddle.me",
+          "gmeetLink": "https://meet.google.com/omr-nqre-kuy",
+          "rescheduleOrCancelUrl": "https://forms.oddle.me/event/qYxgyPAvrfus?t=YSQmJYtCygphZ4WILzTcbsJwr5rNQskV",
+          "scheduledUserEmail": "alangoh@oddle.me",
+          "eventType": "Meeting Reminder"
+        }
+      }
+    ]
+  },
+  "versionId": "ea131a77-7d0e-40a9-b10d-a6040e922679",
+  "activeVersionId": "ea131a77-7d0e-40a9-b10d-a6040e922679",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-14T03:51:12.106Z",
+      "createdAt": "2026-04-14T03:51:12.106Z",
+      "role": "workflow:owner",
+      "workflowId": "ZdQdFQrfbXkbNCw5",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-14T04:11:30.421Z",
+    "createdAt": "2026-04-14T04:11:24.909Z",
+    "versionId": "ea131a77-7d0e-40a9-b10d-a6040e922679",
+    "workflowId": "ZdQdFQrfbXkbNCw5",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "fillout-meeting-events",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "id": "webhook-1",
+        "name": "Fillout Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2,
+        "position": [
+          0,
+          0
+        ],
+        "webhookId": "b07d141e-e9dc-43a3-900f-b3cbe200a0eb"
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = $input.first().json;\n\n// Extract phone number (phoneNumber takes priority over phone)\nconst phone = payload.phoneNumber || payload.phone || '';\n\n// Map country from phone prefix (longest prefixes first)\nconst countryMap = [\n  ['+971', 'Dubai'],\n  ['+852', 'Hong Kong'],\n  ['+65', 'Singapore'],\n  ['+64', 'New Zealand'],\n  ['+61', 'Australia'],\n  ['+60', 'Malaysia'],\n  ['+1', 'United States / Canada'],\n];\n\nlet country = 'Unknown';\nfor (const [prefix, name] of countryMap) {\n  if (phone.startsWith(prefix)) {\n    country = name;\n    break;\n  }\n}\n\n// Format meeting start time in Singapore timezone\nconst eventStart = new Date(payload.eventStartTime);\nconst formattedTime = eventStart.toLocaleString('en-SG', {\n  weekday: 'short',\n  month: 'short',\n  day: 'numeric',\n  year: 'numeric',\n  hour: 'numeric',\n  minute: '2-digit',\n  hour12: true,\n  timeZone: 'Asia/Singapore'\n});\n\n// Ensure gmeetLink has https://\nlet gmeetLink = payload.gmeetLink || '';\nif (gmeetLink && !gmeetLink.startsWith('http')) {\n  gmeetLink = 'https://' + gmeetLink;\n}\n\n// Emoji + label per event type\nconst emojiMap = {\n  'Meeting Scheduled': '\\u2705',\n  'Meeting Rescheduled': '\\ud83d\\udd04',\n  'Meeting Cancelled': '\\u274c',\n};\n\nconst eventType = payload.eventType || 'Unknown Event';\nconst emoji = emojiMap[eventType] || '\\ud83d\\udcc5';\nconst headerText = `${emoji} ${eventType}`;\n\nreturn [{\n  json: {\n    fullName: payload.fullName || 'N/A',\n    restaurantName: payload.restaurantName || 'N/A',\n    email: payload.email || 'N/A',\n    phone: phone || 'N/A',\n    country,\n    formattedTime,\n    gmeetLink: gmeetLink || 'N/A',\n    salesPerson: payload.scheduledUserEmail || 'N/A',\n    headerText,\n    fallbackText: `${headerText} \\u2014 ${payload.fullName || 'N/A'} (${payload.restaurantName || 'N/A'})`\n  }\n}];"
+        },
+        "id": "code-1",
+        "name": "Process Payload",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          304,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "respondWith": "json",
+          "responseBody": "={ \"status\": \"ok\", \"message\": \"Notification sent\" }",
+          "options": {}
+        },
+        "id": "respond-1",
+        "name": "Respond to Webhook",
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1.1,
+        "position": [
+          1120,
+          -16
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"C0ATHGN0MSL\",\n  \"text\": \"{{ $('Process Payload').item.json.fallbackText }} \",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"{{ $('Process Payload').item.json.headerText }}\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Name:*\\n{{ $('Process Payload').item.json.fullName }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Process Payload').item.json.restaurantName }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Email:*\\n{{ $('Process Payload').item.json.email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Phone:*\\n{{ $('Process Payload').item.json.phone }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Process Payload').item.json.country }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Meeting Time:*\\n{{ $('Process Payload').item.json.formattedTime }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Google Meet:*\\n{{ $('Process Payload').item.json.gmeetLink }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Sales Person:*\\n{{ $('Process Payload').item.json.salesPerson }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "http-slack-1",
+        "name": "Send to Slack",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          816,
+          -16
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "6pkLuqxfUVBFQxXi",
+            "name": "Slack RevOps Bot"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 3
+            },
+            "conditions": [
+              {
+                "id": "d48d1106-1c79-44bb-961b-a03eb344f0c3",
+                "leftValue": "={{ $('Fillout Webhook').item.json.eventType }}",
+                "rightValue": "Meeting Reminder",
+                "operator": {
+                  "type": "string",
+                  "operation": "notEquals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2.3,
+        "position": [
+          544,
+          0
+        ],
+        "id": "0d8eef4c-29ee-45d7-8ec0-002e8ff8b52f",
+        "name": "If"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          816,
+          192
+        ],
+        "id": "f866cf72-fb83-466d-9a5d-93bf894b8013",
+        "name": "No Operation, do nothing"
+      }
+    ],
+    "connections": {
+      "Fillout Webhook": {
+        "main": [
+          [
+            {
+              "node": "Process Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Process Payload": {
+        "main": [
+          [
+            {
+              "node": "If",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send to Slack": {
+        "main": [
+          [
+            {
+              "node": "Respond to Webhook",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "If": {
+        "main": [
+          [
+            {
+              "node": "Send to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation, do nothing",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version ea131a77",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
