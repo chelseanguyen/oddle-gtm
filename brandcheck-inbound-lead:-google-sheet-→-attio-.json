@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-13T08:56:06.389Z",
+  "updatedAt": "2026-04-15T08:36:48.436Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -80,7 +80,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
+        "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    rawTimestamp,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
       },
       "id": "c9d4066e-95d4-4049-995d-62b4f2984a8c",
       "name": "Deduplicate Check",
@@ -1122,58 +1122,6 @@
     },
     {
       "parameters": {
-        "method": "POST",
-        "url": "https://api.attio.com/v2/objects/companies/records",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Company Data').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"country\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\",\n      \"place_id\": \"{{ $('Extract Company Data').item.json.placeId }}\",\n      \"cuisine\": \"{{ $('Extract Company Data').item.json.cuisine }}\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
-        "options": {}
-      },
-      "id": "58b24735-f6bb-4189-8cb4-f79049ddee14",
-      "name": "Create New Company",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        8944,
-        608
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key_Header"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "method": "PATCH",
-        "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
-        "options": {}
-      },
-      "id": "642f2d55-af8a-4a17-997a-ea1bd13b65cb",
-      "name": "Link New Company to Person",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
-      "position": [
-        9152,
-        608
-      ],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "9CO17PzdcubAn70Q",
-          "name": "Attio API Key_Header"
-        }
-      }
-    },
-    {
-      "parameters": {
         "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
       },
       "id": "279818c4-7786-40c3-8af1-1ce5b0377bea",
@@ -1543,8 +1491,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        9664,
-        608
+        9728,
+        480
       ],
       "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
       "name": "Update Brand Check sheet",
@@ -1576,10 +1524,10 @@
           "mappingMode": "defineBelow",
           "value": {
             "added to Attio's Inbound list?": "No - Duplicated lead",
-            "placeId": "={{ $('Deduplicate Check').item.json.placeId }}"
+            "timestamp": "={{ $('Deduplicate Check').item.json.rawTimestamp }}"
           },
           "matchingColumns": [
-            "placeId"
+            "timestamp"
           ],
           "schema": [
             {
@@ -1590,7 +1538,7 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true,
-              "removed": true
+              "removed": false
             },
             {
               "id": "placeName",
@@ -1610,7 +1558,7 @@
               "display": true,
               "type": "string",
               "canBeUsedToMatch": true,
-              "removed": false
+              "removed": true
             },
             {
               "id": "phoneNumber",
@@ -2442,7 +2390,7 @@
         ],
         [
           {
-            "node": "Create New Company",
+            "node": "Update Brand Check sheet",
             "type": "main",
             "index": 0
           }
@@ -2479,28 +2427,6 @@
       ]
     },
     "Update Company Instagram": {
-      "main": [
-        [
-          {
-            "node": "Update Brand Check sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Create New Company": {
-      "main": [
-        [
-          {
-            "node": "Link New Company to Person",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Link New Company to Person": {
       "main": [
         [
           {
@@ -2601,7 +2527,7 @@
     "node:New Record Created": {
       "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
       "sheetId": 0,
-      "lastIndexChecked": 755
+      "lastIndexChecked": 757
     }
   },
   "meta": {
@@ -2611,20 +2537,20 @@
     "New Record Created": [
       {
         "json": {
-          "timestamp": "2026-03-30 6:04:00",
+          "timestamp": "2026-04-15 7:42:15",
           "placeName": "Dunkin' Raffles Holland V",
           "placeId": "ChIJu_4GwFsb2jERY9Yssgkh6VQ",
           "phoneNumber": 6585713041,
-          "cuisine": "Cafe, Donut Shop",
-          "signatureDishes": "Glazed Donut, Filled Donut",
+          "cuisine": "Cafe, Bakery",
+          "signatureDishes": "Classic Glazed Donut, Filled Donuts",
           "website": "https://dunkindonuts.com.sg/",
           "instagramHandle": "@dunkindonuts_sg",
           "userAgent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/146.0.0.0 Mobile Safari/537.36",
-          "overallScore": "33/100",
+          "overallScore": "38/100",
           "searchRankingScore": "0/30",
           "reputationScore": "15/30",
-          "gmbScore": "18/20",
-          "socialMediaScore": "0/10",
+          "gmbScore": "20/20",
+          "socialMediaScore": "3/10",
           "websiteSEOScore": "0/10",
           "role": "Restaurant Owner",
           "country": "Singapore",
@@ -2641,8 +2567,8 @@
       }
     ]
   },
-  "versionId": "492a8085-3596-4e05-9ff3-78928a063089",
-  "activeVersionId": "492a8085-3596-4e05-9ff3-78928a063089",
+  "versionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
+  "activeVersionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
   "triggerCount": 1,
   "shared": [
     {
@@ -2654,9 +2580,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-13T08:56:10.026Z",
-    "createdAt": "2026-04-13T08:56:06.394Z",
-    "versionId": "492a8085-3596-4e05-9ff3-78928a063089",
+    "updatedAt": "2026-04-15T08:34:50.224Z",
+    "createdAt": "2026-04-15T08:34:45.088Z",
+    "versionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -2733,7 +2659,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
+          "jsCode": "const allRows = $input.all();\nconst triggerData = $('New Record Created').item.json;\nconst currentPhoneNumber = String(triggerData.phoneNumber || '');\n\nconst matchCount = allRows.filter(item => String(item.json.phoneNumber || '') === currentPhoneNumber).length;\nconst isDuplicate = matchCount > 1;\n\n// Convert timestamp to ISO 8601 date format (YYYY-MM-DD)\nconst rawTimestamp = triggerData.timestamp || '';\nlet dateOnly = '';\nif (rawTimestamp) {\n  // Extract just the date part (YYYY-MM-DD)\n  const parts = rawTimestamp.match(/^(\\d{4}-\\d{2}-\\d{2})/);\n  if (parts) {\n    dateOnly = parts[1];\n  }\n}\n\nreturn [{\n  json: {\n    isDuplicate,\n    rawTimestamp,\n    placeName: triggerData.placeName || '',\n    placeId: triggerData.placeId || '',\n    phoneNumber: currentPhoneNumber,\n    email: (triggerData.email || '').trim(),\n    instagramHandle: triggerData.instagramHandle || '',\n    overallScore: triggerData.overallScore || '',\n    role: triggerData.role || '',\n    country: triggerData.country || '',\n    website: triggerData.website || '',\n    cuisine: triggerData.cuisine || '',\n    signatureDishes: triggerData.signatureDishes || '',\n    timestamp: dateOnly,\n    pdfLink: triggerData.pdfLink || ''\n  }\n}];"
         },
         "id": "c9d4066e-95d4-4049-995d-62b4f2984a8c",
         "name": "Deduplicate Check",
@@ -3775,58 +3701,6 @@
       },
       {
         "parameters": {
-          "method": "POST",
-          "url": "https://api.attio.com/v2/objects/companies/records",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"name\": \"{{ $('Extract Company Data').item.json.placeName }}\",\n      \"primary_location\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"country\": \"{{ $('Extract Company Data').item.json.country }}\",\n      \"instagram\": \"{{ $('Extract Company Data').item.json.instagramHandle }}\",\n      \"place_id\": \"{{ $('Extract Company Data').item.json.placeId }}\",\n      \"cuisine\": \"{{ $('Extract Company Data').item.json.cuisine }}\",\n      \"categories\": [\"Restaurants\"]\n    }\n  }\n}",
-          "options": {}
-        },
-        "id": "58b24735-f6bb-4189-8cb4-f79049ddee14",
-        "name": "Create New Company",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          8944,
-          608
-        ],
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "9CO17PzdcubAn70Q",
-            "name": "Attio API Key_Header"
-          }
-        }
-      },
-      {
-        "parameters": {
-          "method": "PATCH",
-          "url": "=https://api.attio.com/v2/objects/people/records/{{ $('Extract Company Data').item.json.personRecordId }}",
-          "authentication": "genericCredentialType",
-          "genericAuthType": "httpHeaderAuth",
-          "sendBody": true,
-          "specifyBody": "json",
-          "jsonBody": "={\n  \"data\": {\n    \"values\": {\n      \"company\": [{ \"target_object\": \"companies\", \"target_record_id\": \"{{ $json.data.id.record_id }}\" }]\n    }\n  }\n}",
-          "options": {}
-        },
-        "id": "642f2d55-af8a-4a17-997a-ea1bd13b65cb",
-        "name": "Link New Company to Person",
-        "type": "n8n-nodes-base.httpRequest",
-        "typeVersion": 4.2,
-        "position": [
-          9152,
-          608
-        ],
-        "credentials": {
-          "httpHeaderAuth": {
-            "id": "9CO17PzdcubAn70Q",
-            "name": "Attio API Key_Header"
-          }
-        }
-      },
-      {
-        "parameters": {
           "jsCode": "// Email Existing Path: Person was found by email search\nconst personRecordId = $('Search Attio Person by Email').item.json.data[0].id.record_id;\n\nreturn [{\n  json: {\n    personRecordId,\n    listEntryData: $json\n  }\n}];"
         },
         "id": "279818c4-7786-40c3-8af1-1ce5b0377bea",
@@ -4196,8 +4070,8 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          9664,
-          608
+          9728,
+          480
         ],
         "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
         "name": "Update Brand Check sheet",
@@ -4229,10 +4103,10 @@
             "mappingMode": "defineBelow",
             "value": {
               "added to Attio's Inbound list?": "No - Duplicated lead",
-              "placeId": "={{ $('Deduplicate Check').item.json.placeId }}"
+              "timestamp": "={{ $('Deduplicate Check').item.json.rawTimestamp }}"
             },
             "matchingColumns": [
-              "placeId"
+              "timestamp"
             ],
             "schema": [
               {
@@ -4243,7 +4117,7 @@
                 "display": true,
                 "type": "string",
                 "canBeUsedToMatch": true,
-                "removed": true
+                "removed": false
               },
               {
                 "id": "placeName",
@@ -4263,7 +4137,7 @@
                 "display": true,
                 "type": "string",
                 "canBeUsedToMatch": true,
-                "removed": false
+                "removed": true
               },
               {
                 "id": "phoneNumber",
@@ -5095,7 +4969,7 @@
           ],
           [
             {
-              "node": "Create New Company",
+              "node": "Update Brand Check sheet",
               "type": "main",
               "index": 0
             }
@@ -5132,28 +5006,6 @@
         ]
       },
       "Update Company Instagram": {
-        "main": [
-          [
-            {
-              "node": "Update Brand Check sheet",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Create New Company": {
-        "main": [
-          [
-            {
-              "node": "Link New Company to Person",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
-      "Link New Company to Person": {
         "main": [
           [
             {
@@ -5243,7 +5095,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 492a8085",
+    "name": "Version af5d7a43",
     "description": "",
     "autosaved": false
   },
