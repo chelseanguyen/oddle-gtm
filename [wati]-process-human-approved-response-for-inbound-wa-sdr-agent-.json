@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-10T08:32:36.878Z",
+  "updatedAt": "2026-04-15T03:02:56.277Z",
   "createdAt": "2026-04-09T03:33:44.302Z",
   "id": "rkfni64sOvLp54JR",
   "name": "[WATI] Process human-approved response for Inbound WA SDR Agent",
@@ -265,7 +265,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n  \"text\": \"{{ $('Parse Slack Payload').item.json.ai_generated_response }}\"\n}",
+        "jsonBody": "={                         \n    \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response) }}      \n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -525,8 +525,8 @@
       }
     ]
   },
-  "versionId": "88a1cbff-ac36-44aa-b3fc-c6517bb7f551",
-  "activeVersionId": "88a1cbff-ac36-44aa-b3fc-c6517bb7f551",
+  "versionId": "14c4baa1-a0d9-49f0-a97d-452ef6f71545",
+  "activeVersionId": "14c4baa1-a0d9-49f0-a97d-452ef6f71545",
   "triggerCount": 1,
   "shared": [
     {
@@ -538,9 +538,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-10T08:32:43.465Z",
-    "createdAt": "2026-04-10T08:32:36.884Z",
-    "versionId": "88a1cbff-ac36-44aa-b3fc-c6517bb7f551",
+    "updatedAt": "2026-04-15T03:02:59.768Z",
+    "createdAt": "2026-04-15T03:02:56.284Z",
+    "versionId": "14c4baa1-a0d9-49f0-a97d-452ef6f71545",
     "workflowId": "rkfni64sOvLp54JR",
     "nodes": [
       {
@@ -802,7 +802,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n  \"text\": \"{{ $('Parse Slack Payload').item.json.ai_generated_response }}\"\n}",
+          "jsonBody": "={                         \n    \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response) }}      \n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -990,7 +990,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 88a1cbff",
+    "name": "Version 14c4baa1",
     "description": "",
     "autosaved": false
   },
