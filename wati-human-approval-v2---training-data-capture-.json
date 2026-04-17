@@ -1,0 +1,2184 @@
+{
+  "updatedAt": "2026-04-17T09:36:39.008Z",
+  "createdAt": "2026-04-17T08:47:15.279Z",
+  "id": "l3VrpNa4gGW9isL3",
+  "name": "WATI Human Approval v2 - Training Data Capture",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Parse Slack Payload').item.json.country }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })() || ''}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved & Sent* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1280,
+        -720
+      ],
+      "name": "Update Message - Approved",
+      "id": "9fbd6fe0-17d1-457e-bce7-ec9021d57d4a",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Parse Slack Payload').item.json.country }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })() || ''}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1280,
+        -336
+      ],
+      "name": "Update Message - Rejected",
+      "id": "b46760b6-1f5a-4d01-a9b3-b387f91b5dd9",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        480
+      ],
+      "name": "Sticky Note",
+      "id": "81b8cb75-6454-447c-8181-c1d1a6a8b26c"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        336
+      ],
+      "name": "Respond to Slack",
+      "id": "24951c28-76b6-4847-9942-fca3a561db7f"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Slack interaction payload (block_actions)\n// Input: raw_payload from Route by Payload Type (already parsed)\nconst parsedPayload = $input.first().json.raw_payload;\n\nconst action = parsedPayload.actions?.[0];\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Helper: extract value from mrkdwn fields like \"*Label:*\\nValue\"\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text?.includes(label)) {\n          const parts = field.text.split('\\n');\n          return parts.length > 1 ? parts[1].trim() : null;\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper: extract text inside ``` code blocks ``` from a section\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text?.text?.includes(header)) {\n      const match = block.text.text.match(/```([\\s\\S]*?)```/);\n      return match ? match[1].trim() : null;\n    }\n  }\n  return null;\n}\n\n// Strip Slack's auto-formatted links back to plain URLs\nfunction cleanSlackLinks(text) {\n  if (!text) return text;\n  text = text.replace(/<a[^>]*href=\"([^\"]*)\"[^>]*>[^<]*<\\/a>/g, '$1');\n  text = text.replace(/<(https?:\\/\\/[^|>]+)\\|[^>]+>/g, '$1');\n  text = text.replace(/<(https?:\\/\\/[^>]+)>/g, '$1');\n  return text;\n}\n\nreturn {\n  json: {\n    action_id: action?.action_id,\n    action_value: action?.value,\n    trigger_id: parsedPayload.trigger_id,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    contact_name: extractFromField(blocks, '*Contact name:*') || 'Unknown',\n    contact_number: extractFromField(blocks, '*Number:*'),\n    restaurant_name: extractFromField(blocks, '*Restaurant:*'),\n    country: extractFromField(blocks, '*Country:*'),\n    lead_message: cleanSlackLinks(extractSectionText(blocks, \"*Prospect's Reply:*\")),\n    ai_generated_response: cleanSlackLinks(extractSectionText(blocks, '*Agent Generated Response:*')),\n    response_url: parsedPayload.response_url,\n    original_message_ts: parsedPayload.message?.ts,\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        592,
+        -496
+      ],
+      "name": "Parse Slack Payload",
+      "id": "6a20e4b5-11f1-4bc4-a122-b6e1759730b3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-send-success",
+              "leftValue": "={{ $json.message?.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "isNotEmpty"
+              }
+            },
+            {
+              "id": "8b06b309-8b56-4f39-b086-e869c4c4a228",
+              "leftValue": "={{ typeof $json.message }}",
+              "rightValue": "object",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1728,
+        -512
+      ],
+      "name": "Check Send Status",
+      "id": "c9a55a5c-fef5-42b2-b585-dfacbb2212b0"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```Error sending response to prospect```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via Bird.*\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2000,
+        -288
+      ],
+      "name": "Post Error status to Slack",
+      "id": "d583521e-d1b5-43cc-a39a-e8908cf48979",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"✅ *Message Sent*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        2000,
+        -528
+      ],
+      "name": "Post Success status to Slack",
+      "id": "a728d282-45b7-4496-a5a2-82e651d37b58",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "inbound-wa-sdr-agent",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -272,
+        144
+      ],
+      "name": "Webhook",
+      "id": "109cf38e-366a-4b98-a98e-637cbb0ed8f9",
+      "webhookId": "61c91164-50dc-4101-858f-ff85b1609a34"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://live-mt-server.wati.io/api/ext/v3/conversations/messages/text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={                         \n    \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response) }}      \n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1488,
+        -512
+      ],
+      "name": "Respond to Prospect",
+      "id": "3d9028d4-7215-4612-8b8c-83b97f999a1b",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1R4VMEjneoFtqiZe",
+          "name": "Bird API Key"
+        },
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-approve",
+              "leftValue": "={{ $json.action_id }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        816,
+        -496
+      ],
+      "name": "Check if Approved",
+      "id": "ab5cb498-59dc-4948-b247-da789eeb781e"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1280,
+        -512
+      ],
+      "name": "Wait",
+      "id": "983693d2-9da2-4177-9fc5-b5fe63554c59",
+      "webhookId": "2e7b423b-b2d4-46fd-95ce-cccb2619fd04"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = $input.first().json.body.payload;\nconst parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;\nreturn [{ json: { payload_type: parsed.type, raw_payload: parsed } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        144
+      ],
+      "name": "Extract Payload Type",
+      "id": "e1a00001-0001-4000-8000-000000000001"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "route-block-actions",
+                    "leftValue": "={{ $json.payload_type }}",
+                    "rightValue": "block_actions",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "block_actions"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "route-view-submission",
+                    "leftValue": "={{ $json.payload_type }}",
+                    "rightValue": "view_submission",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "view_submission"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        128
+      ],
+      "name": "Route by Payload Type",
+      "id": "e1a00002-0002-4000-8000-000000000002"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        576,
+        464
+      ],
+      "name": "No Operation",
+      "id": "e1a00003-0003-4000-8000-000000000003"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/views.open",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"trigger_id\": \"{{ $('Parse Slack Payload').item.json.trigger_id }}\",\n  \"view\": {\n    \"type\": \"modal\",\n    \"callback_id\": \"correction_modal\",\n    \"title\": {\"type\": \"plain_text\", \"text\": \"Send Correction\"},\n    \"submit\": {\"type\": \"plain_text\", \"text\": \"Send\"},\n    \"close\": {\"type\": \"plain_text\", \"text\": \"Cancel\"},\n    \"private_metadata\": {{ JSON.stringify(JSON.stringify({contact_number: $('Parse Slack Payload').item.json.contact_number, contact_name: $('Parse Slack Payload').item.json.contact_name, restaurant_name: $('Parse Slack Payload').item.json.restaurant_name, country: $('Parse Slack Payload').item.json.country, conversation_id: $('Parse Slack Payload').item.json.action_value, lead_message: $('Parse Slack Payload').item.json.lead_message, ai_generated_response: $('Parse Slack Payload').item.json.ai_generated_response, slack_channel_id: $('Parse Slack Payload').item.json.slack_channel_id, original_message_ts: $('Parse Slack Payload').item.json.original_message_ts})) }},\n    \"blocks\": [\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect:* {{ $('Parse Slack Payload').item.json.contact_name }} ({{ $('Parse Slack Payload').item.json.contact_number }})\\n*Restaurant:* {{ $('Parse Slack Payload').item.json.restaurant_name }} | *Country:* {{ $('Parse Slack Payload').item.json.country }}\"}},\n      {\"type\": \"divider\"},\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect's message:*\\n```{{ (function() { var txt = $('Parse Slack Payload').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"}},\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Agent suggested (rejected):*\\n```{{ (function() { var txt = $('Parse Slack Payload').item.json.ai_generated_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"}},\n      {\"type\": \"divider\"},\n      {\"type\": \"input\", \"block_id\": \"correction_block\", \"label\": {\"type\": \"plain_text\", \"text\": \"Your response:\"}, \"element\": {\"type\": \"plain_text_input\", \"action_id\": \"correction_text\", \"multiline\": true, \"placeholder\": {\"type\": \"plain_text\", \"text\": \"Type your response here...\"}}}\n    ]\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1280,
+        -128
+      ],
+      "name": "Open Correction Modal",
+      "id": "e1a00004-0004-4000-8000-000000000004",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json.raw_payload;\nconst meta = JSON.parse(payload.view.private_metadata);\nconst correctionText = payload.view.state.values.correction_block.correction_text.value;\nconst user = payload.user;\n\nreturn [{\n  json: {\n    contact_number: meta.contact_number,\n    contact_name: meta.contact_name,\n    restaurant_name: meta.restaurant_name,\n    country: meta.country,\n    conversation_id: meta.conversation_id,\n    lead_message: meta.lead_message,\n    ai_generated_response: meta.ai_generated_response,\n    correction_text: correctionText,\n    slack_channel_id: meta.slack_channel_id,\n    original_message_ts: meta.original_message_ts,\n    slack_user_id: user.id,\n    slack_user_name: user.name || user.username\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        144
+      ],
+      "name": "Parse Modal Submission",
+      "id": "e1a00005-0005-4000-8000-000000000005"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://live-mt-server.wati.io/api/ext/v3/conversations/messages/text",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"target\": \"{{ $('Parse Modal Submission').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Modal Submission').item.json.correction_text) }}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        784,
+        144
+      ],
+      "name": "Send Correction via WATI",
+      "id": "e1a00006-0006-4000-8000-000000000006",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1R4VMEjneoFtqiZe",
+          "name": "Bird API Key"
+        },
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0",
+          "mode": "list",
+          "cachedResultName": "Inbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "response",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.format('DD HH:mm') }}",
+            "phone_number": "={{ $('Parse Slack Payload').item.json.contact_number }}",
+            "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+            "restaurant_name": "={{ $('Parse Slack Payload').item.json.restaurant_name }}",
+            "country": "={{ $('Parse Slack Payload').item.json.country }}",
+            "conversation_id": "={{ $('Parse Slack Payload').item.json.action_value }}",
+            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "response_type": "approved",
+            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2240,
+        -528
+      ],
+      "name": "Log Approved to Google Sheet",
+      "id": "e1a00007-0007-4000-8000-000000000007",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0",
+          "mode": "list",
+          "cachedResultName": "Inbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "response",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.format('DD HH:mm') }}",
+            "phone_number": "={{ $('Parse Modal Submission').item.json.contact_number }}",
+            "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
+            "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
+            "country": "={{ $('Parse Modal Submission').item.json.country }}",
+            "conversation_id": "={{ $('Parse Modal Submission').item.json.conversation_id }}",
+            "lead_message": "={{ $('Parse Modal Submission').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Modal Submission').item.json.ai_generated_response }}",
+            "final_response": "={{ $('Parse Modal Submission').item.json.correction_text }}",
+            "response_type": "correction",
+            "reviewer": "={{ $('Parse Modal Submission').item.json.slack_user_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "conversation_id",
+              "displayName": "conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1104,
+        48
+      ],
+      "name": "Log Correction to Google Sheet",
+      "id": "e1a00008-0008-4000-8000-000000000008",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"thread_ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":pencil2: *Manually replied by* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>:\\n``{{ (function() {\n  let txt = $('Parse Modal Submission').item.json.correction_text || '';\n  return JSON.stringify(txt).slice(1, -1);\n})() || '' }}```\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1104,
+        256
+      ],
+      "name": "Post Correction Sent to Slack",
+      "id": "e1a00009-0009-4000-8000-000000000009",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "BgXVOoYmNGYi7Ev4",
+          "name": "Slack Inbound WA Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Setup Required\n1. Configure Google Sheets OAuth2 credential on both \"Log\" nodes\n2. Deactivate the old wati-human-approval workflow before activating this one",
+        "width": 500
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -96
+      ],
+      "name": "Sticky Note2",
+      "id": "e1a0000a-000a-4000-8000-00000000000a"
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Payload Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Payload Type": {
+      "main": [
+        [
+          {
+            "node": "Route by Payload Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Payload Type": {
+      "main": [
+        [
+          {
+            "node": "Parse Slack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Modal Submission",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Slack Payload": {
+      "main": [
+        [
+          {
+            "node": "Check if Approved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Approved": {
+      "main": [
+        [
+          {
+            "node": "Update Message - Approved",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Message - Rejected",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Open Correction Modal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Prospect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond to Prospect": {
+      "main": [
+        [
+          {
+            "node": "Check Send Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Send Status": {
+      "main": [
+        [
+          {
+            "node": "Post Success status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post Error status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Success status to Slack": {
+      "main": [
+        [
+          {
+            "node": "Log Approved to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Error status to Slack": {
+      "main": [
+        []
+      ]
+    },
+    "Parse Modal Submission": {
+      "main": [
+        [
+          {
+            "node": "Send Correction via WATI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Correction via WATI": {
+      "main": [
+        [
+          {
+            "node": "Log Correction to Google Sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Post Correction Sent to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Approved to Google Sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Log Correction to Google Sheet": {
+      "main": [
+        []
+      ]
+    },
+    "Post Correction Sent to Slack": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all",
+    "saveManualExecutions": true,
+    "saveExecutionProgress": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": null,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
+            "accept": "application/json,*/*",
+            "x-slack-signature": "v0=2ac4e809ae579d8155dcc94638b01bb94b60fea9bcf3d14b23239747b84d3cd6",
+            "x-slack-request-timestamp": "1776416357",
+            "content-length": "4010",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-cloud-trace-context": "de9e8c835dcd1f43edb9397d16cc1eae/14609034164389760660",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-de9e8c835dcd1f43edb9397d16cc1eae-cabdb72ba7ff4e94-00",
+            "x-forwarded-for": "18.212.71.156",
+            "forwarded": "for=\"18.212.71.156\";proto=https",
+            "accept-encoding": "gzip,deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "payload": "{\"type\":\"view_submission\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"user\":{\"id\":\"U0FASTJ1H\",\"username\":\"chelsea\",\"name\":\"chelsea\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0ARV4GQTQC\",\"token\":\"kyk1M6976EDUpB8M2lalmiS8\",\"trigger_id\":\"10934606439317.3033437246.f8f5746e51974da8669ace4068cf9f92\",\"view\":{\"id\":\"V0AT4GF8KM5\",\"team_id\":\"T030ZCV78\",\"type\":\"modal\",\"blocks\":[{\"type\":\"section\",\"block_id\":\"+W7Y8\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect:* Chelsea (6590570654)\\n*Restaurant:* XYZ | *Country:* Singapore\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"7qlZu\"},{\"type\":\"section\",\"block_id\":\"4C+vQ\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's message:*\\n```[17 Apr 16:57] I\\u2019m looking for reservation solution```\",\"verbatim\":false}},{\"type\":\"section\",\"block_id\":\"c3+V1\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent suggested (rejected):*\\n```Got it, you\\u2019re looking into reservations for XYZ. Are you free this week or next for a quick 20-min call with the team? We\\u2019ll go through your goals and show how Oddle can help.```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"9pACr\"},{\"type\":\"input\",\"block_id\":\"correction_block\",\"label\":{\"type\":\"plain_text\",\"text\":\"Your corrected response:\",\"emoji\":true},\"optional\":false,\"dispatch_action\":false,\"element\":{\"type\":\"plain_text_input\",\"action_id\":\"correction_text\",\"placeholder\":{\"type\":\"plain_text\",\"text\":\"Type your response here...\",\"emoji\":true},\"multiline\":true,\"dispatch_action_config\":{\"trigger_actions_on\":[\"on_enter_pressed\"]}}}],\"private_metadata\":\"{\\\"contact_number\\\":\\\"6590570654\\\",\\\"contact_name\\\":\\\"Chelsea\\\",\\\"restaurant_name\\\":\\\"XYZ\\\",\\\"country\\\":\\\"Singapore\\\",\\\"conversation_id\\\":\\\"67a1d2ca8949d4d44f68bbed\\\",\\\"lead_message\\\":\\\"[17 Apr 16:57] I\\u2019m looking for reservation solution\\\",\\\"ai_generated_response\\\":\\\"Got it, you\\u2019re looking into reservations for XYZ. Are you free this week or next for a quick 20-min call with the team? We\\u2019ll go through your goals and show how Oddle can help.\\\",\\\"slack_channel_id\\\":\\\"C0AR3LS7319\\\",\\\"original_message_ts\\\":\\\"1776416293.611559\\\"}\",\"callback_id\":\"correction_modal\",\"state\":{\"values\":{\"correction_block\":{\"correction_text\":{\"type\":\"plain_text_input\",\"value\":\"Sure, how about next monday?\"}}}},\"hash\":\"1776416318.FAPEvDvm\",\"title\":{\"type\":\"plain_text\",\"text\":\"Send Correction\",\"emoji\":true},\"clear_on_close\":false,\"notify_on_close\":false,\"close\":{\"type\":\"plain_text\",\"text\":\"Cancel\",\"emoji\":true},\"submit\":{\"type\":\"plain_text\",\"text\":\"Send\",\"emoji\":true},\"previous_view_id\":null,\"root_view_id\":\"V0AT4GF8KM5\",\"app_id\":\"A0ARV4GQTQC\",\"external_id\":\"\",\"app_installed_team_id\":\"T030ZCV78\",\"bot_id\":\"B0ARK4XRBRR\"},\"response_urls\":[],\"is_enterprise_install\":false,\"enterprise\":null}"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook/inbound-wa-sdr-agent",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "62d41963-1bd6-44e4-8275-bcd83b6e7d72",
+  "activeVersionId": "62d41963-1bd6-44e4-8275-bcd83b6e7d72",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-04-17T08:47:15.279Z",
+      "createdAt": "2026-04-17T08:47:15.279Z",
+      "role": "workflow:owner",
+      "workflowId": "l3VrpNa4gGW9isL3",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-17T09:36:40.728Z",
+    "createdAt": "2026-04-17T09:36:39.012Z",
+    "versionId": "62d41963-1bd6-44e4-8275-bcd83b6e7d72",
+    "workflowId": "l3VrpNa4gGW9isL3",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Parse Slack Payload').item.json.country }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })() || ''}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved & Sent* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1280,
+          -720
+        ],
+        "name": "Update Message - Approved",
+        "id": "9fbd6fe0-17d1-457e-bce7-ec9021d57d4a",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Country:*\\n{{ $('Parse Slack Payload').item.json.country }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })() || ''}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1280,
+          -336
+        ],
+        "name": "Update Message - Rejected",
+        "id": "b46760b6-1f5a-4d01-a9b3-b387f91b5dd9",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -32,
+          480
+        ],
+        "name": "Sticky Note",
+        "id": "81b8cb75-6454-447c-8181-c1d1a6a8b26c"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "OK",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          -32,
+          336
+        ],
+        "name": "Respond to Slack",
+        "id": "24951c28-76b6-4847-9942-fca3a561db7f"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse Slack interaction payload (block_actions)\n// Input: raw_payload from Route by Payload Type (already parsed)\nconst parsedPayload = $input.first().json.raw_payload;\n\nconst action = parsedPayload.actions?.[0];\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Helper: extract value from mrkdwn fields like \"*Label:*\\nValue\"\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text?.includes(label)) {\n          const parts = field.text.split('\\n');\n          return parts.length > 1 ? parts[1].trim() : null;\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper: extract text inside ``` code blocks ``` from a section\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text?.text?.includes(header)) {\n      const match = block.text.text.match(/```([\\s\\S]*?)```/);\n      return match ? match[1].trim() : null;\n    }\n  }\n  return null;\n}\n\n// Strip Slack's auto-formatted links back to plain URLs\nfunction cleanSlackLinks(text) {\n  if (!text) return text;\n  text = text.replace(/<a[^>]*href=\"([^\"]*)\"[^>]*>[^<]*<\\/a>/g, '$1');\n  text = text.replace(/<(https?:\\/\\/[^|>]+)\\|[^>]+>/g, '$1');\n  text = text.replace(/<(https?:\\/\\/[^>]+)>/g, '$1');\n  return text;\n}\n\nreturn {\n  json: {\n    action_id: action?.action_id,\n    action_value: action?.value,\n    trigger_id: parsedPayload.trigger_id,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    contact_name: extractFromField(blocks, '*Contact name:*') || 'Unknown',\n    contact_number: extractFromField(blocks, '*Number:*'),\n    restaurant_name: extractFromField(blocks, '*Restaurant:*'),\n    country: extractFromField(blocks, '*Country:*'),\n    lead_message: cleanSlackLinks(extractSectionText(blocks, \"*Prospect's Reply:*\")),\n    ai_generated_response: cleanSlackLinks(extractSectionText(blocks, '*Agent Generated Response:*')),\n    response_url: parsedPayload.response_url,\n    original_message_ts: parsedPayload.message?.ts,\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          592,
+          -496
+        ],
+        "name": "Parse Slack Payload",
+        "id": "6a20e4b5-11f1-4bc4-a122-b6e1759730b3"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-send-success",
+                "leftValue": "={{ $json.message?.id }}",
+                "rightValue": "",
+                "operator": {
+                  "type": "string",
+                  "operation": "isNotEmpty"
+                }
+              },
+              {
+                "id": "8b06b309-8b56-4f39-b086-e869c4c4a228",
+                "leftValue": "={{ typeof $json.message }}",
+                "rightValue": "object",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "or"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          1728,
+          -512
+        ],
+        "name": "Check Send Status",
+        "id": "c9a55a5c-fef5-42b2-b585-dfacbb2212b0"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```Error sending response to prospect```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via Bird.*\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2000,
+          -288
+        ],
+        "name": "Post Error status to Slack",
+        "id": "d583521e-d1b5-43cc-a39a-e8908cf48979",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Message sent!\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"✅ *Message Sent*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          2000,
+          -528
+        ],
+        "name": "Post Success status to Slack",
+        "id": "a728d282-45b7-4496-a5a2-82e651d37b58",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "inbound-wa-sdr-agent",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 2.1,
+        "position": [
+          -272,
+          144
+        ],
+        "name": "Webhook",
+        "id": "109cf38e-366a-4b98-a98e-637cbb0ed8f9",
+        "webhookId": "61c91164-50dc-4101-858f-ff85b1609a34"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://live-mt-server.wati.io/api/ext/v3/conversations/messages/text",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={                         \n    \"target\": \"{{ $('Parse Slack Payload').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Slack Payload').item.json.ai_generated_response) }}      \n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1488,
+          -512
+        ],
+        "name": "Respond to Prospect",
+        "id": "3d9028d4-7215-4612-8b8c-83b97f999a1b",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "1R4VMEjneoFtqiZe",
+            "name": "Bird API Key"
+          },
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-approve",
+                "leftValue": "={{ $json.action_id }}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          816,
+          -496
+        ],
+        "name": "Check if Approved",
+        "id": "ab5cb498-59dc-4948-b247-da789eeb781e"
+      },
+      {
+        "parameters": {
+          "amount": 10
+        },
+        "type": "n8n-nodes-base.wait",
+        "typeVersion": 1.1,
+        "position": [
+          1280,
+          -512
+        ],
+        "name": "Wait",
+        "id": "983693d2-9da2-4177-9fc5-b5fe63554c59",
+        "webhookId": "2e7b423b-b2d4-46fd-95ce-cccb2619fd04"
+      },
+      {
+        "parameters": {
+          "jsCode": "const raw = $input.first().json.body.payload;\nconst parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;\nreturn [{ json: { payload_type: parsed.type, raw_payload: parsed } }];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          -32,
+          144
+        ],
+        "name": "Extract Payload Type",
+        "id": "e1a00001-0001-4000-8000-000000000001"
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "id": "route-block-actions",
+                      "leftValue": "={{ $json.payload_type }}",
+                      "rightValue": "block_actions",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "block_actions"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict"
+                  },
+                  "conditions": [
+                    {
+                      "id": "route-view-submission",
+                      "leftValue": "={{ $json.payload_type }}",
+                      "rightValue": "view_submission",
+                      "operator": {
+                        "type": "string",
+                        "operation": "equals"
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "view_submission"
+              }
+            ]
+          },
+          "options": {
+            "fallbackOutput": "extra"
+          }
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.2,
+        "position": [
+          208,
+          128
+        ],
+        "name": "Route by Payload Type",
+        "id": "e1a00002-0002-4000-8000-000000000002"
+      },
+      {
+        "parameters": {},
+        "type": "n8n-nodes-base.noOp",
+        "typeVersion": 1,
+        "position": [
+          576,
+          464
+        ],
+        "name": "No Operation",
+        "id": "e1a00003-0003-4000-8000-000000000003"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/views.open",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"trigger_id\": \"{{ $('Parse Slack Payload').item.json.trigger_id }}\",\n  \"view\": {\n    \"type\": \"modal\",\n    \"callback_id\": \"correction_modal\",\n    \"title\": {\"type\": \"plain_text\", \"text\": \"Send Correction\"},\n    \"submit\": {\"type\": \"plain_text\", \"text\": \"Send\"},\n    \"close\": {\"type\": \"plain_text\", \"text\": \"Cancel\"},\n    \"private_metadata\": {{ JSON.stringify(JSON.stringify({contact_number: $('Parse Slack Payload').item.json.contact_number, contact_name: $('Parse Slack Payload').item.json.contact_name, restaurant_name: $('Parse Slack Payload').item.json.restaurant_name, country: $('Parse Slack Payload').item.json.country, conversation_id: $('Parse Slack Payload').item.json.action_value, lead_message: $('Parse Slack Payload').item.json.lead_message, ai_generated_response: $('Parse Slack Payload').item.json.ai_generated_response, slack_channel_id: $('Parse Slack Payload').item.json.slack_channel_id, original_message_ts: $('Parse Slack Payload').item.json.original_message_ts})) }},\n    \"blocks\": [\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect:* {{ $('Parse Slack Payload').item.json.contact_name }} ({{ $('Parse Slack Payload').item.json.contact_number }})\\n*Restaurant:* {{ $('Parse Slack Payload').item.json.restaurant_name }} | *Country:* {{ $('Parse Slack Payload').item.json.country }}\"}},\n      {\"type\": \"divider\"},\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Prospect's message:*\\n```{{ (function() { var txt = $('Parse Slack Payload').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"}},\n      {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"*Agent suggested (rejected):*\\n```{{ (function() { var txt = $('Parse Slack Payload').item.json.ai_generated_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"}},\n      {\"type\": \"divider\"},\n      {\"type\": \"input\", \"block_id\": \"correction_block\", \"label\": {\"type\": \"plain_text\", \"text\": \"Your response:\"}, \"element\": {\"type\": \"plain_text_input\", \"action_id\": \"correction_text\", \"multiline\": true, \"placeholder\": {\"type\": \"plain_text\", \"text\": \"Type your response here...\"}}}\n    ]\n  }\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1280,
+          -128
+        ],
+        "name": "Open Correction Modal",
+        "id": "e1a00004-0004-4000-8000-000000000004",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = $input.first().json.raw_payload;\nconst meta = JSON.parse(payload.view.private_metadata);\nconst correctionText = payload.view.state.values.correction_block.correction_text.value;\nconst user = payload.user;\n\nreturn [{\n  json: {\n    contact_number: meta.contact_number,\n    contact_name: meta.contact_name,\n    restaurant_name: meta.restaurant_name,\n    country: meta.country,\n    conversation_id: meta.conversation_id,\n    lead_message: meta.lead_message,\n    ai_generated_response: meta.ai_generated_response,\n    correction_text: correctionText,\n    slack_channel_id: meta.slack_channel_id,\n    original_message_ts: meta.original_message_ts,\n    slack_user_id: user.id,\n    slack_user_name: user.name || user.username\n  }\n}];"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          576,
+          144
+        ],
+        "name": "Parse Modal Submission",
+        "id": "e1a00005-0005-4000-8000-000000000005"
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://live-mt-server.wati.io/api/ext/v3/conversations/messages/text",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"target\": \"{{ $('Parse Modal Submission').item.json.contact_number }}\",\n    \"text\": {{ JSON.stringify($('Parse Modal Submission').item.json.correction_text) }}\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          784,
+          144
+        ],
+        "name": "Send Correction via WATI",
+        "id": "e1a00006-0006-4000-8000-000000000006",
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "1R4VMEjneoFtqiZe",
+            "name": "Bird API Key"
+          },
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0",
+            "mode": "list",
+            "cachedResultName": "Inbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "response",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "timestamp": "={{ $now.format('DD HH:mm') }}",
+              "phone_number": "={{ $('Parse Slack Payload').item.json.contact_number }}",
+              "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+              "restaurant_name": "={{ $('Parse Slack Payload').item.json.restaurant_name }}",
+              "country": "={{ $('Parse Slack Payload').item.json.country }}",
+              "conversation_id": "={{ $('Parse Slack Payload').item.json.action_value }}",
+              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "response_type": "approved",
+              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone_number",
+                "displayName": "phone_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "contact_name",
+                "displayName": "contact_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "conversation_id",
+                "displayName": "conversation_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          2240,
+          -528
+        ],
+        "name": "Log Approved to Google Sheet",
+        "id": "e1a00007-0007-4000-8000-000000000007",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0",
+            "mode": "list",
+            "cachedResultName": "Inbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "response",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1fRxH9Q0uZnSUjGoTOHWIZnz6iuUJbnFgp1WnNvfTZS0/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "timestamp": "={{ $now.format('DD HH:mm') }}",
+              "phone_number": "={{ $('Parse Modal Submission').item.json.contact_number }}",
+              "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
+              "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
+              "country": "={{ $('Parse Modal Submission').item.json.country }}",
+              "conversation_id": "={{ $('Parse Modal Submission').item.json.conversation_id }}",
+              "lead_message": "={{ $('Parse Modal Submission').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Modal Submission').item.json.ai_generated_response }}",
+              "final_response": "={{ $('Parse Modal Submission').item.json.correction_text }}",
+              "response_type": "correction",
+              "reviewer": "={{ $('Parse Modal Submission').item.json.slack_user_name }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone_number",
+                "displayName": "phone_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "contact_name",
+                "displayName": "contact_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "conversation_id",
+                "displayName": "conversation_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1104,
+          48
+        ],
+        "name": "Log Correction to Google Sheet",
+        "id": "e1a00008-0008-4000-8000-000000000008",
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"thread_ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":pencil2: *Manually replied by* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>:\\n``{{ (function() {\n  let txt = $('Parse Modal Submission').item.json.correction_text || '';\n  return JSON.stringify(txt).slice(1, -1);\n})() || '' }}```\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1104,
+          256
+        ],
+        "name": "Post Correction Sent to Slack",
+        "id": "e1a00009-0009-4000-8000-000000000009",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "BgXVOoYmNGYi7Ev4",
+            "name": "Slack Inbound WA Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Setup Required\n1. Configure Google Sheets OAuth2 credential on both \"Log\" nodes\n2. Deactivate the old wati-human-approval workflow before activating this one",
+          "width": 500
+        },
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          -272,
+          -96
+        ],
+        "name": "Sticky Note2",
+        "id": "e1a0000a-000a-4000-8000-00000000000a"
+      }
+    ],
+    "connections": {
+      "Webhook": {
+        "main": [
+          [
+            {
+              "node": "Respond to Slack",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Extract Payload Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Payload Type": {
+        "main": [
+          [
+            {
+              "node": "Route by Payload Type",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Route by Payload Type": {
+        "main": [
+          [
+            {
+              "node": "Parse Slack Payload",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Parse Modal Submission",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "No Operation",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Slack Payload": {
+        "main": [
+          [
+            {
+              "node": "Check if Approved",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check if Approved": {
+        "main": [
+          [
+            {
+              "node": "Update Message - Approved",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Wait",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Message - Rejected",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Open Correction Modal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Wait": {
+        "main": [
+          [
+            {
+              "node": "Respond to Prospect",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Respond to Prospect": {
+        "main": [
+          [
+            {
+              "node": "Check Send Status",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Send Status": {
+        "main": [
+          [
+            {
+              "node": "Post Success status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Post Error status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Success status to Slack": {
+        "main": [
+          [
+            {
+              "node": "Log Approved to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Error status to Slack": {
+        "main": [
+          []
+        ]
+      },
+      "Parse Modal Submission": {
+        "main": [
+          [
+            {
+              "node": "Send Correction via WATI",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Correction via WATI": {
+        "main": [
+          [
+            {
+              "node": "Log Correction to Google Sheet",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Post Correction Sent to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Log Approved to Google Sheet": {
+        "main": [
+          []
+        ]
+      },
+      "Log Correction to Google Sheet": {
+        "main": [
+          []
+        ]
+      },
+      "Post Correction Sent to Slack": {
+        "main": [
+          []
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": "Version 62d41963",
+    "description": "",
+    "autosaved": false
+  },
+  "tags": []
+}
