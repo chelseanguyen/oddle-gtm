@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-15T08:36:48.436Z",
+  "updatedAt": "2026-04-20T06:53:28.413Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -524,7 +524,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        5584,
+        5792,
         576
       ]
     },
@@ -566,7 +566,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        5808,
+        6016,
         576
       ]
     },
@@ -586,7 +586,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        6048,
+        6256,
         416
       ],
       "credentials": {
@@ -625,7 +625,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6256,
+        6464,
         416
       ]
     },
@@ -667,7 +667,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6272,
+        6480,
         704
       ]
     },
@@ -687,7 +687,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        6512,
+        6720,
         496
       ],
       "credentials": {
@@ -726,7 +726,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6768,
+        6976,
         656
       ]
     },
@@ -777,7 +777,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        6768,
+        6976,
         896
       ]
     },
@@ -797,7 +797,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        7056,
+        7264,
         736
       ],
       "credentials": {
@@ -836,7 +836,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        7280,
+        7488,
         736
       ]
     },
@@ -878,7 +878,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        7280,
+        7488,
         976
       ]
     },
@@ -898,7 +898,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        7616,
+        7824,
         816
       ],
       "credentials": {
@@ -937,7 +937,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        7824,
+        8032,
         816
       ]
     },
@@ -957,7 +957,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        7840,
+        8048,
         1040
       ],
       "credentials": {
@@ -976,7 +976,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        8464,
+        8672,
         464
       ]
     },
@@ -989,7 +989,7 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        8240,
+        8448,
         416
       ]
     },
@@ -1031,7 +1031,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        8672,
+        8880,
         464
       ]
     },
@@ -1051,7 +1051,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        8944,
+        9152,
         304
       ],
       "credentials": {
@@ -1090,7 +1090,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
       "position": [
-        9152,
+        9360,
         304
       ]
     },
@@ -1110,7 +1110,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        9424,
+        9632,
         288
       ],
       "credentials": {
@@ -1178,7 +1178,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5536,
+        5744,
         352
       ],
       "typeVersion": 1,
@@ -1491,7 +1491,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        9728,
+        9936,
         480
       ],
       "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
@@ -1907,7 +1907,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId }}\" }\n  ]\n}",
+        "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
         "options": {}
       },
       "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
@@ -1915,8 +1915,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        5328,
-        576
+        5536,
+        720
       ],
       "credentials": {
         "httpBearerAuth": {
@@ -1924,6 +1924,39 @@
           "name": "WATI API token"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "is-taiwan-number",
+              "leftValue": "={{ $('Deduplicate Check').item.json.phoneNumber }}",
+              "rightValue": "886",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b7e91a2c-3d4f-5e6a-8b9c-0d1e2f3a4b5c",
+      "name": "Is Taiwan Number?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        5296,
+        592
+      ]
     }
   ],
   "connections": {
@@ -2492,22 +2525,40 @@
         ]
       ]
     },
-    "Merge Company Search Paths": {
+    "Add new WATI contact": {
       "main": [
         [
           {
-            "node": "Add new WATI contact",
+            "node": "Prepare Company Search",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Add new WATI contact": {
+    "Merge Company Search Paths": {
+      "main": [
+        [
+          {
+            "node": "Is Taiwan Number?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Taiwan Number?": {
       "main": [
         [
           {
             "node": "Prepare Company Search",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add new WATI contact",
             "type": "main",
             "index": 0
           }
@@ -2527,7 +2578,7 @@
     "node:New Record Created": {
       "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
       "sheetId": 0,
-      "lastIndexChecked": 757
+      "lastIndexChecked": 759
     }
   },
   "meta": {
@@ -2567,8 +2618,8 @@
       }
     ]
   },
-  "versionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
-  "activeVersionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
+  "versionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
+  "activeVersionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
   "triggerCount": 1,
   "shared": [
     {
@@ -2580,9 +2631,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-15T08:34:50.224Z",
-    "createdAt": "2026-04-15T08:34:45.088Z",
-    "versionId": "af5d7a43-d60c-4b2b-8dbf-89243897d9bc",
+    "updatedAt": "2026-04-20T06:53:31.760Z",
+    "createdAt": "2026-04-20T06:53:28.417Z",
+    "versionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -3103,7 +3154,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          5584,
+          5792,
           576
         ]
       },
@@ -3145,7 +3196,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          5808,
+          6016,
           576
         ]
       },
@@ -3165,7 +3216,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          6048,
+          6256,
           416
         ],
         "credentials": {
@@ -3204,7 +3255,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6256,
+          6464,
           416
         ]
       },
@@ -3246,7 +3297,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6272,
+          6480,
           704
         ]
       },
@@ -3266,7 +3317,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          6512,
+          6720,
           496
         ],
         "credentials": {
@@ -3305,7 +3356,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6768,
+          6976,
           656
         ]
       },
@@ -3356,7 +3407,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          6768,
+          6976,
           896
         ]
       },
@@ -3376,7 +3427,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          7056,
+          7264,
           736
         ],
         "credentials": {
@@ -3415,7 +3466,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          7280,
+          7488,
           736
         ]
       },
@@ -3457,7 +3508,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          7280,
+          7488,
           976
         ]
       },
@@ -3477,7 +3528,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          7616,
+          7824,
           816
         ],
         "credentials": {
@@ -3516,7 +3567,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          7824,
+          8032,
           816
         ]
       },
@@ -3536,7 +3587,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          7840,
+          8048,
           1040
         ],
         "credentials": {
@@ -3555,7 +3606,7 @@
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
         "position": [
-          8464,
+          8672,
           464
         ]
       },
@@ -3568,7 +3619,7 @@
         "type": "n8n-nodes-base.merge",
         "typeVersion": 3,
         "position": [
-          8240,
+          8448,
           416
         ]
       },
@@ -3610,7 +3661,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          8672,
+          8880,
           464
         ]
       },
@@ -3630,7 +3681,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          8944,
+          9152,
           304
         ],
         "credentials": {
@@ -3669,7 +3720,7 @@
         "type": "n8n-nodes-base.if",
         "typeVersion": 2,
         "position": [
-          9152,
+          9360,
           304
         ]
       },
@@ -3689,7 +3740,7 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          9424,
+          9632,
           288
         ],
         "credentials": {
@@ -3757,7 +3808,7 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          5536,
+          5744,
           352
         ],
         "typeVersion": 1,
@@ -4070,7 +4121,7 @@
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.7,
         "position": [
-          9728,
+          9936,
           480
         ],
         "id": "fac448ca-d2e1-43d5-832c-a8d36b21ff31",
@@ -4486,7 +4537,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId }}\" }\n  ]\n}",
+          "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
           "options": {}
         },
         "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
@@ -4494,8 +4545,8 @@
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.2,
         "position": [
-          5328,
-          576
+          5536,
+          720
         ],
         "credentials": {
           "httpBearerAuth": {
@@ -4503,6 +4554,39 @@
             "name": "WATI API token"
           }
         }
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "is-taiwan-number",
+                "leftValue": "={{ $('Deduplicate Check').item.json.phoneNumber }}",
+                "rightValue": "886",
+                "operator": {
+                  "type": "string",
+                  "operation": "startsWith"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "b7e91a2c-3d4f-5e6a-8b9c-0d1e2f3a4b5c",
+        "name": "Is Taiwan Number?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          5296,
+          592
+        ]
       }
     ],
     "connections": {
@@ -5071,17 +5155,6 @@
           ]
         ]
       },
-      "Merge Company Search Paths": {
-        "main": [
-          [
-            {
-              "node": "Add new WATI contact",
-              "type": "main",
-              "index": 0
-            }
-          ]
-        ]
-      },
       "Add new WATI contact": {
         "main": [
           [
@@ -5092,10 +5165,39 @@
             }
           ]
         ]
+      },
+      "Merge Company Search Paths": {
+        "main": [
+          [
+            {
+              "node": "Is Taiwan Number?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Is Taiwan Number?": {
+        "main": [
+          [
+            {
+              "node": "Prepare Company Search",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Add new WATI contact",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version af5d7a43",
+    "name": "Version b74eb9ea",
     "description": "",
     "autosaved": false
   },
