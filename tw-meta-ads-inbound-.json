@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-24T04:27:24.264Z",
+  "updatedAt": "2026-04-21T02:51:33.086Z",
   "createdAt": "2026-03-24T04:10:13.574Z",
   "id": "Rp1RP9g98Q3IswFw",
   "name": "TW Meta Ads Inbound",
@@ -24,7 +24,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
+        "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst normalizedPhone = phoneNumber.startsWith('0') ? '886' + phoneNumber.slice(1) : phoneNumber;\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber: normalizedPhone,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
       },
       "id": "extract-lead-data",
       "name": "Extract Lead Data",
@@ -1080,72 +1080,69 @@
             "content-type": "application/json; charset=utf-8",
             "user-agent": "Zapier",
             "accept": "*/*",
-            "content-length": "1593",
-            "x-cloud-trace-context": "f6ab9143704757610a767d39ab1ea759/17270915603617910304;o=1",
+            "content-length": "1492",
+            "x-cloud-trace-context": "2b4c579ea2b5cbb7defe778188586630/3752890358813193088;o=1",
             "x-forwarded-proto": "https",
-            "traceparent": "00-f6ab9143704757610a767d39ab1ea759-efae9e3c7b658e20-01",
-            "x-forwarded-for": "44.214.195.75",
-            "forwarded": "for=\"44.214.195.75\";proto=https",
+            "traceparent": "00-2b4c579ea2b5cbb7defe778188586630-3414f1e5ce0c7380-01",
+            "x-forwarded-for": "44.214.195.67",
+            "forwarded": "for=\"44.214.195.67\";proto=https",
             "accept-encoding": "gzip,deflate"
           },
           "params": {},
           "query": {},
           "body": {
-            "ad_id": "120248743837740537",
-            "ad_name": "OL_川妹子",
-            "adgroup_id": "120248743837740537",
-            "adset_id": "120248743837750537",
-            "adset_name": "OL_interest-餐廳老闆 + Oddle visitor_雙北、台中、新竹",
-            "campaign_id": "120248743837760537",
-            "campaign_name": "2026 Mar-B2B_contact(Meta leads) - All product-新粉專 - OR+OL",
+            "ad_id": "120251672221400537",
+            "ad_name": "OL_騷豆花",
+            "adgroup_id": "120251672221400537",
+            "adset_id": "120251672221380537",
+            "adset_name": "Product_interest-餐廳老闆 + Oddle visitor_雙北",
+            "campaign_id": "120251672221390537",
+            "campaign_name": "2026 Apr-B2B_contact(Meta leads) - All product-新粉專",
             "campaign_name_B2B_contact": "Meta leads",
-            "created_time": "2026-03-23T13:45:03+0000",
+            "created_time": "2026-04-21T01:07:39+0000",
             "custom_disclaimer_responses": "",
-            "email": "sabrina@ivymaison.com",
-            "Email": "sabrina@ivymaison.com",
+            "email": "temperbeer@gmail.com",
+            "Email": "temperbeer@gmail.com",
             "event_field": "leadgen",
             "form_id": "1773005097405941",
             "form_name": "TW B2B Inbound Leads 表單 - 2026 Mar update",
-            "Full name": "全通路電商女皇-葳姐",
-            "full_name": "全通路電商女皇-葳姐",
-            "id": "1972298053716696",
-            "leadgen_id": "1972298053716696",
+            "Full name": "好啤氣 Temper",
+            "full_name": "好啤氣 Temper",
+            "id": "806613462504971",
+            "leadgen_id": "806613462504971",
             "page_id": "533140446548134",
             "page_name": "Oddle 餐飲科技 - 訂位系統、線上訂餐網站",
             "partner_name": "",
-            "Phone number": "+886986308108",
-            "phone_number": "+886986308108",
+            "Phone number": "0918113357",
+            "phone_number": "0918113357",
             "platform": "ig",
             "raw": {
-              "email": "sabrina@ivymaison.com",
-              "Email": "sabrina@ivymaison.com",
-              "Full name": "全通路電商女皇-葳姐",
-              "full_name": "全通路電商女皇-葳姐",
-              "Phone number": "+886986308108",
-              "phone_number": "+886986308108",
+              "email": "temperbeer@gmail.com",
+              "Email": "temperbeer@gmail.com",
+              "Full name": "好啤氣 Temper",
+              "full_name": "好啤氣 Temper",
+              "Phone number": "0918113357",
+              "phone_number": "0918113357",
               "對oddle哪種產品感興趣": "顧客忠誠計畫",
               "對Oddle哪種產品感興趣": "顧客忠誠計畫",
-              "您經營的餐廳/品牌名稱": "Ivymaison 美胸",
-              "請問您的職位": "運營經理"
+              "您經營的餐廳/品牌名稱": "好啤氣",
+              "請問您的職位": "餐廳老闆"
             },
             "retailer_item_id": "",
             "vehicle": "",
             "對oddle哪種產品感興趣": "顧客忠誠計畫",
             "對Oddle哪種產品感興趣": "顧客忠誠計畫",
-            "您經營的餐廳/品牌名稱": "Ivymaison 美胸",
-            "請問您的職位": "運營經理"
+            "您經營的餐廳/品牌名稱": "好啤氣",
+            "請問您的職位": "餐廳老闆"
           },
-          "webhookUrl": "https://workflow.oddle.center/webhook-test/tw-meta-ads-inbound",
-          "executionMode": "test"
-        },
-        "pairedItem": {
-          "item": 0
+          "webhookUrl": "https://workflow.oddle.center/webhook/tw-meta-ads-inbound",
+          "executionMode": "production"
         }
       }
     ]
   },
-  "versionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
-  "activeVersionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
+  "versionId": "0f8e8510-2a6a-4597-a8e6-5ce551df249d",
+  "activeVersionId": "0f8e8510-2a6a-4597-a8e6-5ce551df249d",
   "triggerCount": 1,
   "shared": [
     {
@@ -1157,9 +1154,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-03-24T04:27:11.482Z",
-    "createdAt": "2026-03-24T04:22:28.119Z",
-    "versionId": "a8ea3a08-7382-4541-ae6e-100fd75eee2c",
+    "updatedAt": "2026-04-21T02:51:33.091Z",
+    "createdAt": "2026-04-21T02:51:33.091Z",
+    "versionId": "0f8e8510-2a6a-4597-a8e6-5ce551df249d",
     "workflowId": "Rp1RP9g98Q3IswFw",
     "nodes": [
       {
@@ -1180,7 +1177,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
+          "jsCode": "const payload = $input.first().json.body;\n\n// Extract lead data from Meta Ads payload\nconst fullName = payload.full_name || payload['Full name'] || '';\nconst email = (payload.email || payload.Email || '').trim().toLowerCase();\nconst phoneNumber = payload.phone_number || payload['Phone number'] || '';\nconst normalizedPhone = phoneNumber.startsWith('0') ? '886' + phoneNumber.slice(1) : phoneNumber;\nconst jobTitle = payload['請問您的職位'] || '';\nconst restaurantName = payload['您經營的餐廳/品牌名稱'] || '';\nconst productInterested = payload['對oddle哪種產品感興趣'] || payload['對Oddle哪種產品感興趣'] || '';\n\n// Extract Line ID (two possible field names)\nconst lineId = payload['提供您的 Line id，讓我們可以盡快與您聯繫'] || payload['提供您的_line_id，讓我們可以盡快與您聯繫'] || '';\n\n// Parse timestamp to date format (YYYY-MM-DD)\nconst rawTimestamp = payload.created_time || '';\nlet submissionDate = '';\nif (rawTimestamp) {\n  const date = new Date(rawTimestamp);\n  submissionDate = date.toISOString().split('T')[0];\n}\n\n// Extract domain from email for company search\nfunction extractEmailDomain(email) {\n  if (!email || !email.includes('@')) return '';\n  return email.split('@')[1].toLowerCase().trim();\n}\n\n// Email domain blacklist (B2C email providers)\nconst emailBlacklist = [\n  'gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'live.com', 'msn.com',\n  'icloud.com', 'me.com', 'mac.com', 'aol.com', 'protonmail.com', 'proton.me',\n  'ymail.com', 'rocketmail.com', 'mail.com', 'zoho.com', 'gmx.com', 'gmx.net',\n  'yahoo.com.tw', 'yahoo.com.hk', 'qq.com', '163.com', '126.com'\n];\n\nfunction isEmailBlacklisted(domain) {\n  if (!domain) return true;\n  return emailBlacklist.some(bl => domain === bl || domain.endsWith('.' + bl));\n}\n\nconst emailDomain = extractEmailDomain(email);\nconst validEmailDomain = (!isEmailBlacklisted(emailDomain)) ? emailDomain : '';\n\n// Determine if we should search for company\nconst shouldSearchCompany = validEmailDomain || restaurantName;\n\nreturn [{\n  json: {\n    fullName,\n    email,\n    phoneNumber: normalizedPhone,\n    jobTitle,\n    restaurantName,\n    productInterested,\n    lineId,\n    submissionDate,\n    emailDomain: validEmailDomain,\n    country: 'Taiwan',\n    shouldSearchCompany,\n    adId: payload.ad_id || '',\n    adName: payload.ad_name || '',\n    campaignName: payload.campaign_name || '',\n    formName: payload.form_name || '',\n    platform: payload.platform || ''\n  }\n}];"
         },
         "id": "extract-lead-data",
         "name": "Extract Lead Data",
@@ -2218,8 +2215,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version a8ea3a08",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": []
