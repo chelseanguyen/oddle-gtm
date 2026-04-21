@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-09T13:20:31.112Z",
+  "updatedAt": "2026-04-21T09:57:12.484Z",
   "createdAt": "2026-02-05T06:36:49.966Z",
   "id": "iW7MF8aPEB5WE3Z2",
   "name": "[WhatsApp] Process human-approved response for WA SDR Agent",
@@ -23,7 +23,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply updated\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"{{ $('Parse Slack Payload').item.json.action_id === 'approve' ? ':white_check_mark: *Approved & Sent*' : ':pencil2: *Rejected - Manual Follow-up*' }} by <@{{ $json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply updated\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"{{ $('Parse Slack Payload').item.json.action_id === 'approve' ? ':white_check_mark: *Approved & Sent*' : ':pencil2: *Rejected - Manual Follow-up*' }} by <@{{ $json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -58,7 +58,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -108,7 +108,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    lead_identifier: number,\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
+        "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -339,7 +339,7 @@
     },
     {
       "parameters": {
-        "amount": 30
+        "amount": 10
       },
       "type": "n8n-nodes-base.wait",
       "typeVersion": 1.1,
@@ -350,6 +350,346 @@
       "id": "98d225be-0d55-4b0a-b8b8-104fd1f60d5a",
       "name": "Wait",
       "webhookId": "758333e8-fa7e-440d-8d33-079be0dbfa91"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+          "mode": "list",
+          "cachedResultName": "Outbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "response",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.format('DD HH:mm') }}",
+            "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+            "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+            "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+            "country": "={{ $('Parse Slack Payload').item.json.country }}",
+            "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
+            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "bird_message_id": "={{ $('Respond to Prospect').item.json.id }}",
+            "response_type": "approved",
+            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bird_conversation_id",
+              "displayName": "bird_conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bird_message_id",
+              "displayName": "bird_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "a1b00001-0001-4000-8000-000000000001",
+      "name": "Log Approved to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1760,
+        192
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+          "mode": "list",
+          "cachedResultName": "Outbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "response",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $now.format('DD HH:mm') }}",
+            "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+            "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+            "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+            "country": "={{ $('Parse Slack Payload').item.json.country }}",
+            "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
+            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "response_type": "rejected",
+            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone_number",
+              "displayName": "phone_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact_name",
+              "displayName": "contact_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bird_conversation_id",
+              "displayName": "bird_conversation_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "bird_message_id",
+              "displayName": "bird_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "a1b00002-0002-4000-8000-000000000002",
+      "name": "Log Rejected to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1040,
+        416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
+        "width": 500
+      },
+      "id": "a1b00003-0003-4000-8000-000000000003",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        0
+      ]
     }
   ],
   "connections": {
@@ -389,7 +729,13 @@
     },
     "Post Success status to Slack": {
       "main": [
-        []
+        [
+          {
+            "node": "Log Approved to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Webhook": {
@@ -452,6 +798,17 @@
           }
         ]
       ]
+    },
+    "Update Message - Rejected": {
+      "main": [
+        [
+          {
+            "node": "Log Rejected to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
@@ -495,8 +852,8 @@
       }
     ]
   },
-  "versionId": "067f0e4c-f553-4a40-b81a-1dff9c16d093",
-  "activeVersionId": "067f0e4c-f553-4a40-b81a-1dff9c16d093",
+  "versionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
+  "activeVersionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
   "triggerCount": 1,
   "shared": [
     {
@@ -508,9 +865,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-09T13:21:49.837Z",
-    "createdAt": "2026-04-09T13:20:31.121Z",
-    "versionId": "067f0e4c-f553-4a40-b81a-1dff9c16d093",
+    "updatedAt": "2026-04-21T09:57:12.489Z",
+    "createdAt": "2026-04-21T09:57:12.489Z",
+    "versionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
     "workflowId": "iW7MF8aPEB5WE3Z2",
     "nodes": [
       {
@@ -530,7 +887,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply updated\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"{{ $('Parse Slack Payload').item.json.action_id === 'approve' ? ':white_check_mark: *Approved & Sent*' : ':pencil2: *Rejected - Manual Follow-up*' }} by <@{{ $json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply updated\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"{{ $('Parse Slack Payload').item.json.action_id === 'approve' ? ':white_check_mark: *Approved & Sent*' : ':pencil2: *Rejected - Manual Follow-up*' }} by <@{{ $json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -565,7 +922,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -615,7 +972,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    lead_identifier: number,\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
+          "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -846,7 +1203,7 @@
       },
       {
         "parameters": {
-          "amount": 30
+          "amount": 10
         },
         "type": "n8n-nodes-base.wait",
         "typeVersion": 1.1,
@@ -857,6 +1214,346 @@
         "id": "98d225be-0d55-4b0a-b8b8-104fd1f60d5a",
         "name": "Wait",
         "webhookId": "758333e8-fa7e-440d-8d33-079be0dbfa91"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+            "mode": "list",
+            "cachedResultName": "Outbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "response",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "timestamp": "={{ $now.format('DD HH:mm') }}",
+              "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+              "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+              "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+              "country": "={{ $('Parse Slack Payload').item.json.country }}",
+              "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
+              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "bird_message_id": "={{ $('Respond to Prospect').item.json.id }}",
+              "response_type": "approved",
+              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone_number",
+                "displayName": "phone_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "contact_name",
+                "displayName": "contact_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bird_conversation_id",
+                "displayName": "bird_conversation_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bird_message_id",
+                "displayName": "bird_message_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "a1b00001-0001-4000-8000-000000000001",
+        "name": "Log Approved to Google Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1760,
+          192
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+            "mode": "list",
+            "cachedResultName": "Outbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": "gid=0",
+            "mode": "list",
+            "cachedResultName": "response",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "timestamp": "={{ $now.format('DD HH:mm') }}",
+              "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+              "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
+              "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+              "country": "={{ $('Parse Slack Payload').item.json.country }}",
+              "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
+              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "response_type": "rejected",
+              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "timestamp",
+                "displayName": "timestamp",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "phone_number",
+                "displayName": "phone_number",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "contact_name",
+                "displayName": "contact_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bird_conversation_id",
+                "displayName": "bird_conversation_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "bird_message_id",
+                "displayName": "bird_message_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "a1b00002-0002-4000-8000-000000000002",
+        "name": "Log Rejected to Google Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1040,
+          416
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
+          "width": 500
+        },
+        "id": "a1b00003-0003-4000-8000-000000000003",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          0
+        ]
       }
     ],
     "connections": {
@@ -896,7 +1593,13 @@
       },
       "Post Success status to Slack": {
         "main": [
-          []
+          [
+            {
+              "node": "Log Approved to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
         ]
       },
       "Webhook": {
@@ -959,11 +1662,22 @@
             }
           ]
         ]
+      },
+      "Update Message - Rejected": {
+        "main": [
+          [
+            {
+              "node": "Log Rejected to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 067f0e4c",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": []
