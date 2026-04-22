@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-20T06:53:28.413Z",
+  "updatedAt": "2026-04-22T03:44:39.461Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -40,6 +40,7 @@
         2240,
         608
       ],
+      "retryOnFail": true,
       "credentials": {
         "googleSheetsTriggerOAuth2Api": {
           "id": "pDR6QZ9oC3DsT1h3",
@@ -2618,8 +2619,8 @@
       }
     ]
   },
-  "versionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
-  "activeVersionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
+  "versionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
+  "activeVersionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
   "triggerCount": 1,
   "shared": [
     {
@@ -2631,9 +2632,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-20T06:53:31.760Z",
-    "createdAt": "2026-04-20T06:53:28.417Z",
-    "versionId": "b74eb9ea-b852-41db-b9fd-5f49aa54cdad",
+    "updatedAt": "2026-04-22T03:44:42.910Z",
+    "createdAt": "2026-04-22T03:44:39.466Z",
+    "versionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -2670,6 +2671,7 @@
           2240,
           608
         ],
+        "retryOnFail": true,
         "credentials": {
           "googleSheetsTriggerOAuth2Api": {
             "id": "pDR6QZ9oC3DsT1h3",
@@ -5197,7 +5199,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version b74eb9ea",
+    "name": "Version b7d7c42f",
     "description": "",
     "autosaved": false
   },
