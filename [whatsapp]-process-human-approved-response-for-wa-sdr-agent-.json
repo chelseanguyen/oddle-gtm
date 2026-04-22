@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-21T09:57:12.484Z",
+  "updatedAt": "2026-04-22T07:14:19.650Z",
   "createdAt": "2026-02-05T06:36:49.966Z",
   "id": "iW7MF8aPEB5WE3Z2",
   "name": "[WhatsApp] Process human-approved response for WA SDR Agent",
@@ -30,7 +30,7 @@
       "typeVersion": 4.3,
       "position": [
         800,
-        -32
+        0
       ],
       "name": "Update Message - Approved",
       "id": "bb25144a-1f54-47d7-b136-2b8f7e394982",
@@ -58,7 +58,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":pencil2: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>. Manual response pending...\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -78,19 +78,6 @@
     },
     {
       "parameters": {
-        "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "position": [
-        64,
-        480
-      ],
-      "typeVersion": 1,
-      "id": "0bed6b75-c5ef-41b8-b203-bb015a742a2d",
-      "name": "Sticky Note"
-    },
-    {
-      "parameters": {
         "respondWith": "text",
         "responseBody": "OK",
         "options": {
@@ -100,15 +87,15 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1,
       "position": [
-        64,
-        320
+        16,
+        528
       ],
       "name": "Respond to Slack",
       "id": "db0c01fe-e130-4858-b69a-34b5ffc3aa53"
     },
     {
       "parameters": {
-        "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
+        "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\nconst triggerId = parsedPayload.trigger_id;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs,\n    trigger_id: triggerId\n  }\n};"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -156,7 +143,7 @@
       "typeVersion": 2,
       "position": [
         1248,
-        208
+        224
       ],
       "name": "Check Send Status",
       "id": "cfef757e-6380-45ea-b0c8-60863d87dbf3"
@@ -220,7 +207,7 @@
       "typeVersion": 4.3,
       "position": [
         1520,
-        192
+        208
       ],
       "name": "Post Success status to Slack",
       "id": "7305a82e-ffdc-49ae-80cf-5191daf98a36",
@@ -241,8 +228,8 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -144,
-        128
+        -224,
+        336
       ],
       "id": "7b57d141-7fd7-4c63-aa1b-c7416bb390a0",
       "name": "Webhook",
@@ -278,7 +265,7 @@
       "typeVersion": 4.3,
       "position": [
         1008,
-        208
+        224
       ],
       "id": "37c0ac2e-06ae-4276-8d94-bb85e3e12188",
       "name": "Respond to Prospect",
@@ -297,8 +284,8 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        -128,
-        0
+        -176,
+        208
       ],
       "typeVersion": 1,
       "id": "c0fdf043-dd70-4245-ace2-cfac4339a18e",
@@ -345,7 +332,7 @@
       "typeVersion": 1.1,
       "position": [
         800,
-        208
+        224
       ],
       "id": "98d225be-0d55-4b0a-b8b8-104fd1f60d5a",
       "name": "Wait",
@@ -506,12 +493,196 @@
       "typeVersion": 4.5,
       "position": [
         1760,
-        192
+        208
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "H3k1lZEtuCVhMzHl",
           "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
+        "width": 500
+      },
+      "id": "a1b00003-0003-4000-8000-000000000003",
+      "name": "Sticky Note3",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "route-block-actions",
+              "leftValue": "={{ (() => { const p = $json.body.payload; const parsed = typeof p === 'string' ? JSON.parse(p) : p; return parsed.type; })() }}",
+              "rightValue": "block_actions",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b00010-0010-4000-8000-000000000010",
+      "name": "Route Payload Type",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        16,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsed = $('Parse Slack Payload').item.json;\n\nconst privateMetadata = JSON.stringify({\n  bird_conversation_id: parsed.bird_conversation_id,\n  phone_number: parsed.lead_identifier,\n  contact_name: parsed.contact_name,\n  restaurant_name: parsed.company_name,\n  country: parsed.country,\n  segment: parsed.segment || '',\n  slack_channel_id: parsed.slack_channel_id,\n  original_message_ts: parsed.original_message_ts,\n  slack_user_id: parsed.slack_user_id,\n  slack_user_name: parsed.slack_user_name,\n  lead_message: (parsed.lead_message || '').substring(0, 500),\n  ai_generated_response: (parsed.ai_generated_response || '').substring(0, 300)\n});\n\nconst leadMsgSafe = (parsed.lead_message || '').substring(0, 200);\nconst aiRespSafe = (parsed.ai_generated_response || '').substring(0, 200);\nconst contactInfo = (parsed.contact_name || 'Unknown') + ' - ' + (parsed.company_name || 'Unknown');\n\nconst viewsOpenModal = {\n  trigger_id: parsed.trigger_id,\n  view: {\n    type: 'modal',\n    callback_id: 'manual_response_modal',\n    title: { type: 'plain_text', text: 'Send Manual Response' },\n    submit: { type: 'plain_text', text: 'Send' },\n    close: { type: 'plain_text', text: 'Discard' },\n    private_metadata: privateMetadata,\n    blocks: [\n      {\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*To:* ' + contactInfo + '\\n*Their message:*\\n```' + leadMsgSafe + '```'\n        }\n      },\n      {\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*AI suggestion:*\\n```' + aiRespSafe + '```'\n        }\n      },\n      {\n        type: 'input',\n        block_id: 'manual_response_block',\n        label: { type: 'plain_text', text: 'Your response' },\n        element: {\n          type: 'plain_text_input',\n          action_id: 'manual_response_input',\n          multiline: true,\n          placeholder: { type: 'plain_text', text: 'Type your message to the prospect...' }\n        }\n      }\n    ]\n  }\n};\n\nreturn { json: { views_open_modal: viewsOpenModal } };"
+      },
+      "id": "a1b00011-0011-4000-8000-000000000011",
+      "name": "Build Rejection Modal",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        624
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/views.open",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.views_open_modal }}",
+        "options": {}
+      },
+      "id": "a1b00012-0012-4000-8000-000000000012",
+      "name": "Open Rejection Modal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1040,
+        624
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nconst ctx = JSON.parse(parsed.view.private_metadata);\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+      },
+      "id": "a1b00013-0013-4000-8000-000000000013",
+      "name": "Parse Modal Submission",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/conversations/{{ $json.bird_conversation_id }}/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"participantType\": \"accessKey\",\n    \"participantId\": \"60363874-e6e7-4af3-8a7f-9878ba9a173a\",\n    \"recipients\": [\n      {\n        \"type\": \"to\",\n        \"identifierKey\": \"phonenumber\",\n        \"identifierValue\": \"{{ $json.phone_number }}\"\n      }\n    ],\n    \"body\": {\n      \"type\": \"text\",\n      \"text\": {\n        \"text\": \"{{ \n  (function() {\n    let text = $json.manual_response || '';\n    return JSON.stringify(text).slice(1, -1);\n  })()\n}}\"\n      }\n    },\n    \"addMissingParticipants\": true\n}",
+        "options": {
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          }
+        }
+      },
+      "id": "a1b00014-0014-4000-8000-000000000014",
+      "name": "Send Manual Response to Bird",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        496,
+        848
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "1R4VMEjneoFtqiZe",
+          "name": "Bird API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{\n  (function() {\n    let txt = $('Parse Modal Submission').item.json.lead_message || '';\n    return JSON.stringify(txt).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Manual Response Sent:*\\n```{{\n  (function() {\n    let txt = $('Parse Modal Submission').item.json.manual_response || '';\n    return JSON.stringify(txt).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "a1b00015-0015-4000-8000-000000000015",
+      "name": "Update Message - Manual Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        720,
+        848
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "8F3Mb23D8ZFkrAh6",
+          "name": "Slack's WhatsApp Agent Alex"
         }
       }
     },
@@ -535,16 +706,18 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "timestamp": "={{ $now.format('DD HH:mm') }}",
-            "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
-            "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
-            "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
-            "country": "={{ $('Parse Slack Payload').item.json.country }}",
-            "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
-            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
-            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
-            "response_type": "rejected",
-            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+            "timestamp": "={{ $('Parse Modal Submission').item.json.timestamp }}",
+            "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
+            "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
+            "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
+            "country": "={{ $('Parse Modal Submission').item.json.country }}",
+            "bird_conversation_id": "={{ $('Parse Modal Submission').item.json.bird_conversation_id }}",
+            "lead_message": "={{ $('Parse Modal Submission').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Modal Submission').item.json.ai_generated_response }}",
+            "final_response": "={{ $('Parse Modal Submission').item.json.manual_response }}",
+            "bird_message_id": "={{ $('Send Manual Response to Bird').item.json.id }}",
+            "response_type": "rejected_manual",
+            "reviewer": "={{ $('Parse Modal Submission').item.json.slack_user_name }}"
           },
           "matchingColumns": [],
           "schema": [
@@ -662,13 +835,13 @@
         },
         "options": {}
       },
-      "id": "a1b00002-0002-4000-8000-000000000002",
-      "name": "Log Rejected to Google Sheet",
+      "id": "a1b00016-0016-4000-8000-000000000016",
+      "name": "Log Manual Response to Google Sheet",
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.5,
       "position": [
-        1040,
-        416
+        944,
+        848
       ],
       "credentials": {
         "googleSheetsOAuth2Api": {
@@ -676,20 +849,6 @@
           "name": "Google Sheets account 1"
         }
       }
-    },
-    {
-      "parameters": {
-        "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
-        "width": 500
-      },
-      "id": "a1b00003-0003-4000-8000-000000000003",
-      "name": "Sticky Note3",
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        1760,
-        0
-      ]
     }
   ],
   "connections": {
@@ -722,11 +881,6 @@
         ]
       ]
     },
-    "Post Error status to Slack": {
-      "main": [
-        []
-      ]
-    },
     "Post Success status to Slack": {
       "main": [
         [
@@ -747,7 +901,7 @@
             "index": 0
           },
           {
-            "node": "Parse Slack Payload",
+            "node": "Route Payload Type",
             "type": "main",
             "index": 0
           }
@@ -784,6 +938,11 @@
             "node": "Update Message - Rejected",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Build Rejection Modal",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -799,11 +958,62 @@
         ]
       ]
     },
-    "Update Message - Rejected": {
+    "Route Payload Type": {
       "main": [
         [
           {
-            "node": "Log Rejected to Google Sheet",
+            "node": "Parse Slack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Modal Submission",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Rejection Modal": {
+      "main": [
+        [
+          {
+            "node": "Open Rejection Modal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Modal Submission": {
+      "main": [
+        [
+          {
+            "node": "Send Manual Response to Bird",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Manual Response to Bird": {
+      "main": [
+        [
+          {
+            "node": "Update Message - Manual Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Message - Manual Sent": {
+      "main": [
+        [
+          {
+            "node": "Log Manual Response to Google Sheet",
             "type": "main",
             "index": 0
           }
@@ -852,8 +1062,8 @@
       }
     ]
   },
-  "versionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
-  "activeVersionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
+  "versionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
+  "activeVersionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
   "triggerCount": 1,
   "shared": [
     {
@@ -865,9 +1075,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-21T09:57:12.489Z",
-    "createdAt": "2026-04-21T09:57:12.489Z",
-    "versionId": "7d2775b1-29b1-43d2-8ea3-674df5f941b5",
+    "updatedAt": "2026-04-22T07:14:21.562Z",
+    "createdAt": "2026-04-22T07:14:19.655Z",
+    "versionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
     "workflowId": "iW7MF8aPEB5WE3Z2",
     "nodes": [
       {
@@ -894,7 +1104,7 @@
         "typeVersion": 4.3,
         "position": [
           800,
-          -32
+          0
         ],
         "name": "Update Message - Approved",
         "id": "bb25144a-1f54-47d7-b136-2b8f7e394982",
@@ -922,7 +1132,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.lead_identifier }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Slack Payload').item.json.contact_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Segment:*\\n{{ $('Parse Slack Payload').item.json.segment }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    return JSON.stringify(rawText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || '';\n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":pencil2: *Rejected* by <@{{ $('Parse Slack Payload').item.json.slack_user_id }}>. Manual response pending...\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -942,19 +1152,6 @@
       },
       {
         "parameters": {
-          "content": "When a user clicks a button in Slack, Slack sends a webhook payload to n8n workflow and expects a response within 3 seconds. Otherwise, it'll show an operation time-out error "
-        },
-        "type": "n8n-nodes-base.stickyNote",
-        "position": [
-          64,
-          480
-        ],
-        "typeVersion": 1,
-        "id": "0bed6b75-c5ef-41b8-b203-bb015a742a2d",
-        "name": "Sticky Note"
-      },
-      {
-        "parameters": {
           "respondWith": "text",
           "responseBody": "OK",
           "options": {
@@ -964,15 +1161,15 @@
         "type": "n8n-nodes-base.respondToWebhook",
         "typeVersion": 1,
         "position": [
-          64,
-          320
+          16,
+          528
         ],
         "name": "Respond to Slack",
         "id": "db0c01fe-e130-4858-b69a-34b5ffc3aa53"
       },
       {
         "parameters": {
-          "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs\n  }\n};"
+          "jsCode": "// Parse Slack interaction payload\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id; \nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\nconst messageTs = parsedPayload.message?.ts;\nconst triggerId = parsedPayload.trigger_id;\n\n// Logic to extract Bird IDs from the pipe-separated value\n// Example: \"9417efce...|7a2155ed...|6e133ad8...\"\nconst rawValue = action?.value || \"\";\nconst valueParts = rawValue.split('|');\n\nconst birdConversationId = valueParts[0] || null;\n\n// Helper function to extract text from markdown fields\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            return parts[1].trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text inside code blocks\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Extraction based on the specific keys in your JSON payload\nconst restaurantName = extractFromField(blocks, '*Restaurant:*');\nconst number = extractFromField(blocks, '*Number:*');\nconst contactName = extractFromField(blocks, '*Contact name:*');\nconst segment = extractFromField(blocks, '*Segment:*');\nconst leadMessage = extractSectionText(blocks, \"*Prospect's Reply:*\");\nconst aiResponse = extractSectionText(blocks, '*Agent Generated Response:*');\n\nfunction detectCountry(phone) {\n  if (!phone) return 'Unknown';\n  if (phone.startsWith('+65')) return 'Singapore';\n  if (phone.startsWith('+60')) return 'Malaysia';\n  if (phone.startsWith('+61')) return 'Australia';\n  if (phone.startsWith('+971')) return 'Dubai';\n  return 'Unknown';\n}\n\nreturn {\n  json: {\n    action_id: actionId,\n    bird_conversation_id: birdConversationId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_id: user?.id,\n    slack_user_name: user?.name || user?.username,\n    company_name: restaurantName,\n    contact_name: contactName || 'Unknown',\n    segment: segment || '',\n    lead_identifier: number,\n    country: detectCountry(number),\n    message_type: \"block_actions\",\n    lead_message: leadMessage,\n    ai_generated_response: aiResponse,\n    response_url: responseUrl,\n    original_message_ts: messageTs,\n    trigger_id: triggerId\n  }\n};"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -1020,7 +1217,7 @@
         "typeVersion": 2,
         "position": [
           1248,
-          208
+          224
         ],
         "name": "Check Send Status",
         "id": "cfef757e-6380-45ea-b0c8-60863d87dbf3"
@@ -1084,7 +1281,7 @@
         "typeVersion": 4.3,
         "position": [
           1520,
-          192
+          208
         ],
         "name": "Post Success status to Slack",
         "id": "7305a82e-ffdc-49ae-80cf-5191daf98a36",
@@ -1105,8 +1302,8 @@
         "type": "n8n-nodes-base.webhook",
         "typeVersion": 2.1,
         "position": [
-          -144,
-          128
+          -224,
+          336
         ],
         "id": "7b57d141-7fd7-4c63-aa1b-c7416bb390a0",
         "name": "Webhook",
@@ -1142,7 +1339,7 @@
         "typeVersion": 4.3,
         "position": [
           1008,
-          208
+          224
         ],
         "id": "37c0ac2e-06ae-4276-8d94-bb85e3e12188",
         "name": "Respond to Prospect",
@@ -1161,8 +1358,8 @@
         },
         "type": "n8n-nodes-base.stickyNote",
         "position": [
-          -128,
-          0
+          -176,
+          208
         ],
         "typeVersion": 1,
         "id": "c0fdf043-dd70-4245-ace2-cfac4339a18e",
@@ -1209,7 +1406,7 @@
         "typeVersion": 1.1,
         "position": [
           800,
-          208
+          224
         ],
         "id": "98d225be-0d55-4b0a-b8b8-104fd1f60d5a",
         "name": "Wait",
@@ -1370,12 +1567,196 @@
         "typeVersion": 4.5,
         "position": [
           1760,
-          192
+          208
         ],
         "credentials": {
           "googleSheetsOAuth2Api": {
             "id": "H3k1lZEtuCVhMzHl",
             "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
+          "width": 500
+        },
+        "id": "a1b00003-0003-4000-8000-000000000003",
+        "name": "Sticky Note3",
+        "type": "n8n-nodes-base.stickyNote",
+        "typeVersion": 1,
+        "position": [
+          1760,
+          0
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "loose",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "route-block-actions",
+                "leftValue": "={{ (() => { const p = $json.body.payload; const parsed = typeof p === 'string' ? JSON.parse(p) : p; return parsed.type; })() }}",
+                "rightValue": "block_actions",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "a1b00010-0010-4000-8000-000000000010",
+        "name": "Route Payload Type",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          16,
+          336
+        ]
+      },
+      {
+        "parameters": {
+          "jsCode": "const parsed = $('Parse Slack Payload').item.json;\n\nconst privateMetadata = JSON.stringify({\n  bird_conversation_id: parsed.bird_conversation_id,\n  phone_number: parsed.lead_identifier,\n  contact_name: parsed.contact_name,\n  restaurant_name: parsed.company_name,\n  country: parsed.country,\n  segment: parsed.segment || '',\n  slack_channel_id: parsed.slack_channel_id,\n  original_message_ts: parsed.original_message_ts,\n  slack_user_id: parsed.slack_user_id,\n  slack_user_name: parsed.slack_user_name,\n  lead_message: (parsed.lead_message || '').substring(0, 500),\n  ai_generated_response: (parsed.ai_generated_response || '').substring(0, 300)\n});\n\nconst leadMsgSafe = (parsed.lead_message || '').substring(0, 200);\nconst aiRespSafe = (parsed.ai_generated_response || '').substring(0, 200);\nconst contactInfo = (parsed.contact_name || 'Unknown') + ' - ' + (parsed.company_name || 'Unknown');\n\nconst viewsOpenModal = {\n  trigger_id: parsed.trigger_id,\n  view: {\n    type: 'modal',\n    callback_id: 'manual_response_modal',\n    title: { type: 'plain_text', text: 'Send Manual Response' },\n    submit: { type: 'plain_text', text: 'Send' },\n    close: { type: 'plain_text', text: 'Discard' },\n    private_metadata: privateMetadata,\n    blocks: [\n      {\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*To:* ' + contactInfo + '\\n*Their message:*\\n```' + leadMsgSafe + '```'\n        }\n      },\n      {\n        type: 'section',\n        text: {\n          type: 'mrkdwn',\n          text: '*AI suggestion:*\\n```' + aiRespSafe + '```'\n        }\n      },\n      {\n        type: 'input',\n        block_id: 'manual_response_block',\n        label: { type: 'plain_text', text: 'Your response' },\n        element: {\n          type: 'plain_text_input',\n          action_id: 'manual_response_input',\n          multiline: true,\n          placeholder: { type: 'plain_text', text: 'Type your message to the prospect...' }\n        }\n      }\n    ]\n  }\n};\n\nreturn { json: { views_open_modal: viewsOpenModal } };"
+        },
+        "id": "a1b00011-0011-4000-8000-000000000011",
+        "name": "Build Rejection Modal",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          800,
+          624
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/views.open",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={{ $json.views_open_modal }}",
+          "options": {}
+        },
+        "id": "a1b00012-0012-4000-8000-000000000012",
+        "name": "Open Rejection Modal",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1040,
+          624
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8F3Mb23D8ZFkrAh6",
+            "name": "Slack's WhatsApp Agent Alex"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nconst ctx = JSON.parse(parsed.view.private_metadata);\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+        },
+        "id": "a1b00013-0013-4000-8000-000000000013",
+        "name": "Parse Modal Submission",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          272,
+          848
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/conversations/{{ $json.bird_conversation_id }}/messages",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpHeaderAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n    \"participantType\": \"accessKey\",\n    \"participantId\": \"60363874-e6e7-4af3-8a7f-9878ba9a173a\",\n    \"recipients\": [\n      {\n        \"type\": \"to\",\n        \"identifierKey\": \"phonenumber\",\n        \"identifierValue\": \"{{ $json.phone_number }}\"\n      }\n    ],\n    \"body\": {\n      \"type\": \"text\",\n      \"text\": {\n        \"text\": \"{{ \n  (function() {\n    let text = $json.manual_response || '';\n    return JSON.stringify(text).slice(1, -1);\n  })()\n}}\"\n      }\n    },\n    \"addMissingParticipants\": true\n}",
+          "options": {
+            "redirect": {
+              "redirect": {
+                "followRedirects": false
+              }
+            }
+          }
+        },
+        "id": "a1b00014-0014-4000-8000-000000000014",
+        "name": "Send Manual Response to Bird",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          496,
+          848
+        ],
+        "credentials": {
+          "httpHeaderAuth": {
+            "id": "1R4VMEjneoFtqiZe",
+            "name": "Bird API Key"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{\n  (function() {\n    let txt = $('Parse Modal Submission').item.json.lead_message || '';\n    return JSON.stringify(txt).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Manual Response Sent:*\\n```{{\n  (function() {\n    let txt = $('Parse Modal Submission').item.json.manual_response || '';\n    return JSON.stringify(txt).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "id": "a1b00015-0015-4000-8000-000000000015",
+        "name": "Update Message - Manual Sent",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          720,
+          848
+        ],
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "8F3Mb23D8ZFkrAh6",
+            "name": "Slack's WhatsApp Agent Alex"
           }
         }
       },
@@ -1399,16 +1780,18 @@
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "timestamp": "={{ $now.format('DD HH:mm') }}",
-              "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
-              "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
-              "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
-              "country": "={{ $('Parse Slack Payload').item.json.country }}",
-              "bird_conversation_id": "={{ $('Parse Slack Payload').item.json.bird_conversation_id }}",
-              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
-              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
-              "response_type": "rejected",
-              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}"
+              "timestamp": "={{ $('Parse Modal Submission').item.json.timestamp }}",
+              "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
+              "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
+              "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
+              "country": "={{ $('Parse Modal Submission').item.json.country }}",
+              "bird_conversation_id": "={{ $('Parse Modal Submission').item.json.bird_conversation_id }}",
+              "lead_message": "={{ $('Parse Modal Submission').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Modal Submission').item.json.ai_generated_response }}",
+              "final_response": "={{ $('Parse Modal Submission').item.json.manual_response }}",
+              "bird_message_id": "={{ $('Send Manual Response to Bird').item.json.id }}",
+              "response_type": "rejected_manual",
+              "reviewer": "={{ $('Parse Modal Submission').item.json.slack_user_name }}"
             },
             "matchingColumns": [],
             "schema": [
@@ -1526,13 +1909,13 @@
           },
           "options": {}
         },
-        "id": "a1b00002-0002-4000-8000-000000000002",
-        "name": "Log Rejected to Google Sheet",
+        "id": "a1b00016-0016-4000-8000-000000000016",
+        "name": "Log Manual Response to Google Sheet",
         "type": "n8n-nodes-base.googleSheets",
         "typeVersion": 4.5,
         "position": [
-          1040,
-          416
+          944,
+          848
         ],
         "credentials": {
           "googleSheetsOAuth2Api": {
@@ -1540,20 +1923,6 @@
             "name": "Google Sheets account 1"
           }
         }
-      },
-      {
-        "parameters": {
-          "content": "### Setup Required\n1. Configure documentId on both Log nodes — select 'Outbound SDR Training Data' sheet, tab: response\n2. Verify bird_message_id field name from a live Bird API response (Log Approved node uses $('Respond to Prospect').item.json.id)",
-          "width": 500
-        },
-        "id": "a1b00003-0003-4000-8000-000000000003",
-        "name": "Sticky Note3",
-        "type": "n8n-nodes-base.stickyNote",
-        "typeVersion": 1,
-        "position": [
-          1760,
-          0
-        ]
       }
     ],
     "connections": {
@@ -1586,11 +1955,6 @@
           ]
         ]
       },
-      "Post Error status to Slack": {
-        "main": [
-          []
-        ]
-      },
       "Post Success status to Slack": {
         "main": [
           [
@@ -1611,7 +1975,7 @@
               "index": 0
             },
             {
-              "node": "Parse Slack Payload",
+              "node": "Route Payload Type",
               "type": "main",
               "index": 0
             }
@@ -1648,6 +2012,11 @@
               "node": "Update Message - Rejected",
               "type": "main",
               "index": 0
+            },
+            {
+              "node": "Build Rejection Modal",
+              "type": "main",
+              "index": 0
             }
           ]
         ]
@@ -1663,11 +2032,62 @@
           ]
         ]
       },
-      "Update Message - Rejected": {
+      "Route Payload Type": {
         "main": [
           [
             {
-              "node": "Log Rejected to Google Sheet",
+              "node": "Parse Slack Payload",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Parse Modal Submission",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Build Rejection Modal": {
+        "main": [
+          [
+            {
+              "node": "Open Rejection Modal",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Modal Submission": {
+        "main": [
+          [
+            {
+              "node": "Send Manual Response to Bird",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Manual Response to Bird": {
+        "main": [
+          [
+            {
+              "node": "Update Message - Manual Sent",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Message - Manual Sent": {
+        "main": [
+          [
+            {
+              "node": "Log Manual Response to Google Sheet",
               "type": "main",
               "index": 0
             }
@@ -1676,8 +2096,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": null,
-    "description": null,
+    "name": "Version d4df0eff",
+    "description": "",
     "autosaved": false
   },
   "tags": []
