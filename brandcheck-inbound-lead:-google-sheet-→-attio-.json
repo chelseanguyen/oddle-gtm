@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-22T03:44:39.461Z",
+  "updatedAt": "2026-04-24T02:36:58.275Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -11,7 +11,9 @@
         "pollTimes": {
           "item": [
             {
-              "mode": "everyMinute"
+              "mode": "everyX",
+              "value": 5,
+              "unit": "minutes"
             }
           ]
         },
@@ -2619,8 +2621,8 @@
       }
     ]
   },
-  "versionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
-  "activeVersionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
+  "versionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
+  "activeVersionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
   "triggerCount": 1,
   "shared": [
     {
@@ -2632,9 +2634,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-22T03:44:42.910Z",
-    "createdAt": "2026-04-22T03:44:39.466Z",
-    "versionId": "b7d7c42f-92a2-4fc4-8f9c-57e28be2ba39",
+    "updatedAt": "2026-04-24T02:37:01.590Z",
+    "createdAt": "2026-04-24T02:36:58.379Z",
+    "versionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -2642,7 +2644,9 @@
           "pollTimes": {
             "item": [
               {
-                "mode": "everyMinute"
+                "mode": "everyX",
+                "value": 5,
+                "unit": "minutes"
               }
             ]
           },
@@ -5199,7 +5203,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version b7d7c42f",
+    "name": "Version e67d75e2",
     "description": "",
     "autosaved": false
   },
