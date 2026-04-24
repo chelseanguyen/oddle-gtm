@@ -1,0 +1,1904 @@
+{
+  "updatedAt": "2026-04-24T08:45:06.821Z",
+  "createdAt": "2026-01-14T09:14:31.594Z",
+  "id": "Z4BV7uCQ8dSjXR1w",
+  "name": "[Email] Process human-approved response for Email Agent",
+  "active": true,
+  "isArchived": false,
+  "nodes": [
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}|{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}|{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ $('Parse Slack Payload').item.json.lead_message && $('Parse Slack Payload').item.json.lead_message.length > 500 ? $('Parse Slack Payload').item.json.lead_message.substring(0, 500).replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') + '\\\\n\\\\n[Message truncated - view full reply in Lemlist]' : ($('Parse Slack Payload').item.json.lead_message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ ($('Parse Slack Payload').item.json.ai_generated_response || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        720,
+        -32
+      ],
+      "name": "Update Message - Approved",
+      "id": "c0bb6280-cc23-4bba-8cde-1993c51dd7ee",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply - send failed\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    \n    let truncated = rawText.length > 500 \n      ? rawText.substring(0, 500) + '\\n\\n[Message truncated - view full reply in Lemlist]' \n      : rawText;\n    \n    return JSON.stringify(truncated).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || ''; \n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":x: *Email Send Failed* - Approved by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1920,
+        320
+      ],
+      "name": "Update Message - Error",
+      "id": "5e15d02c-1bd0-4e09-b25b-503cc1a61c72",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.update",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ $('Parse Slack Payload').item.json.lead_message && $('Parse Slack Payload').item.json.lead_message.length > 500 ? $('Parse Slack Payload').item.json.lead_message.substring(0, 500).replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') + '\\\\n\\\\n[Message truncated - view full reply in Lemlist]' : ($('Parse Slack Payload').item.json.lead_message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ ($('Parse Slack Payload').item.json.ai_generated_response || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        720,
+        416
+      ],
+      "name": "Update Message - Rejected",
+      "id": "a374ed4a-89e5-41ac-bc27-5b3d2afc32a5",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse conversation history to extract subject, metadata, and lead message\n\n  const messages = $input.first().json.data || [];\n  const latestMessage = messages[0] || {};\n\n  // Extract subject line\n  let subject = latestMessage.subject || 'Re: Follow-up';\n  if (!subject.toLowerCase().startsWith('re:')) {\n    subject = 'Re: ' + subject;\n  }\n\n  // Find the first email sent by us for metadata\n  const sentMessage = messages.find(msg => msg.type === 'emailsSent') || latestMessage;\n\n  // Find the latest lead message (type: \"emailsReplied\")\n  const leadReply = messages.find(msg => msg.type === 'emailsReplied');\n  let leadMessage = '';\n\n  if (leadReply && leadReply.message) {\n    // Clean up HTML tags and decode entities\n    leadMessage = leadReply.message\n      .replace(/<[^>]*>/g, '')           // Remove HTML tags\n      .replace(/&lt;/g, '<')             // Decode HTML entities\n      .replace(/&gt;/g, '>')\n      .replace(/&amp;/g, '&')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&#39;/g, \"'\")            // Decode apostrophe\n      .replace(/&quot;/g, '\"')           // Decode quotes\n      .replace(/&#x27;/g, \"'\")           // Decode hex apostrophe\n      .replace(/&apos;/g, \"'\")           // Decode apos\n      .replace(/\\s+/g, ' ')              // Collapse multiple spaces\n      .trim()                            // Remove leading/trailing whitespace\n      .substring(0, 500);                // Truncate to 500 characters\n  }\n\n  // Handle CC\n  let cc = null;\n  if (Array.isArray(sentMessage.cc)) {\n    cc = sentMessage.cc.length > 0 ? sentMessage.cc : null;\n  } else if (Array.isArray(latestMessage.cc)) {\n    cc = latestMessage.cc.length > 0 ? latestMessage.cc : null;\n  }\n\n  return {\n    json: {\n      subject: subject,\n      sendUserId: sentMessage.sendUserId || null,\n      sendUserEmail: sentMessage.sendUserEmail || null,\n      sendUserMailboxId: sentMessage.sendUserMailboxId || null,\n      contactId: latestMessage.contactId || null,\n      leadId: latestMessage.leadId || null,\n      cc: cc,\n      leadMessage: leadMessage  // Cleaned and truncated lead message\n    }\n  };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        944,
+        192
+      ],
+      "name": "Parse Conversation History",
+      "id": "c8f231c4-a50f-47f9-9677-477c2c5d482e"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "slack-reply-approval",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -160,
+        320
+      ],
+      "name": "Slack Webhook Trigger",
+      "webhookId": "slack-reply-approval",
+      "id": "8f0b0f30-e8aa-4f1e-886a-95cfe672fa47"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "OK",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        64,
+        320
+      ],
+      "name": "Respond to Slack",
+      "id": "8262bccd-7e74-46ba-a844-7a1f4d9aabd5"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse Slack interaction payload for RLHF\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Helper function to decode Slack HTML entities\nconst decode = (str) => {\n  if (!str) return null;\n  return str\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>');\n};\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id;\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\n\n// Helper function to extract text from markdown field\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            let value = parts[1];\n            const emailMatch = value.match(/<mailto:([^|>]+)\\|/);\n            if (emailMatch) {\n              return emailMatch[1];\n            }\n            return value.trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text from section with specific header\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract Lemlist IDs from URL in context block\nfunction extractLemlistIds(blocks) {\n  for (const block of blocks) {\n    if (block.type === 'context' && block.elements) {\n      for (const element of block.elements) {\n        if (element.text && element.text.includes('app.lemlist.com')) {\n          const urlMatch = element.text.match(/https:\\/\\/app\\.lemlist\\.com\\/teams\\/([^\\/]+)\\/inbox\\/list\\/myConversations\\/contacts\\/([^|>]+)/);\n          if (urlMatch) {\n            return {\n              teamId: urlMatch[1],\n              contactId: urlMatch[2]\n            };\n          }\n        }\n      }\n    }\n  }\n  return { teamId: null, contactId: null };\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Apply decoding during extraction\nconst companyName = decode(extractFromField(blocks, '*Company:*'));\nconst leadEmail = extractFromField(blocks, '*Lead Email:*');\nconst replyFromEmail = extractFromField(blocks, '*Reply-from Email:*');\nconst outreachCampaign = decode(extractFromField(blocks, '*Outreach Campaign:*'));\nconst prospectReply = decode(extractSectionText(blocks, \"*Prospect's Reply:*\"));\nconst agentResponse = decode(extractSectionText(blocks, '*Agent Generated Response:*'));\nconst lemlistIds = extractLemlistIds(blocks);\n// Parse button value: \"messageId||createdAt\" format (falls back to legacy plain messageId)\nconst rawButtonValue = action?.value || '';\nconst valueParts = rawButtonValue.split('||');\nconst lemlistMessageId = valueParts[0] || rawButtonValue;\nconst prospectReplyTs = valueParts[1] || null;\n\nconst country = extractFromField(blocks, '*Country:*');\n\nreturn {\n  json: {\n    action_id: actionId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_name: user?.name || user?.username,\n    company_name: companyName,\n    lead_identifier: leadEmail,\n    reply_from_email: replyFromEmail,\n    campaign_name: outreachCampaign,\n    country: country,\n    lead_message: prospectReply,\n    ai_generated_response: agentResponse,\n    lemlist_contact_id: lemlistIds.contactId,\n    lemlist_team_id: lemlistIds.teamId,\n    lemlist_message_id: lemlistMessageId,\n    prospect_reply_ts: prospectReplyTs,\n    user_id: user?.id,\n    response_url: responseUrl,\n    original_message_ts: parsedPayload.message?.ts,\n    team_id: parsedPayload.team?.id\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        320
+      ],
+      "name": "Parse Slack Payload",
+      "id": "0840d52c-e4d6-450e-97a1-ea46837a4936"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "condition-approve",
+              "leftValue": "={{ $json.action_id }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        496,
+        320
+      ],
+      "name": "Check Action",
+      "id": "f8866b04-bfe6-4ddb-9c34-1205e3a37afc"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.lemlist.com/api/inbox/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "lemlistApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [
+        720,
+        192
+      ],
+      "name": "Retrieve Conversation History",
+      "id": "f29fcfaa-b69c-4eb3-9837-c777e32f9ef6",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.lemlist.com/api/inbox/email",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "sendUserId",
+              "value": "={{ $json.sendUserId }}"
+            },
+            {
+              "name": "sendUserEmail",
+              "value": "={{ $json.sendUserEmail }}"
+            },
+            {
+              "name": "sendUserMailboxId",
+              "value": "={{ $json.sendUserMailboxId }}"
+            },
+            {
+              "name": "contactId",
+              "value": "={{ $json.contactId }}"
+            },
+            {
+              "name": "leadId",
+              "value": "={{ $json.leadId }}"
+            },
+            {
+              "name": "subject",
+              "value": "={{ $json.subject }}"
+            },
+            {
+              "name": "message",
+              "value": "={{ \n  '<p>' + \n  $('Parse Slack Payload').item.json.ai_generated_response\n    .replace(/(https?:\\/\\/[^\\s>]+)/g, '<a href=\"$1\">$1</a>')\n    .split('\\n\\n')\n    .map(para => para.replace(/\\n/g, '<br>'))\n    .join('</p><p>') + \n  '</p>' \n}}"
+            },
+            {
+              "name": "cc",
+              "value": "={{ $json.cc.map(item => item.address) }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1152,
+        192
+      ],
+      "name": "Send Email via Lemlist",
+      "id": "80d7a160-204b-4808-b891-1818a837e993",
+      "credentials": {
+        "lemlistApi": {
+          "id": "6dgMHleAsx5bfyF9",
+          "name": "Lemlist account"
+        },
+        "httpBasicAuth": {
+          "id": "ErJHjZR0I2frgqLU",
+          "name": "Lemlist Account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ \n  (function() {\n    let errorText = $json.error.message || ''; \n    \n    return JSON.stringify(errorText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Error sending email, please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1680,
+        320
+      ],
+      "name": "Post Error status to Slack",
+      "id": "98f56553-2067-46d6-9bc4-1e233be2acd7",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Email sent successfully!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Email Sent Successfully\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View conversation in Lemlist>\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1680,
+        32
+      ],
+      "name": "Post Success status to Slack",
+      "id": "a859ec25-2b54-40cd-a4b3-f3210f3d7a22",
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "A9y0ZdmG00hI8udd",
+          "name": "Slack's Email SDR Agent"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ok }}",
+                    "rightValue": true,
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "equals"
+                    },
+                    "id": "f8b49112-55c9-470e-9925-5d6aafdf74df"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Send success"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d10af122-becb-4eb2-bc29-b810356f05df",
+                    "leftValue": "={{ $json.error }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "object",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error sending"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1376,
+        192
+      ],
+      "id": "be1d0f2d-ceb6-4a57-b8cd-b6fdc61c84df",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+          "mode": "list",
+          "cachedResultName": "Outbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2133763837,
+          "mode": "list",
+          "cachedResultName": "email",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=2133763837"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "original_message_ts": "={{ DateTime.fromISO($('Parse Slack Payload').item.json.prospect_reply_ts).setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+            "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+            "lead_email": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+            "reply_from_email": "={{ $('Parse Slack Payload').item.json.reply_from_email }}",
+            "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+            "country": "={{ $('Parse Slack Payload').item.json.country }}",
+            "campaign_name": "={{ $('Parse Slack Payload').item.json.campaign_name }}",
+            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "response_type": "approved",
+            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}",
+            "lemlist_message_id": "={{ $('Parse Slack Payload').item.json.lemlist_message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "original_message_ts",
+              "displayName": "original_message_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sdr_action_ts",
+              "displayName": "sdr_action_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_email",
+              "displayName": "lead_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_from_email",
+              "displayName": "reply_from_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "campaign_name",
+              "displayName": "campaign_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lemlist_message_id",
+              "displayName": "lemlist_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "2b2c029b-faf2-476f-8a34-98c8dba73576",
+      "name": "Log Approved to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1920,
+        32
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+          "mode": "list",
+          "cachedResultName": "Outbound SDR Training Data",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2133763837,
+          "mode": "list",
+          "cachedResultName": "email",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=2133763837"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "original_message_ts": "={{ DateTime.fromISO($('Parse Slack Payload').item.json.prospect_reply_ts).setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+            "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+            "lead_email": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+            "reply_from_email": "={{ $('Parse Slack Payload').item.json.reply_from_email }}",
+            "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+            "country": "={{ $('Parse Slack Payload').item.json.country }}",
+            "campaign_name": "={{ $('Parse Slack Payload').item.json.campaign_name }}",
+            "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+            "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+            "final_response": "",
+            "response_type": "rejected",
+            "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}",
+            "lemlist_message_id": "={{ $('Parse Slack Payload').item.json.lemlist_message_id }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "original_message_ts",
+              "displayName": "original_message_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sdr_action_ts",
+              "displayName": "sdr_action_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_email",
+              "displayName": "lead_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reply_from_email",
+              "displayName": "reply_from_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "restaurant_name",
+              "displayName": "restaurant_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "country",
+              "displayName": "country",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "campaign_name",
+              "displayName": "campaign_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lead_message",
+              "displayName": "lead_message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "agent_response",
+              "displayName": "agent_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "final_response",
+              "displayName": "final_response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "response_type",
+              "displayName": "response_type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "reviewer",
+              "displayName": "reviewer",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "lemlist_message_id",
+              "displayName": "lemlist_message_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "35a0f2a6-813b-449a-b4b5-096811b01e42",
+      "name": "Log Rejected to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        960,
+        416
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "H3k1lZEtuCVhMzHl",
+          "name": "Google Sheets account 1"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Parse Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Send Email via Lemlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Respond to Slack",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Parse Slack Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Slack Payload": {
+      "main": [
+        [
+          {
+            "node": "Check Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Action": {
+      "main": [
+        [
+          {
+            "node": "Retrieve Conversation History",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Update Message - Approved",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Message - Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve Conversation History": {
+      "main": [
+        [
+          {
+            "node": "Parse Conversation History",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Email via Lemlist": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Error status to Slack": {
+      "main": [
+        [
+          {
+            "node": "Update Message - Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Success status to Slack": {
+      "main": [
+        [
+          {
+            "node": "Log Approved to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Post Success status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post Error status to Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Message - Rejected": {
+      "main": [
+        [
+          {
+            "node": "Log Rejected to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "callerPolicy": "workflowsFromSameOwner",
+    "timeSavedPerExecution": 5,
+    "timezone": "Asia/Singapore",
+    "errorWorkflow": "2SWvtvGbkteCtlr0"
+  },
+  "staticData": null,
+  "meta": null,
+  "pinData": {
+    "Slack Webhook Trigger": [
+      {
+        "json": {
+          "headers": {
+            "host": "workflow.oddle.center",
+            "user-agent": "Slackbot 1.0 (+https://api.slack.com/robots)",
+            "accept": "application/json,*/*",
+            "x-slack-signature": "v0=e056fec596a8f94daced1432360da538a1af58146bbe6600bb2d88d01d7eae58",
+            "x-slack-request-timestamp": "1771999157",
+            "content-length": "5284",
+            "content-type": "application/x-www-form-urlencoded",
+            "x-cloud-trace-context": "bea317ca6648cb6ab3ccd1274813d219/15258554632089625829;o=1",
+            "x-forwarded-proto": "https",
+            "traceparent": "00-bea317ca6648cb6ab3ccd1274813d219-d3c146983797e4e5-01",
+            "x-forwarded-for": "44.221.74.133",
+            "forwarded": "for=\"44.221.74.133\";proto=https",
+            "accept-encoding": "gzip,deflate"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "payload": "{\"type\":\"block_actions\",\"user\":{\"id\":\"U0FASTJ1H\",\"username\":\"chelsea\",\"name\":\"chelsea\",\"team_id\":\"T030ZCV78\"},\"api_app_id\":\"A0A55SZF3EU\",\"token\":\"mA4Pk1zJFUdp77ZGdyQ7LFki\",\"container\":{\"type\":\"message\",\"message_ts\":\"1771993885.827749\",\"channel_id\":\"C0AB3U5B1D4\",\"is_ephemeral\":false},\"trigger_id\":\"10575793591734.3033437246.bea337fc85aaab12afc95954b383e3b8\",\"team\":{\"id\":\"T030ZCV78\",\"domain\":\"oddle\"},\"enterprise\":null,\"is_enterprise_install\":false,\"channel\":{\"id\":\"C0AB3U5B1D4\",\"name\":\"noti-sdr-email-agent\"},\"message\":{\"user\":\"U0A484RHCNR\",\"type\":\"message\",\"ts\":\"1771993885.827749\",\"bot_id\":\"B0A4BHC4802\",\"app_id\":\"A0A55SZF3EU\",\"text\":\"New prospect reply needs approval\",\"team\":\"T030ZCV78\",\"blocks\":[{\"type\":\"header\",\"block_id\":\"oHNf0\",\"text\":{\"type\":\"plain_text\",\"text\":\":bell: New Prospect Reply\",\"emoji\":true}},{\"type\":\"divider\",\"block_id\":\"mgGrK\"},{\"type\":\"section\",\"block_id\":\"kr4mc\",\"fields\":[{\"type\":\"mrkdwn\",\"text\":\"*Company:*\\nAlbion Hotel Collingwood\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Lead Email:*\\npete@albionhotel.pub\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Reply-from Email:*\\npete@bodriggy.beer\",\"verbatim\":false},{\"type\":\"mrkdwn\",\"text\":\"*Outreach Campaign:*\\n[AU] SevenRooms &amp; No delivery (Feb 2026)\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"AFQ4I\"},{\"type\":\"section\",\"block_id\":\"3RjMP\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Prospect's Reply:*\\n```No thanks!\\n\\n\\nOn Wed, Feb 25, 2026 at 2:19\\u202fPM Alan Goh &lt;alan.goh@oddle-company.net&gt; wrote:\\n\\n&gt; Hi Albion Hotel Collingwood,\\n&gt;\\n&gt; Our *Founder Access* officially ends in March.\\n&gt;\\n&gt; After that, the rate for Albion Hotel Collingwood will jump to our\\n&gt; standard A$249\\/month.\\n&gt;\\n&gt; If you've been looking for a...\\n\\n[Message truncated - view full reply in Lemlist]```\",\"verbatim\":false}},{\"type\":\"divider\",\"block_id\":\"Ot\\/u5\"},{\"type\":\"section\",\"block_id\":\"wt5D4\",\"text\":{\"type\":\"mrkdwn\",\"text\":\"*Agent Generated Response:*\\n```Hi Pete,\\n\\nNo worries at all.\\n\\nBefore I close the loop on my end, could I check one thing just so I don't send you irrelevant info in the future? Are you \\\"not interested\\\" because you are happy with your current costs, or is it simply that you aren't looking to change anything this quarter?\\n\\nCheers,\\nAlan```\",\"verbatim\":false}},{\"type\":\"context\",\"block_id\":\"aaatg\",\"elements\":[{\"type\":\"mrkdwn\",\"text\":\":e-mail: <https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_FWejoMLNHwKW5mKfP|View full conversation in Lemlist>\",\"verbatim\":false}]},{\"type\":\"divider\",\"block_id\":\"\\/l8gd\"},{\"type\":\"actions\",\"block_id\":\"approval_actions\",\"elements\":[{\"type\":\"button\",\"action_id\":\"approve\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"style\":\"primary\",\"value\":\"<CAAb53nh987LEpo6rDCd_u0U5Ui4m1DmMLa6JSoHhe5qnSdt7qA@mail.gmail.com>\"},{\"type\":\"button\",\"action_id\":\"reject\",\"text\":{\"type\":\"plain_text\",\"text\":\":pencil2: Reject &amp; Edit\",\"emoji\":true},\"style\":\"danger\",\"url\":\"https:\\/\\/app.lemlist.com\\/teams\\/tea_gYwPePZxuhFb6QraW\\/inbox\\/list\\/myConversations\\/contacts\\/ctc_FWejoMLNHwKW5mKfP\"}]}]},\"state\":{\"values\":{}},\"response_url\":\"https:\\/\\/hooks.slack.com\\/actions\\/T030ZCV78\\/10577855577666\\/pW7lCbLhdXs68ImNRlv7h7US\",\"actions\":[{\"action_id\":\"approve\",\"block_id\":\"approval_actions\",\"text\":{\"type\":\"plain_text\",\"text\":\":white_check_mark: Approve &amp; Send\",\"emoji\":true},\"value\":\"<CAAb53nh987LEpo6rDCd_u0U5Ui4m1DmMLa6JSoHhe5qnSdt7qA@mail.gmail.com>\",\"style\":\"primary\",\"type\":\"button\",\"action_ts\":\"1771999157.503591\"}]}"
+          },
+          "webhookUrl": "https://workflow.oddle.center/webhook/slack-reply-approval",
+          "executionMode": "production"
+        }
+      }
+    ]
+  },
+  "versionId": "d2272738-c582-46bc-95ec-24bb1f0386ee",
+  "activeVersionId": "d2272738-c582-46bc-95ec-24bb1f0386ee",
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-01-14T09:14:31.594Z",
+      "createdAt": "2026-01-14T09:14:31.594Z",
+      "role": "workflow:owner",
+      "workflowId": "Z4BV7uCQ8dSjXR1w",
+      "projectId": "tAHBdayTR1Nb6OKK"
+    }
+  ],
+  "activeVersion": {
+    "updatedAt": "2026-04-24T08:45:06.825Z",
+    "createdAt": "2026-04-24T08:45:06.825Z",
+    "versionId": "d2272738-c582-46bc-95ec-24bb1f0386ee",
+    "workflowId": "Z4BV7uCQ8dSjXR1w",
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply approved\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}|{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}|{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ $('Parse Slack Payload').item.json.lead_message && $('Parse Slack Payload').item.json.lead_message.length > 500 ? $('Parse Slack Payload').item.json.lead_message.substring(0, 500).replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') + '\\\\n\\\\n[Message truncated - view full reply in Lemlist]' : ($('Parse Slack Payload').item.json.lead_message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ ($('Parse Slack Payload').item.json.ai_generated_response || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":white_check_mark: *Approved* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          720,
+          -32
+        ],
+        "name": "Update Message - Approved",
+        "id": "c0bb6280-cc23-4bba-8cde-1993c51dd7ee",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply - send failed\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ \n  (function() {\n    let rawText = $('Parse Slack Payload').item.json.lead_message || '';\n    \n    let truncated = rawText.length > 500 \n      ? rawText.substring(0, 500) + '\\n\\n[Message truncated - view full reply in Lemlist]' \n      : rawText;\n    \n    return JSON.stringify(truncated).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ \n  (function() {\n    let agentText = $('Parse Slack Payload').item.json.ai_generated_response || ''; \n    return JSON.stringify(agentText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":x: *Email Send Failed* - Approved by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1920,
+          320
+        ],
+        "name": "Update Message - Error",
+        "id": "5e15d02c-1bd0-4e09-b25b-503cc1a61c72",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.update",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Slack Payload').item.json.original_message_ts }}\",\n  \"text\": \"Prospect reply rejected\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Lead Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.lead_identifier }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Reply-from Email:*\\n<mailto:{{ $('Parse Slack Payload').item.json.reply_from_email }}>\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ $('Parse Slack Payload').item.json.lead_message && $('Parse Slack Payload').item.json.lead_message.length > 500 ? $('Parse Slack Payload').item.json.lead_message.substring(0, 500).replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') + '\\\\n\\\\n[Message truncated - view full reply in Lemlist]' : ($('Parse Slack Payload').item.json.lead_message || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ ($('Parse Slack Payload').item.json.ai_generated_response || '').replace(/\\r\\n/g, '\\\\n').replace(/\\n/g, '\\\\n').replace(/\\r/g, '\\\\n').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\\\"/g, '\\\\\"') }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View full conversation in Lemlist>\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* by <@{{ $('Parse Slack Payload').item.json.user_id }}>\"\n      }\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          720,
+          416
+        ],
+        "name": "Update Message - Rejected",
+        "id": "a374ed4a-89e5-41ac-bc27-5b3d2afc32a5",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse conversation history to extract subject, metadata, and lead message\n\n  const messages = $input.first().json.data || [];\n  const latestMessage = messages[0] || {};\n\n  // Extract subject line\n  let subject = latestMessage.subject || 'Re: Follow-up';\n  if (!subject.toLowerCase().startsWith('re:')) {\n    subject = 'Re: ' + subject;\n  }\n\n  // Find the first email sent by us for metadata\n  const sentMessage = messages.find(msg => msg.type === 'emailsSent') || latestMessage;\n\n  // Find the latest lead message (type: \"emailsReplied\")\n  const leadReply = messages.find(msg => msg.type === 'emailsReplied');\n  let leadMessage = '';\n\n  if (leadReply && leadReply.message) {\n    // Clean up HTML tags and decode entities\n    leadMessage = leadReply.message\n      .replace(/<[^>]*>/g, '')           // Remove HTML tags\n      .replace(/&lt;/g, '<')             // Decode HTML entities\n      .replace(/&gt;/g, '>')\n      .replace(/&amp;/g, '&')\n      .replace(/&nbsp;/g, ' ')\n      .replace(/&#39;/g, \"'\")            // Decode apostrophe\n      .replace(/&quot;/g, '\"')           // Decode quotes\n      .replace(/&#x27;/g, \"'\")           // Decode hex apostrophe\n      .replace(/&apos;/g, \"'\")           // Decode apos\n      .replace(/\\s+/g, ' ')              // Collapse multiple spaces\n      .trim()                            // Remove leading/trailing whitespace\n      .substring(0, 500);                // Truncate to 500 characters\n  }\n\n  // Handle CC\n  let cc = null;\n  if (Array.isArray(sentMessage.cc)) {\n    cc = sentMessage.cc.length > 0 ? sentMessage.cc : null;\n  } else if (Array.isArray(latestMessage.cc)) {\n    cc = latestMessage.cc.length > 0 ? latestMessage.cc : null;\n  }\n\n  return {\n    json: {\n      subject: subject,\n      sendUserId: sentMessage.sendUserId || null,\n      sendUserEmail: sentMessage.sendUserEmail || null,\n      sendUserMailboxId: sentMessage.sendUserMailboxId || null,\n      contactId: latestMessage.contactId || null,\n      leadId: latestMessage.leadId || null,\n      cc: cc,\n      leadMessage: leadMessage  // Cleaned and truncated lead message\n    }\n  };"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          944,
+          192
+        ],
+        "name": "Parse Conversation History",
+        "id": "c8f231c4-a50f-47f9-9677-477c2c5d482e"
+      },
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "slack-reply-approval",
+          "responseMode": "responseNode",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1.1,
+        "position": [
+          -160,
+          320
+        ],
+        "name": "Slack Webhook Trigger",
+        "webhookId": "slack-reply-approval",
+        "id": "8f0b0f30-e8aa-4f1e-886a-95cfe672fa47"
+      },
+      {
+        "parameters": {
+          "respondWith": "text",
+          "responseBody": "OK",
+          "options": {
+            "responseCode": 200
+          }
+        },
+        "type": "n8n-nodes-base.respondToWebhook",
+        "typeVersion": 1,
+        "position": [
+          64,
+          320
+        ],
+        "name": "Respond to Slack",
+        "id": "8262bccd-7e74-46ba-a844-7a1f4d9aabd5"
+      },
+      {
+        "parameters": {
+          "jsCode": "// Parse Slack interaction payload for RLHF\nconst payload = $input.first().json.body.payload;\nlet parsedPayload;\n\nif (typeof payload === 'string') {\n  parsedPayload = JSON.parse(payload);\n} else {\n  parsedPayload = payload;\n}\n\n// Helper function to decode Slack HTML entities\nconst decode = (str) => {\n  if (!str) return null;\n  return str\n    .replace(/&amp;/g, '&')\n    .replace(/&lt;/g, '<')\n    .replace(/&gt;/g, '>');\n};\n\n// Extract basic action details\nconst action = parsedPayload.actions?.[0];\nconst actionId = action?.action_id;\nconst user = parsedPayload.user;\nconst channel = parsedPayload.channel;\nconst responseUrl = parsedPayload.response_url;\n\n// Helper function to extract text from markdown field\nfunction extractFromField(blocks, label) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.fields) {\n      for (const field of block.fields) {\n        if (field.text && field.text.includes(label)) {\n          const parts = field.text.split('\\n');\n          if (parts.length > 1) {\n            let value = parts[1];\n            const emailMatch = value.match(/<mailto:([^|>]+)\\|/);\n            if (emailMatch) {\n              return emailMatch[1];\n            }\n            return value.trim();\n          }\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract text from section with specific header\nfunction extractSectionText(blocks, header) {\n  for (const block of blocks) {\n    if (block.type === 'section' && block.text && block.text.text) {\n      if (block.text.text.includes(header)) {\n        const text = block.text.text;\n        const codeBlockMatch = text.match(/```([\\s\\S]*?)```/);\n        if (codeBlockMatch) {\n          return codeBlockMatch[1].trim();\n        }\n        const parts = text.split(header);\n        if (parts.length > 1) {\n          return parts[1].replace(/^\\n/, '').trim();\n        }\n      }\n    }\n  }\n  return null;\n}\n\n// Helper function to extract Lemlist IDs from URL in context block\nfunction extractLemlistIds(blocks) {\n  for (const block of blocks) {\n    if (block.type === 'context' && block.elements) {\n      for (const element of block.elements) {\n        if (element.text && element.text.includes('app.lemlist.com')) {\n          const urlMatch = element.text.match(/https:\\/\\/app\\.lemlist\\.com\\/teams\\/([^\\/]+)\\/inbox\\/list\\/myConversations\\/contacts\\/([^|>]+)/);\n          if (urlMatch) {\n            return {\n              teamId: urlMatch[1],\n              contactId: urlMatch[2]\n            };\n          }\n        }\n      }\n    }\n  }\n  return { teamId: null, contactId: null };\n}\n\nconst blocks = parsedPayload.message?.blocks || [];\n\n// Apply decoding during extraction\nconst companyName = decode(extractFromField(blocks, '*Company:*'));\nconst leadEmail = extractFromField(blocks, '*Lead Email:*');\nconst replyFromEmail = extractFromField(blocks, '*Reply-from Email:*');\nconst outreachCampaign = decode(extractFromField(blocks, '*Outreach Campaign:*'));\nconst prospectReply = decode(extractSectionText(blocks, \"*Prospect's Reply:*\"));\nconst agentResponse = decode(extractSectionText(blocks, '*Agent Generated Response:*'));\nconst lemlistIds = extractLemlistIds(blocks);\n// Parse button value: \"messageId||createdAt\" format (falls back to legacy plain messageId)\nconst rawButtonValue = action?.value || '';\nconst valueParts = rawButtonValue.split('||');\nconst lemlistMessageId = valueParts[0] || rawButtonValue;\nconst prospectReplyTs = valueParts[1] || null;\n\nconst country = extractFromField(blocks, '*Country:*');\n\nreturn {\n  json: {\n    action_id: actionId,\n    slack_channel_id: channel?.id,\n    slack_channel_name: channel?.name,\n    slack_user_name: user?.name || user?.username,\n    company_name: companyName,\n    lead_identifier: leadEmail,\n    reply_from_email: replyFromEmail,\n    campaign_name: outreachCampaign,\n    country: country,\n    lead_message: prospectReply,\n    ai_generated_response: agentResponse,\n    lemlist_contact_id: lemlistIds.contactId,\n    lemlist_team_id: lemlistIds.teamId,\n    lemlist_message_id: lemlistMessageId,\n    prospect_reply_ts: prospectReplyTs,\n    user_id: user?.id,\n    response_url: responseUrl,\n    original_message_ts: parsedPayload.message?.ts,\n    team_id: parsedPayload.team?.id\n  }\n};"
+        },
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          272,
+          320
+        ],
+        "name": "Parse Slack Payload",
+        "id": "0840d52c-e4d6-450e-97a1-ea46837a4936"
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "condition-approve",
+                "leftValue": "={{ $json.action_id }}",
+                "rightValue": "approve",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          496,
+          320
+        ],
+        "name": "Check Action",
+        "id": "f8866b04-bfe6-4ddb-9c34-1205e3a37afc"
+      },
+      {
+        "parameters": {
+          "url": "=https://api.lemlist.com/api/inbox/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}",
+          "authentication": "predefinedCredentialType",
+          "nodeCredentialType": "lemlistApi",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          720,
+          192
+        ],
+        "name": "Retrieve Conversation History",
+        "id": "f29fcfaa-b69c-4eb3-9837-c777e32f9ef6",
+        "credentials": {
+          "lemlistApi": {
+            "id": "6dgMHleAsx5bfyF9",
+            "name": "Lemlist account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.lemlist.com/api/inbox/email",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBasicAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "sendUserId",
+                "value": "={{ $json.sendUserId }}"
+              },
+              {
+                "name": "sendUserEmail",
+                "value": "={{ $json.sendUserEmail }}"
+              },
+              {
+                "name": "sendUserMailboxId",
+                "value": "={{ $json.sendUserMailboxId }}"
+              },
+              {
+                "name": "contactId",
+                "value": "={{ $json.contactId }}"
+              },
+              {
+                "name": "leadId",
+                "value": "={{ $json.leadId }}"
+              },
+              {
+                "name": "subject",
+                "value": "={{ $json.subject }}"
+              },
+              {
+                "name": "message",
+                "value": "={{ \n  '<p>' + \n  $('Parse Slack Payload').item.json.ai_generated_response\n    .replace(/(https?:\\/\\/[^\\s>]+)/g, '<a href=\"$1\">$1</a>')\n    .split('\\n\\n')\n    .map(para => para.replace(/\\n/g, '<br>'))\n    .join('</p><p>') + \n  '</p>' \n}}"
+              },
+              {
+                "name": "cc",
+                "value": "={{ $json.cc.map(item => item.address) }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1152,
+          192
+        ],
+        "name": "Send Email via Lemlist",
+        "id": "80d7a160-204b-4808-b891-1818a837e993",
+        "credentials": {
+          "lemlistApi": {
+            "id": "6dgMHleAsx5bfyF9",
+            "name": "Lemlist account"
+          },
+          "httpBasicAuth": {
+            "id": "ErJHjZR0I2frgqLU",
+            "name": "Lemlist Account"
+          }
+        },
+        "continueOnFail": true
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send email\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":x: Failed to Send Email\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ \n  (function() {\n    let errorText = $json.error.message || ''; \n    \n    return JSON.stringify(errorText).slice(1, -1);\n  })()\n}}```\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":warning: Error sending email, please send the reply manually in Lemlist\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1680,
+          320
+        ],
+        "name": "Post Error status to Slack",
+        "id": "98f56553-2067-46d6-9bc4-1e233be2acd7",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://slack.com/api/chat.postMessage",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "specifyBody": "json",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Email sent successfully!\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":white_check_mark: Email Sent Successfully\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*To:*\\n{{ $('Parse Slack Payload').item.json.reply_from_email }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Company:*\\n{{ $('Parse Slack Payload').item.json.company_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Outreach Campaign:*\\n{{ $('Parse Slack Payload').item.json.campaign_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \":e-mail: <https://app.lemlist.com/teams/{{ $('Parse Slack Payload').item.json.lemlist_team_id }}/inbox/list/myConversations/contacts/{{ $('Parse Slack Payload').item.json.lemlist_contact_id }}|View conversation in Lemlist>\"\n        }\n      ]\n    }\n  ]\n}",
+          "options": {}
+        },
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.3,
+        "position": [
+          1680,
+          32
+        ],
+        "name": "Post Success status to Slack",
+        "id": "a859ec25-2b54-40cd-a4b3-f3210f3d7a22",
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "A9y0ZdmG00hI8udd",
+            "name": "Slack's Email SDR Agent"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "rules": {
+            "values": [
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "leftValue": "={{ $json.ok }}",
+                      "rightValue": true,
+                      "operator": {
+                        "type": "boolean",
+                        "operation": "equals"
+                      },
+                      "id": "f8b49112-55c9-470e-9925-5d6aafdf74df"
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Send success"
+              },
+              {
+                "conditions": {
+                  "options": {
+                    "caseSensitive": true,
+                    "leftValue": "",
+                    "typeValidation": "strict",
+                    "version": 3
+                  },
+                  "conditions": [
+                    {
+                      "id": "d10af122-becb-4eb2-bc29-b810356f05df",
+                      "leftValue": "={{ $json.error }}",
+                      "rightValue": "",
+                      "operator": {
+                        "type": "object",
+                        "operation": "notEmpty",
+                        "singleValue": true
+                      }
+                    }
+                  ],
+                  "combinator": "and"
+                },
+                "renameOutput": true,
+                "outputKey": "Error sending"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "type": "n8n-nodes-base.switch",
+        "typeVersion": 3.4,
+        "position": [
+          1376,
+          192
+        ],
+        "id": "be1d0f2d-ceb6-4a57-b8cd-b6fdc61c84df",
+        "name": "Switch"
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+            "mode": "list",
+            "cachedResultName": "Outbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2133763837,
+            "mode": "list",
+            "cachedResultName": "email",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=2133763837"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "original_message_ts": "={{ DateTime.fromISO($('Parse Slack Payload').item.json.prospect_reply_ts).setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+              "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+              "lead_email": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+              "reply_from_email": "={{ $('Parse Slack Payload').item.json.reply_from_email }}",
+              "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+              "country": "={{ $('Parse Slack Payload').item.json.country }}",
+              "campaign_name": "={{ $('Parse Slack Payload').item.json.campaign_name }}",
+              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "final_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "response_type": "approved",
+              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}",
+              "lemlist_message_id": "={{ $('Parse Slack Payload').item.json.lemlist_message_id }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "original_message_ts",
+                "displayName": "original_message_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "sdr_action_ts",
+                "displayName": "sdr_action_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_email",
+                "displayName": "lead_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reply_from_email",
+                "displayName": "reply_from_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "campaign_name",
+                "displayName": "campaign_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lemlist_message_id",
+                "displayName": "lemlist_message_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "2b2c029b-faf2-476f-8a34-98c8dba73576",
+        "name": "Log Approved to Google Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          1920,
+          32
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "append",
+          "documentId": {
+            "__rl": true,
+            "value": "1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg",
+            "mode": "list",
+            "cachedResultName": "Outbound SDR Training Data",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit?usp=drivesdk"
+          },
+          "sheetName": {
+            "__rl": true,
+            "value": 2133763837,
+            "mode": "list",
+            "cachedResultName": "email",
+            "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=2133763837"
+          },
+          "columns": {
+            "mappingMode": "defineBelow",
+            "value": {
+              "original_message_ts": "={{ DateTime.fromISO($('Parse Slack Payload').item.json.prospect_reply_ts).setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+              "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('DD HH:mm') }}",
+              "lead_email": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
+              "reply_from_email": "={{ $('Parse Slack Payload').item.json.reply_from_email }}",
+              "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
+              "country": "={{ $('Parse Slack Payload').item.json.country }}",
+              "campaign_name": "={{ $('Parse Slack Payload').item.json.campaign_name }}",
+              "lead_message": "={{ $('Parse Slack Payload').item.json.lead_message }}",
+              "agent_response": "={{ $('Parse Slack Payload').item.json.ai_generated_response }}",
+              "final_response": "",
+              "response_type": "rejected",
+              "reviewer": "={{ $('Parse Slack Payload').item.json.slack_user_name }}",
+              "lemlist_message_id": "={{ $('Parse Slack Payload').item.json.lemlist_message_id }}"
+            },
+            "matchingColumns": [],
+            "schema": [
+              {
+                "id": "original_message_ts",
+                "displayName": "original_message_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "sdr_action_ts",
+                "displayName": "sdr_action_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_email",
+                "displayName": "lead_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reply_from_email",
+                "displayName": "reply_from_email",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "restaurant_name",
+                "displayName": "restaurant_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "country",
+                "displayName": "country",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "campaign_name",
+                "displayName": "campaign_name",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lead_message",
+                "displayName": "lead_message",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "agent_response",
+                "displayName": "agent_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "final_response",
+                "displayName": "final_response",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "response_type",
+                "displayName": "response_type",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "reviewer",
+                "displayName": "reviewer",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              },
+              {
+                "id": "lemlist_message_id",
+                "displayName": "lemlist_message_id",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true
+              }
+            ],
+            "attemptToConvertTypes": false,
+            "convertFieldsToString": false
+          },
+          "options": {}
+        },
+        "id": "35a0f2a6-813b-449a-b4b5-096811b01e42",
+        "name": "Log Rejected to Google Sheet",
+        "type": "n8n-nodes-base.googleSheets",
+        "typeVersion": 4.5,
+        "position": [
+          960,
+          416
+        ],
+        "credentials": {
+          "googleSheetsOAuth2Api": {
+            "id": "H3k1lZEtuCVhMzHl",
+            "name": "Google Sheets account 1"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Parse Conversation History": {
+        "main": [
+          [
+            {
+              "node": "Send Email via Lemlist",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Slack Webhook Trigger": {
+        "main": [
+          [
+            {
+              "node": "Respond to Slack",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Parse Slack Payload",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Slack Payload": {
+        "main": [
+          [
+            {
+              "node": "Check Action",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Action": {
+        "main": [
+          [
+            {
+              "node": "Retrieve Conversation History",
+              "type": "main",
+              "index": 0
+            },
+            {
+              "node": "Update Message - Approved",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Update Message - Rejected",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Retrieve Conversation History": {
+        "main": [
+          [
+            {
+              "node": "Parse Conversation History",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Send Email via Lemlist": {
+        "main": [
+          [
+            {
+              "node": "Switch",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Error status to Slack": {
+        "main": [
+          [
+            {
+              "node": "Update Message - Error",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Post Success status to Slack": {
+        "main": [
+          [
+            {
+              "node": "Log Approved to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Switch": {
+        "main": [
+          [
+            {
+              "node": "Post Success status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Post Error status to Slack",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Update Message - Rejected": {
+        "main": [
+          [
+            {
+              "node": "Log Rejected to Google Sheet",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Oddle Engineer",
+    "name": null,
+    "description": null,
+    "autosaved": false
+  },
+  "tags": []
+}
