@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-22T07:14:19.650Z",
+  "updatedAt": "2026-04-23T11:12:45.171Z",
   "createdAt": "2026-02-05T06:36:49.966Z",
   "id": "iW7MF8aPEB5WE3Z2",
   "name": "[WhatsApp] Process human-approved response for WA SDR Agent",
@@ -352,13 +352,14 @@
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "response",
+          "cachedResultName": "whatsapp",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "timestamp": "={{ $now.format('DD HH:mm') }}",
+            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).toISO() }}",
+            "sdr_action_ts": "={{ $now.format('DD HH:mm') }}",
             "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
             "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
             "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
@@ -374,8 +375,18 @@
           "matchingColumns": [],
           "schema": [
             {
-              "id": "timestamp",
-              "displayName": "timestamp",
+              "id": "original_message_ts",
+              "displayName": "original_message_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sdr_action_ts",
+              "displayName": "sdr_action_ts",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -599,7 +610,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nconst ctx = JSON.parse(parsed.view.private_metadata);\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+        "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nlet ctx;\ntry {\n  ctx = JSON.parse(parsed.view.private_metadata);\n} catch (e) {\n  throw new Error('Failed to parse modal private_metadata: ' + e.message);\n}\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
       },
       "id": "a1b00013-0013-4000-8000-000000000013",
       "name": "Parse Modal Submission",
@@ -700,13 +711,14 @@
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
-          "cachedResultName": "response",
+          "cachedResultName": "whatsapp",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
         },
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "timestamp": "={{ $('Parse Modal Submission').item.json.timestamp }}",
+            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).toISO() }}",
+            "sdr_action_ts": "={{ $('Parse Modal Submission').item.json.timestamp }}",
             "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
             "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
             "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
@@ -722,8 +734,18 @@
           "matchingColumns": [],
           "schema": [
             {
-              "id": "timestamp",
-              "displayName": "timestamp",
+              "id": "original_message_ts",
+              "displayName": "original_message_ts",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sdr_action_ts",
+              "displayName": "sdr_action_ts",
               "required": false,
               "defaultMatch": false,
               "display": true,
@@ -935,12 +957,12 @@
         ],
         [
           {
-            "node": "Update Message - Rejected",
+            "node": "Build Rejection Modal",
             "type": "main",
             "index": 0
           },
           {
-            "node": "Build Rejection Modal",
+            "node": "Update Message - Rejected",
             "type": "main",
             "index": 0
           }
@@ -1062,8 +1084,8 @@
       }
     ]
   },
-  "versionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
-  "activeVersionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
+  "versionId": "6f300ea3-7322-48c5-93bd-81aebdcaf3ad",
+  "activeVersionId": "6f300ea3-7322-48c5-93bd-81aebdcaf3ad",
   "triggerCount": 1,
   "shared": [
     {
@@ -1075,9 +1097,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-22T07:14:21.562Z",
-    "createdAt": "2026-04-22T07:14:19.655Z",
-    "versionId": "d4df0eff-855e-4ce8-ab5c-a0066d70f6ac",
+    "updatedAt": "2026-04-23T11:12:45.179Z",
+    "createdAt": "2026-04-23T11:12:45.179Z",
+    "versionId": "6f300ea3-7322-48c5-93bd-81aebdcaf3ad",
     "workflowId": "iW7MF8aPEB5WE3Z2",
     "nodes": [
       {
@@ -1426,13 +1448,14 @@
             "__rl": true,
             "value": "gid=0",
             "mode": "list",
-            "cachedResultName": "response",
+            "cachedResultName": "whatsapp",
             "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
           },
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "timestamp": "={{ $now.format('DD HH:mm') }}",
+              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).toISO() }}",
+              "sdr_action_ts": "={{ $now.format('DD HH:mm') }}",
               "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
               "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
               "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
@@ -1448,8 +1471,18 @@
             "matchingColumns": [],
             "schema": [
               {
-                "id": "timestamp",
-                "displayName": "timestamp",
+                "id": "original_message_ts",
+                "displayName": "original_message_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "sdr_action_ts",
+                "displayName": "sdr_action_ts",
                 "required": false,
                 "defaultMatch": false,
                 "display": true,
@@ -1673,7 +1706,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nconst ctx = JSON.parse(parsed.view.private_metadata);\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
+          "jsCode": "const payload = $input.first().json.body.payload;\nconst parsed = typeof payload === 'string' ? JSON.parse(payload) : payload;\n\nlet ctx;\ntry {\n  ctx = JSON.parse(parsed.view.private_metadata);\n} catch (e) {\n  throw new Error('Failed to parse modal private_metadata: ' + e.message);\n}\nconst manualResponse = (parsed.view.state.values?.manual_response_block?.manual_response_input?.value || '').trim();\n\nreturn {\n  json: {\n    bird_conversation_id: ctx.bird_conversation_id,\n    phone_number: ctx.phone_number,\n    contact_name: ctx.contact_name,\n    restaurant_name: ctx.restaurant_name,\n    country: ctx.country,\n    segment: ctx.segment || '',\n    slack_channel_id: ctx.slack_channel_id,\n    original_message_ts: ctx.original_message_ts,\n    slack_user_id: parsed.user?.id || ctx.slack_user_id,\n    slack_user_name: parsed.user?.name || parsed.user?.username || ctx.slack_user_name,\n    lead_message: ctx.lead_message,\n    ai_generated_response: ctx.ai_generated_response,\n    manual_response: manualResponse,\n    timestamp: new Date().toISOString()\n  }\n};"
         },
         "id": "a1b00013-0013-4000-8000-000000000013",
         "name": "Parse Modal Submission",
@@ -1774,13 +1807,14 @@
             "__rl": true,
             "value": "gid=0",
             "mode": "list",
-            "cachedResultName": "response",
+            "cachedResultName": "whatsapp",
             "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1tsG507zazeSJjtdQPsuVbIpl2nRset30ZytjJQp9_hg/edit#gid=0"
           },
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "timestamp": "={{ $('Parse Modal Submission').item.json.timestamp }}",
+              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).toISO() }}",
+              "sdr_action_ts": "={{ $('Parse Modal Submission').item.json.timestamp }}",
               "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
               "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
               "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
@@ -1796,8 +1830,18 @@
             "matchingColumns": [],
             "schema": [
               {
-                "id": "timestamp",
-                "displayName": "timestamp",
+                "id": "original_message_ts",
+                "displayName": "original_message_ts",
+                "required": false,
+                "defaultMatch": false,
+                "display": true,
+                "type": "string",
+                "canBeUsedToMatch": true,
+                "removed": false
+              },
+              {
+                "id": "sdr_action_ts",
+                "displayName": "sdr_action_ts",
                 "required": false,
                 "defaultMatch": false,
                 "display": true,
@@ -2009,12 +2053,12 @@
           ],
           [
             {
-              "node": "Update Message - Rejected",
+              "node": "Build Rejection Modal",
               "type": "main",
               "index": 0
             },
             {
-              "node": "Build Rejection Modal",
+              "node": "Update Message - Rejected",
               "type": "main",
               "index": 0
             }
@@ -2096,8 +2140,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version d4df0eff",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": []
