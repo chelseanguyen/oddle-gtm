@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-24T02:36:58.275Z",
+  "updatedAt": "2026-04-27T02:45:22.206Z",
   "createdAt": "2026-03-11T10:28:30.004Z",
   "id": "KLWZBUSnirIYZ5Cw",
   "name": "BrandCheck Inbound Lead: Google Sheet → Attio",
@@ -1910,7 +1910,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
+        "jsonBody": "={\n  \"whatsapp_number\": \"+{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
         "options": {}
       },
       "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
@@ -2581,7 +2581,7 @@
     "node:New Record Created": {
       "documentId": "1UVyw2m4OqdHpnp7EOWrthXmhOIWXfd7CHtvj_xWNmLE",
       "sheetId": 0,
-      "lastIndexChecked": 761
+      "lastIndexChecked": 762
     }
   },
   "meta": {
@@ -2621,8 +2621,8 @@
       }
     ]
   },
-  "versionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
-  "activeVersionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
+  "versionId": "86f8a190-de98-473d-9933-d4403f81f2e6",
+  "activeVersionId": "86f8a190-de98-473d-9933-d4403f81f2e6",
   "triggerCount": 1,
   "shared": [
     {
@@ -2634,9 +2634,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-24T02:37:01.590Z",
-    "createdAt": "2026-04-24T02:36:58.379Z",
-    "versionId": "e67d75e2-c157-4cfd-9b78-6d1ca88fe1eb",
+    "updatedAt": "2026-04-27T02:45:25.880Z",
+    "createdAt": "2026-04-27T02:45:22.212Z",
+    "versionId": "86f8a190-de98-473d-9933-d4403f81f2e6",
     "workflowId": "KLWZBUSnirIYZ5Cw",
     "nodes": [
       {
@@ -4543,7 +4543,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"whatsapp_number\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
+          "jsonBody": "={\n  \"whatsapp_number\": \"+{{ $('Deduplicate Check').item.json.phoneNumber }}\",\n  \"name\": \"Unknown\",\n  \"custom_params\": [\n    { \"name\": \"restaurant\", \"value\": \"{{ $('Deduplicate Check').item.json.placeName || 'N/A' }}\" },\n    { \"name\": \"restaurant_role\", \"value\": \"{{ $('Deduplicate Check').item.json.role || 'N/A' }}\" },\n    { \"name\": \"email\", \"value\": \"{{ $('Deduplicate Check').item.json.email || 'N/A' }}\" },\n    { \"name\": \"country\", \"value\": \"{{ $('Deduplicate Check').item.json.country || 'N/A' }}\" },\n    { \"name\": \"source_url\", \"value\": \"https://brandcheck.oddle.me\" },\n    { \"name\": \"name\", \"value\": \"Unknown\" },\n    { \"name\": \"phone\", \"value\": \"{{ $('Deduplicate Check').item.json.phoneNumber }}\" },\n    { \"name\": \"attio_record_id\", \"value\": \"{{ $('Merge Company Search Paths').item.json.personRecordId || 'N/A' }}\" }\n  ]\n}",
           "options": {}
         },
         "id": "cf24087b-2b8d-46e3-a222-52ad8fc77bee",
@@ -5203,7 +5203,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version e67d75e2",
+    "name": "Version 86f8a190",
     "description": "",
     "autosaved": false
   },
