@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-24T08:58:19.193Z",
+  "updatedAt": "2026-04-27T03:32:00.953Z",
   "createdAt": "2026-04-07T09:58:15.103Z",
   "id": "x5TrHUH7xBfxMDVT",
   "name": "Inbound SDR Agent (WATI)",
@@ -255,7 +255,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.waId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.type }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.senderName }}\"\n        }        \n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.waId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.type }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.senderName }}\"\n        }        \n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on WATI & reply to the prospect.\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -309,7 +309,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+        "jsCode": "const payload = $('Receive Reply').item.json.body;\nconst imageUrl = payload.data || null;\nconst caption = payload.text || \"\";\nconst messageId = payload.id;\nconst senderNumber = payload.waId || \"\";\nconst senderName = payload.senderName || \"Unknown\";\n\nif (imageUrl) {\n  return [{\n    messageId: messageId,\n    imageUrl: imageUrl,\n    caption: caption,\n    senderNumber: senderNumber,\n    sender: senderName\n  }];\n} else {\n  return [{ imageUrl: null, status: \"no image found\" }];\n}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -322,16 +322,9 @@
     },
     {
       "parameters": {
-        "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
-            }
-          ]
-        },
+        "url": "={{ $('Get image file ID').item.json.imageUrl }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -341,8 +334,14 @@
         288
       ],
       "id": "2728a1fe-e251-40f9-9836-df4c9bc05aeb",
-      "name": "Retrieve image from Bird",
-      "alwaysOutputData": true
+      "name": "Retrieve image from WATI",
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
     },
     {
       "parameters": {
@@ -505,7 +504,7 @@
             {
               "id": "3a6b605b-f034-437c-a1c6-dc7eb082e3af",
               "name": "image_caption",
-              "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+              "value": "={{ $('Receive Reply').item.json.body.text || \"\" }}",
               "type": "string"
             }
           ]
@@ -885,7 +884,7 @@
     },
     {
       "parameters": {
-        "content": "## Process image messages - NEED TO EDIT FOR WATI",
+        "content": "## Process image messages",
         "height": 288,
         "width": 912,
         "color": 5
@@ -1468,14 +1467,14 @@
       "main": [
         [
           {
-            "node": "Retrieve image from Bird",
+            "node": "Retrieve image from WATI",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Retrieve image from Bird": {
+    "Retrieve image from WATI": {
       "main": [
         [
           {
@@ -1865,43 +1864,43 @@
           "headers": {
             "host": "workflow.oddle.center",
             "user-agent": "Wati-webhook/1.0 (https://wati.io; support@wati.io)",
-            "x-datadog-trace-id": "1855181562694887647",
-            "x-datadog-parent-id": "14591765308059448251",
+            "x-datadog-trace-id": "14351727621359043540",
+            "x-datadog-parent-id": "17805580186274458873",
             "x-datadog-sampling-priority": "0",
-            "x-datadog-tags": "_dd.p.tid=46bd92023b333770",
-            "traceparent": "00-46bd92023b33377019beedcd564868df-41111842890cd753-01",
-            "tracestate": "dd=s:0;p:ca805d3cb8c073bb",
+            "x-datadog-tags": "_dd.p.tid=983bc492cb58c08a",
+            "traceparent": "00-983bc492cb58c08ac72b943ba04483d4-1f0ba6d461fa950e-01",
+            "tracestate": "dd=s:0;p:f71a20d7669f6cf9",
             "content-type": "application/json; charset=utf-8",
-            "content-length": "756",
-            "x-cloud-trace-context": "46bd92023b33377019beedcd564868df/4688555361115625299;o=1",
+            "content-length": "796",
+            "x-cloud-trace-context": "983bc492cb58c08ac72b943ba04483d4/2237065071026672910;o=1",
             "x-forwarded-proto": "https",
-            "x-forwarded-for": "34.142.208.50",
-            "forwarded": "for=\"34.142.208.50\";proto=https"
+            "x-forwarded-for": "35.240.222.206",
+            "forwarded": "for=\"35.240.222.206\";proto=https"
           },
           "params": {},
           "query": {},
           "body": {
-            "id": "69def72d2c7e9879e41b0c03",
-            "created": "2026-04-15T02:25:49.6980002Z",
-            "whatsappMessageId": "wamid.HBgKNjU5ODU1NzA3MhUCABIYFDNBMUY1MEY0MTEzMUFBNUM5ODhCAA==",
-            "conversationId": "69de4e72fc14aa36815a05e2",
-            "ticketId": "69de4e73ab34d1fdc4354b47",
-            "text": "Chermain.cc@gmail.com",
-            "type": "text",
-            "data": null,
+            "id": "69eb997d8d019c934e7e44f2",
+            "created": "2026-04-24T16:25:33.7302355Z",
+            "whatsappMessageId": "wamid.HBgKNjU4MTAyODc5MhUCABIYFDNBNjJCNkRFQTA0NjgxMkE0Q0IxAA==",
+            "conversationId": "69302184d06c0b92af3c8a90",
+            "ticketId": "69eb9961a23dc4715fc60e3c",
+            "text": null,
+            "type": "image",
+            "data": "https://live-mt-server.wati.io/382749/api/file/showFile?fileName=data/images/27596468-3c5f-4c34-9e0d-ef5f85efabf1.jpg",
             "sourceId": null,
             "sourceUrl": null,
-            "timestamp": "1776219948",
+            "timestamp": "1777047931",
             "owner": false,
             "eventType": "message",
             "statusString": "SENT",
             "avatarUrl": null,
-            "assignedId": "67984447ba4c7afa1dfd35f6",
-            "operatorName": "Chloei Garcia",
-            "operatorEmail": "chloei.garcia@oddle.me",
-            "waId": "6598557072",
+            "assignedId": null,
+            "operatorName": null,
+            "operatorEmail": null,
+            "waId": "6581028792",
             "messageContact": null,
-            "senderName": "Chermain",
+            "senderName": "John",
             "listReply": null,
             "interactiveButtonReply": null,
             "buttonReply": null,
@@ -1916,8 +1915,8 @@
       }
     ]
   },
-  "versionId": "98d7d4c9-36f3-47cf-9138-a33d4acb583f",
-  "activeVersionId": "98d7d4c9-36f3-47cf-9138-a33d4acb583f",
+  "versionId": "5c6bd8ff-2ec8-40e6-b78a-6a426f2ba625",
+  "activeVersionId": "5c6bd8ff-2ec8-40e6-b78a-6a426f2ba625",
   "triggerCount": 1,
   "shared": [
     {
@@ -1929,9 +1928,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-24T08:58:20.998Z",
-    "createdAt": "2026-04-24T08:58:19.204Z",
-    "versionId": "98d7d4c9-36f3-47cf-9138-a33d4acb583f",
+    "updatedAt": "2026-04-27T03:32:04.027Z",
+    "createdAt": "2026-04-27T03:32:00.959Z",
+    "versionId": "5c6bd8ff-2ec8-40e6-b78a-6a426f2ba625",
     "workflowId": "x5TrHUH7xBfxMDVT",
     "nodes": [
       {
@@ -2183,7 +2182,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.waId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.type }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.senderName }}\"\n        }        \n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on Bird & reply to the prospect.\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"C0AR3LS7319\",\n  \"text\": \"Unrecognized message type received\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":warning: Unrecognized Message Type\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Receive Reply').item.json.body.waId }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Message type:*\\n`{{ $('Receive Reply').item.json.body.type }}`\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Receive Reply').item.json.body.senderName }}\"\n        }        \n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Status:* The AI Agent cannot process this message type automatically.\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Action Required:* Please check this conversation directly on WATI & reply to the prospect.\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -2237,7 +2236,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+          "jsCode": "const payload = $('Receive Reply').item.json.body;\nconst imageUrl = payload.data || null;\nconst caption = payload.text || \"\";\nconst messageId = payload.id;\nconst senderNumber = payload.waId || \"\";\nconst senderName = payload.senderName || \"Unknown\";\n\nif (imageUrl) {\n  return [{\n    messageId: messageId,\n    imageUrl: imageUrl,\n    caption: caption,\n    senderNumber: senderNumber,\n    sender: senderName\n  }];\n} else {\n  return [{ imageUrl: null, status: \"no image found\" }];\n}"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2250,16 +2249,9 @@
       },
       {
         "parameters": {
-          "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
-          "sendHeaders": true,
-          "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
-              }
-            ]
-          },
+          "url": "={{ $('Get image file ID').item.json.imageUrl }}",
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -2269,8 +2261,14 @@
           288
         ],
         "id": "2728a1fe-e251-40f9-9836-df4c9bc05aeb",
-        "name": "Retrieve image from Bird",
-        "alwaysOutputData": true
+        "name": "Retrieve image from WATI",
+        "alwaysOutputData": true,
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
       },
       {
         "parameters": {
@@ -2433,7 +2431,7 @@
               {
                 "id": "3a6b605b-f034-437c-a1c6-dc7eb082e3af",
                 "name": "image_caption",
-                "value": "={{ $('Receive Reply').item.json.body.payload.body.image.text || $('Receive Reply').item.json.body.payload.body.video.text || $('Receive Reply').item.json.body.payload.body.audio.text || \"\" }}",
+                "value": "={{ $('Receive Reply').item.json.body.text || \"\" }}",
                 "type": "string"
               }
             ]
@@ -2813,7 +2811,7 @@
       },
       {
         "parameters": {
-          "content": "## Process image messages - NEED TO EDIT FOR WATI",
+          "content": "## Process image messages",
           "height": 288,
           "width": 912,
           "color": 5
@@ -3396,14 +3394,14 @@
         "main": [
           [
             {
-              "node": "Retrieve image from Bird",
+              "node": "Retrieve image from WATI",
               "type": "main",
               "index": 0
             }
           ]
         ]
       },
-      "Retrieve image from Bird": {
+      "Retrieve image from WATI": {
         "main": [
           [
             {
@@ -3774,7 +3772,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 98d7d4c9",
+    "name": "Version 5c6bd8ff",
     "description": "",
     "autosaved": false
   },
