@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-29T08:19:05.198Z",
+  "updatedAt": "2026-04-29T10:27:31.757Z",
   "createdAt": "2026-02-05T06:36:49.966Z",
   "id": "iW7MF8aPEB5WE3Z2",
   "name": "[WhatsApp] Process human-approved response for WA SDR Agent",
@@ -358,8 +358,8 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-            "sdr_action_ts": "={{ $now.toFormat('MMM dd, yyyy HH:mm') }}",
+            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+            "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
             "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
             "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
             "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
@@ -679,7 +679,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Manual Response Sent:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.manual_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.ai_generated_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
         "options": {}
       },
       "id": "a1b00015-0015-4000-8000-000000000015",
@@ -763,8 +763,8 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-            "sdr_action_ts": "={{ DateTime.fromISO($('Parse Modal Submission').item.json.timestamp).toFormat('MMM dd, yyyy HH:mm') }}",
+            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+            "sdr_action_ts": "={{ DateTime.fromISO($('Parse Modal Submission').item.json.timestamp).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
             "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
             "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
             "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
@@ -938,8 +938,8 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse View Closed').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-            "sdr_action_ts": "={{ $now.toFormat('MMM dd, yyyy HH:mm') }}",
+            "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse View Closed').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+            "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
             "phone_number": "={{ $('Parse View Closed').item.json.phone_number }}",
             "contact_name": "={{ $('Parse View Closed').item.json.contact_name }}",
             "restaurant_name": "={{ $('Parse View Closed').item.json.restaurant_name }}",
@@ -1372,8 +1372,8 @@
       }
     ]
   },
-  "versionId": "4eb2fbac-ea66-4314-afb6-0b96779a57f5",
-  "activeVersionId": "4eb2fbac-ea66-4314-afb6-0b96779a57f5",
+  "versionId": "dfc1bb8b-ab4c-4ec5-8419-2021d3b1a7dd",
+  "activeVersionId": "dfc1bb8b-ab4c-4ec5-8419-2021d3b1a7dd",
   "triggerCount": 1,
   "shared": [
     {
@@ -1385,9 +1385,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-29T08:19:07.187Z",
-    "createdAt": "2026-04-29T08:19:05.207Z",
-    "versionId": "4eb2fbac-ea66-4314-afb6-0b96779a57f5",
+    "updatedAt": "2026-04-29T10:27:33.799Z",
+    "createdAt": "2026-04-29T10:27:31.762Z",
+    "versionId": "dfc1bb8b-ab4c-4ec5-8419-2021d3b1a7dd",
     "workflowId": "iW7MF8aPEB5WE3Z2",
     "nodes": [
       {
@@ -1742,8 +1742,8 @@
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-              "sdr_action_ts": "={{ $now.toFormat('MMM dd, yyyy HH:mm') }}",
+              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Slack Payload').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+              "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
               "phone_number": "={{ $('Parse Slack Payload').item.json.lead_identifier }}",
               "contact_name": "={{ $('Parse Slack Payload').item.json.contact_name }}",
               "restaurant_name": "={{ $('Parse Slack Payload').item.json.company_name }}",
@@ -2063,7 +2063,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Manual Response Sent:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.manual_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Modal Submission').item.json.slack_channel_id }}\",\n  \"ts\": \"{{ $('Parse Modal Submission').item.json.original_message_ts }}\",\n  \"text\": \"Rejected - manual response sent\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \":bell: New Prospect Reply\",\n        \"emoji\": true\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Modal Submission').item.json.phone_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Restaurant:*\\n{{ $('Parse Modal Submission').item.json.restaurant_name }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Contact name:*\\n{{ $('Parse Modal Submission').item.json.contact_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Prospect's Reply:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.lead_message || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Agent Generated Response:*\\n```{{ (function() { let txt = $('Parse Modal Submission').item.json.ai_generated_response || ''; return JSON.stringify(txt).slice(1, -1); })() }}```\"\n      }\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \":no_entry: *Rejected* :white_check_mark: *Manual response sent* by <@{{ $('Parse Modal Submission').item.json.slack_user_id }}>\"\n      }\n    }\n  ]\n}",
           "options": {}
         },
         "id": "a1b00015-0015-4000-8000-000000000015",
@@ -2147,8 +2147,8 @@
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-              "sdr_action_ts": "={{ DateTime.fromISO($('Parse Modal Submission').item.json.timestamp).toFormat('MMM dd, yyyy HH:mm') }}",
+              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse Modal Submission').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+              "sdr_action_ts": "={{ DateTime.fromISO($('Parse Modal Submission').item.json.timestamp).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
               "phone_number": "={{ $('Parse Modal Submission').item.json.phone_number }}",
               "contact_name": "={{ $('Parse Modal Submission').item.json.contact_name }}",
               "restaurant_name": "={{ $('Parse Modal Submission').item.json.restaurant_name }}",
@@ -2322,8 +2322,8 @@
           "columns": {
             "mappingMode": "defineBelow",
             "value": {
-              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse View Closed').item.json.original_message_ts) * 1000).toFormat('MMM dd, yyyy HH:mm') }}",
-              "sdr_action_ts": "={{ $now.toFormat('MMM dd, yyyy HH:mm') }}",
+              "original_message_ts": "={{ DateTime.fromMillis(Number($('Parse View Closed').item.json.original_message_ts) * 1000).setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
+              "sdr_action_ts": "={{ $now.setZone('Asia/Singapore').toFormat('MMM dd, yyyy HH:mm') }}",
               "phone_number": "={{ $('Parse View Closed').item.json.phone_number }}",
               "contact_name": "={{ $('Parse View Closed').item.json.contact_name }}",
               "restaurant_name": "={{ $('Parse View Closed').item.json.restaurant_name }}",
@@ -2716,7 +2716,7 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 4eb2fbac",
+    "name": "Version dfc1bb8b",
     "description": "",
     "autosaved": false
   },
