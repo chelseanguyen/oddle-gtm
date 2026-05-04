@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-29T03:36:08.127Z",
+  "updatedAt": "2026-05-04T02:49:23.547Z",
   "createdAt": "2026-04-07T09:58:15.103Z",
   "id": "x5TrHUH7xBfxMDVT",
   "name": "Inbound SDR Agent (WATI)",
@@ -31,7 +31,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const receiveReply = $('Receive Reply').item.json.body;\nconst phoneNumber = receiveReply.waId;\nconst conversationId = receiveReply.conversationId;\nconst messageType = receiveReply.type;\nconst messageText = receiveReply.text || `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    conversation_id: conversationId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
+        "jsCode": "const receiveReply = $('Receive Reply').item.json.body;\nconst phoneNumber = receiveReply.waId;\nconst conversationId = receiveReply.conversationId;\nconst messageType = receiveReply.type;\nconst messageText = receiveReply.text || `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\nif (receiveReply.data) newMessage.data = receiveReply.data;\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    conversation_id: conversationId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -203,7 +203,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    conversation_id: row.conversation_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+        "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nconst imageMessage = messages.find(m => m.type === 'image' && m.data);\nconst image_url = imageMessage ? imageMessage.data : null;\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    conversation_id: row.conversation_id,\n    merged_text,\n    message_type,\n    message_count: messages.length,\n    image_url\n  }\n}];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -309,7 +309,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+        "jsCode": "const imageUrl = $('Merge Messages').item.json.image_url || null;\n\nif (imageUrl) {\n  return [{ json: { imageUrl } }];\n} else {\n  return [{ json: { imageUrl: null, status: 'no image found' } }];\n}"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -322,17 +322,14 @@
     },
     {
       "parameters": {
-        "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
-        "sendHeaders": true,
+        "url": "={{ $('Get image file ID').item.json.imageUrl }}",
+        "sendHeaders": false,
         "headerParameters": {
-          "parameters": [
-            {
-              "name": "Authorization",
-              "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
-            }
-          ]
+          "parameters": []
         },
-        "options": {}
+        "options": {},
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBearerAuth"
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
@@ -342,7 +339,13 @@
       ],
       "id": "2728a1fe-e251-40f9-9836-df4c9bc05aeb",
       "name": "Retrieve image from Bird",
-      "alwaysOutputData": true
+      "alwaysOutputData": true,
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "qBoCbsiIZFcmrK9e",
+          "name": "WATI API token"
+        }
+      }
     },
     {
       "parameters": {
@@ -1916,8 +1919,8 @@
       }
     ]
   },
-  "versionId": "3533eef5-05f6-419c-bff8-fdc02350ac06",
-  "activeVersionId": "3533eef5-05f6-419c-bff8-fdc02350ac06",
+  "versionId": "d97ea965-c0f6-4188-9ec3-90a19eb46235",
+  "activeVersionId": "d97ea965-c0f6-4188-9ec3-90a19eb46235",
   "triggerCount": 1,
   "shared": [
     {
@@ -1929,9 +1932,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-29T03:36:10.433Z",
-    "createdAt": "2026-04-29T03:36:08.134Z",
-    "versionId": "3533eef5-05f6-419c-bff8-fdc02350ac06",
+    "updatedAt": "2026-05-04T02:49:23.553Z",
+    "createdAt": "2026-05-04T02:49:23.553Z",
+    "versionId": "d97ea965-c0f6-4188-9ec3-90a19eb46235",
     "workflowId": "x5TrHUH7xBfxMDVT",
     "nodes": [
       {
@@ -1959,7 +1962,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const receiveReply = $('Receive Reply').item.json.body;\nconst phoneNumber = receiveReply.waId;\nconst conversationId = receiveReply.conversationId;\nconst messageType = receiveReply.type;\nconst messageText = receiveReply.text || `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    conversation_id: conversationId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
+          "jsCode": "const receiveReply = $('Receive Reply').item.json.body;\nconst phoneNumber = receiveReply.waId;\nconst conversationId = receiveReply.conversationId;\nconst messageType = receiveReply.type;\nconst messageText = receiveReply.text || `[${messageType} message]`;\nconst now = new Date().toISOString();\n\nconst newMessage = { type: messageType, text: messageText, timestamp: now };\nif (receiveReply.data) newMessage.data = receiveReply.data;\n\nconst getResponse = $input.item.json;\nconst existingRow = Array.isArray(getResponse) && getResponse.length > 0 ? getResponse[0] : null;\nconst existingMessages = existingRow?.messages || [];\n\nconst mergedMessages = [...existingMessages, newMessage];\n\nreturn [{\n  json: {\n    phone_number: phoneNumber,\n    messages: mergedMessages,\n    conversation_id: conversationId,\n    message_type: messageType,\n    updated_at: now\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2131,7 +2134,7 @@
       },
       {
         "parameters": {
-          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    conversation_id: row.conversation_id,\n    merged_text,\n    message_type,\n    message_count: messages.length\n  }\n}];"
+          "jsCode": "const response = $input.item.json;\nconst row = Array.isArray(response) ? response[0] : response;\n\nif (!row || !row.messages || row.messages.length === 0) {\n  return [{\n    json: {\n      phone_number: $('Store myTs').item.json.phone_number,\n      merged_text: '',\n      message_type: $('Store myTs').item.json.message_type || 'text',\n      message_count: 0\n    }\n  }];\n}\n\nconst messages = row.messages;\nconst textParts = messages\n  .map(m => (m.text && !m.text.startsWith('[')) ? m.text : null)\n  .filter(Boolean);\n\nconst merged_text = textParts.join('\\n');\n\nconst typePriority = ['image', 'file', 'voice', 'audio', 'video', 'link_preview', 'text'];\nconst foundTypes = new Set(messages.map(m => m.type));\nconst message_type = typePriority.find(t => foundTypes.has(t)) || 'text';\n\nconst imageMessage = messages.find(m => m.type === 'image' && m.data);\nconst image_url = imageMessage ? imageMessage.data : null;\n\nreturn [{\n  json: {\n    phone_number: row.phone_number,\n    conversation_id: row.conversation_id,\n    merged_text,\n    message_type,\n    message_count: messages.length,\n    image_url\n  }\n}];"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2237,7 +2240,7 @@
       },
       {
         "parameters": {
-          "jsCode": "// Extract the main payload\nconst payload = $('Receive Reply').item.json.body.payload;\nconst imageBody = payload?.body?.image?.images;\nconst imagesFound = [];\n\nif (imageBody && Array.isArray(imageBody)) {\n  for (const img of imageBody) {\n    if (img.mediaUrl) {\n      // Extract Media ID from the end of the URL\n      const mediaId = img.mediaUrl.split('/').pop();\n\n      imagesFound.push({\n        messageId: payload.id, \n        mediaFileId: mediaId,\n        imageUrl: img.mediaUrl,\n        caption: payload.body?.image?.text || payload.body?.caption || \"\",\n        senderNumber: payload.sender?.contact?.identifierValue || \"\",\n        sender: payload.sender?.contact?.annotations?.name || \"Unknown\"\n      });\n    }\n  }\n}\n\n// Return the extracted data or a fallback if no images exist\nreturn imagesFound.length > 0 ? imagesFound : [{ imageUrl: null, status: \"no image found\" }];"
+          "jsCode": "const imageUrl = $('Merge Messages').item.json.image_url || null;\n\nif (imageUrl) {\n  return [{ json: { imageUrl } }];\n} else {\n  return [{ json: { imageUrl: null, status: 'no image found' } }];\n}"
         },
         "type": "n8n-nodes-base.code",
         "typeVersion": 2,
@@ -2250,17 +2253,14 @@
       },
       {
         "parameters": {
-          "url": "=https://media.api.bird.com/workspaces/736ee961-e36a-4b45-af59-adb909f0ba56/messages/{{ $('Get image file ID').item.json.messageId }}/media/{{ $('Get image file ID').item.json.mediaFileId }}",
-          "sendHeaders": true,
+          "url": "={{ $('Get image file ID').item.json.imageUrl }}",
+          "sendHeaders": false,
           "headerParameters": {
-            "parameters": [
-              {
-                "name": "Authorization",
-                "value": "AccessKey JpV6a4ZnSnvXExEeUW0Rd046hsBMwmBpjmWN"
-              }
-            ]
+            "parameters": []
           },
-          "options": {}
+          "options": {},
+          "authentication": "genericCredentialType",
+          "genericAuthType": "httpBearerAuth"
         },
         "type": "n8n-nodes-base.httpRequest",
         "typeVersion": 4.3,
@@ -2270,7 +2270,13 @@
         ],
         "id": "2728a1fe-e251-40f9-9836-df4c9bc05aeb",
         "name": "Retrieve image from Bird",
-        "alwaysOutputData": true
+        "alwaysOutputData": true,
+        "credentials": {
+          "httpBearerAuth": {
+            "id": "qBoCbsiIZFcmrK9e",
+            "name": "WATI API token"
+          }
+        }
       },
       {
         "parameters": {
@@ -3774,8 +3780,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version 3533eef5",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": []
