@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-04-24T08:57:08.469Z",
+  "updatedAt": "2026-05-04T02:48:50.532Z",
   "createdAt": "2026-04-17T08:47:15.279Z",
   "id": "l3VrpNa4gGW9isL3",
   "name": "[WATI] Process approved response for Inbound WA SDR Agent - Training Data Capture",
@@ -165,7 +165,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```Error sending response to prospect```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via Bird.*\"\n        }\n      ]\n    }\n  ]\n}",
+        "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $('Respond to Prospect').item.json.error || 'Unknown error' }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via WATI.*\"\n        }\n      ]\n    }\n  ]\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -272,7 +272,8 @@
           "id": "qBoCbsiIZFcmrK9e",
           "name": "WATI API token"
         }
-      }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -853,8 +854,8 @@
       }
     ]
   },
-  "versionId": "d2d626dc-3174-441d-9a06-5e5fd0c11297",
-  "activeVersionId": "d2d626dc-3174-441d-9a06-5e5fd0c11297",
+  "versionId": "7fd6deb3-2d4f-4680-87e2-b695a75f1740",
+  "activeVersionId": "7fd6deb3-2d4f-4680-87e2-b695a75f1740",
   "triggerCount": 1,
   "shared": [
     {
@@ -866,9 +867,9 @@
     }
   ],
   "activeVersion": {
-    "updatedAt": "2026-04-24T08:57:10.181Z",
-    "createdAt": "2026-04-24T08:57:08.473Z",
-    "versionId": "d2d626dc-3174-441d-9a06-5e5fd0c11297",
+    "updatedAt": "2026-05-04T02:48:50.541Z",
+    "createdAt": "2026-05-04T02:48:50.541Z",
+    "versionId": "7fd6deb3-2d4f-4680-87e2-b695a75f1740",
     "workflowId": "l3VrpNa4gGW9isL3",
     "nodes": [
       {
@@ -1030,7 +1031,7 @@
           },
           "sendBody": true,
           "specifyBody": "json",
-          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```Error sending response to prospect```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via Bird.*\"\n        }\n      ]\n    }\n  ]\n}",
+          "jsonBody": "={\n  \"channel\": \"{{ $('Parse Slack Payload').item.json.slack_channel_id }}\",\n  \"text\": \"Failed to send message\",\n  \"blocks\": [\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"❌ *Failed to send message*\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Number:*\\n{{ $('Parse Slack Payload').item.json.contact_number }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Approved by:*\\n{{ $('Parse Slack Payload').item.json.slack_user_name }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*Error Details:*\\n```{{ $('Respond to Prospect').item.json.error || 'Unknown error' }}```\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⚠️ *Please send the reply manually via WATI.*\"\n        }\n      ]\n    }\n  ]\n}",
           "options": {}
         },
         "type": "n8n-nodes-base.httpRequest",
@@ -1137,7 +1138,8 @@
             "id": "qBoCbsiIZFcmrK9e",
             "name": "WATI API token"
           }
-        }
+        },
+        "continueOnFail": true
       },
       {
         "parameters": {
@@ -1674,8 +1676,8 @@
       }
     },
     "authors": "Oddle Engineer",
-    "name": "Version d2d626dc",
-    "description": "",
+    "name": null,
+    "description": null,
     "autosaved": false
   },
   "tags": []
