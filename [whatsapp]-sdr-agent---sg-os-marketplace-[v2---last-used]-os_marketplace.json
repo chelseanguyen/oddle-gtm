@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-03-11T06:27:46.022Z",
+  "updatedAt": "2026-05-04T03:53:17.986Z",
   "createdAt": "2026-03-02T11:02:53.080Z",
   "id": "LToj6ycrS3KEQCZa",
   "name": "[WhatsApp] SDR Agent - SG OS Marketplace [v2 - last used]",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -2540,7 +2540,7 @@
       }
     ]
   },
-  "versionId": "e77b0ee7-dea0-4fa3-afdf-f77254af3af8",
+  "versionId": "149eaa8c-c048-49f3-9ea1-91a7bca91674",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
