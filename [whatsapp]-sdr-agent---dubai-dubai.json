@@ -1,10 +1,10 @@
 {
-  "updatedAt": "2026-04-22T07:34:04.235Z",
+  "updatedAt": "2026-05-04T03:53:42.189Z",
   "createdAt": "2026-03-19T09:42:30.057Z",
   "id": "UpdWY7NyuhKEQFsQ",
   "name": "[WhatsApp] SDR Agent - Dubai",
   "active": false,
-  "isArchived": false,
+  "isArchived": true,
   "nodes": [
     {
       "parameters": {
@@ -2796,7 +2796,7 @@
       }
     ]
   },
-  "versionId": "339640e1-567f-4ae3-9a90-ca123e44b6c3",
+  "versionId": "fbe17af5-0240-4164-801a-cc3572fc678e",
   "activeVersionId": null,
   "triggerCount": 1,
   "shared": [
